@@ -1,6 +1,8 @@
 ## Custom Radio (Radio Mod)
 **Custom Radio** — это мод для [Scrap Mechanic](https://store.steampowered.com/app/387990/Scrap_Mechanic/), который добавляет радиоприемники, способные воспроизводить как встроенную, так и пользовательскую музыку — без замены файлов игры.
 
+[>> English version <<](https://github.com/Xrisofor/SM-RadioMod/blob/main/README.md)
+
 ## Как это работает?
 * Установите необходимые зависимости:
   * [SM-DLL-Injector](https://github.com/QuestionableM/SM-DLL-Injector/releases/)
