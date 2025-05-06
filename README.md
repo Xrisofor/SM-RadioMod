@@ -29,7 +29,7 @@ The mod is in beta and includes the following playlists:
 
 ## Add your tracks!
 You can easily customize the radio to suit your tastes.:
-* **Manual addition:** Add tracks via the mod files.
+* **Manual addition:** [Add tracks via the mod files](https://github.com/Xrisofor/SM-RadioMod/wiki).
 * **Custom Radio Manager:** Use [the Custom Radio Manager program](https://drive.google.com/file/d/1ndqaF3vAaxhKE7nunuXn1MYdKF-Y13Tn/view), which automatically downloads the necessary extensions and simplifies configuration.
   * ⚠ For the Custom Radio Manager to work, [Microsoft is required.Net Framework 4.7.2](https://dotnet.microsoft.com/ru-ru/download/dotnet-framework/net472).
 
