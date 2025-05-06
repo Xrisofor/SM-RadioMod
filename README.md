@@ -1,6 +1,8 @@
 ## Custom Radio (Radio Mod)
 **Custom Radio** is a mod for [Scrap Mechanic](https://store.steampowered.com/app/387990/Scrap_Mechanic/) that adds radios capable of playing both built-in and user-added music — all without replacing core game files.
 
+[>> Русская версия <<](https://github.com/Xrisofor/SM-RadioMod/blob/main/README-RU.md)
+
 ## How does it work?
 * Install the required dependencies:
   * [SM-DLL-Injector](https://github.com/QuestionableM/SM-DLL-Injector/releases/)
@@ -43,7 +45,7 @@ Use the [Custom Radio Manager](https://drive.google.com/file/d/1ndqaF3vAaxhKE7nu
 > ⚠️ Requires [Microsoft .NET Framework 4.7.2](https://dotnet.microsoft.com/ru-ru/download/dotnet-framework/net472).
 
 > ⚠️ IMPORTANT:
-> If you're using your own mod with Custom Radio, it must be published and enabled in the game.
+> If you're using your own mod with Custom Radio, it **must be published and enabled in the game.**
 > Otherwise, [Mod Database](https://steamcommunity.com/workshop/filedetails/?id=2504530003) will not detect or load your mod.
 
 ## Editing the Main Mod
