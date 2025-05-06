@@ -1,0 +1,20 @@
+{
+  "effectSetList": [
+    {
+      "path": "$CONTENT_DATA/Effects/Database/EffectSets/game.effectset",
+      "showInEditor": true
+    },
+    {
+      "path": "$CONTENT_DATA/Effects/Database/EffectSets/events.effectset",
+      "showInEditor": true
+    },
+    {
+      "path": "$CONTENT_DATA/Effects/Database/EffectSets/custom_events.effectset",
+      "showInEditor": true
+    },
+    {
+      "path": "$CONTENT_DATA/Effects/Database/EffectSets/evangelion.effectset",
+      "showInEditor": true
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+   "partList" : [
+      {
+         "box" : {
+            "x" : 2,
+            "y" : 2,
+            "z" : 1
+         },
+         "color" : "df7f01",
+         "flammable" : true,
+         "name" : "obj_cusom_radio",
+         "physicsMaterial" : "Mechanical",
+         "ratings" : {
+            "buoyancy" : 6,
+            "density" : 2,
+            "durability" : 3,
+            "friction" : 5
+         },
+         "renderable" : "$GAME_DATA/Objects/Renderable/Interactive/obj_interactive_radio.rend",
+         "rotationSet" : "PropYZ",
+         "scripted" : {
+            "classname" : "CustomRadio",
+            "filename" : "$CONTENT_DATA/Scripts/game/interactables/CustomRadio.lua"
+         },
+         "showInInventory" : true,
+         "uuid" : "d0ad87eb-22ef-41fb-8c39-002e7507d7e3"
+      },
+      {
+         "box" : {
+            "x" : 1,
+            "y" : 1,
+            "z" : 1
+         },
+         "color" : "df7f01",
+         "flammable" : true,
+         "name" : "obj_cusom_radio_speaker",
+         "physicsMaterial" : "Metal",
+         "ratings" : {
+            "buoyancy" : 6,
+            "density" : 2,
+            "durability" : 3,
+            "friction" : 5
+         },
+         "renderable" : "$CONTENT_DATA/Objects/Renderable/obj_interactive_radio_speaker.rend",
+         "rotationSet" : "PropYZm",
+         "scripted" : {
+            "classname" : "CustomRadioSpeaker",
+            "filename" : "$CONTENT_DATA/Scripts/game/interactables/CustomRadioSpeaker.lua"
+         },
+         "showInInventory" : true,
+         "uuid" : "99ae2a73-b28d-4b7c-a558-104ed1b59b1d"
+      },
+      {
+         "box" : {
+            "x" : 2,
+            "y" : 2,
+            "z" : 1
+         },
+         "color" : "8b5dff",
+         "flammable" : true,
+         "name" : "obj_cusom_radio_clock",
+         "physicsMaterial" : "Mechanical",
+         "ratings" : {
+            "buoyancy" : 6,
+            "density" : 2,
+            "durability" : 3,
+            "friction" : 5
+         },
+         "renderable" : "$SURVIVAL_DATA/Objects/Renderable/decor/obj_decor_clock.rend",
+         "rotationSet" : "PropYZm",
+         "scripted" : {
+            "classname" : "CustomRadioClock",
+            "filename" : "$CONTENT_DATA/Scripts/game/interactables/CustomRadioClock.lua"
+         },
+         "showInInventory" : true,
+         "uuid" : "3f7a7d81-e33a-4a73-91b7-7f9f20d8489d"
+      },
+      {
+         "box" : {
+            "x" : 2,
+            "y" : 1,
+            "z" : 1
+         },
+         "color" : "df7f01",
+         "flammable" : true,
+         "name" : "obj_cusom_small_radio",
+         "physicsMaterial" : "Mechanical",
+         "ratings" : {
+            "buoyancy" : 6,
+            "density" : 2,
+            "durability" : 3,
+            "friction" : 5
+         },
+         "renderable" : "$CONTENT_DATA/Objects/Renderable/obj_interactive_small_radio.rend",
+         "rotationSet" : "PropYZ",
+         "scripted" : {
+            "classname" : "CustomRadio",
+            "filename" : "$CONTENT_DATA/Scripts/game/interactables/CustomRadio.lua"
+         },
+         "showInInventory" : true,
+         "uuid" : "f6b6faf5-2554-49cd-aa49-23af1a6cb2a3"
+      }
+   ]
+}

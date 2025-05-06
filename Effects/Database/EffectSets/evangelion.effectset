@@ -1,0 +1,48 @@
+{
+   "RadioMod - Evangelion Playlist No. 1" : {
+      "parameterList": {
+         "CAE_Volume": 1.0,
+         "CAE_Pitch": 1.0,
+         "CAE_Reverb": 1.0,
+         "CAE_ReverbIdx": -1.0,
+         "CAE_Position": 0.0
+      },
+      "effectList" : [
+         {
+            "delay" : 0.0,
+            "name" : "Evangelion_PlaylistOne_Radio_RadioMod",
+            "type" : "audio",
+            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position" ]
+         }
+      ],
+      "radioMod": {
+         "Name": "Evangelion Playlist No. 1",
+         "Author": "Shiro Sagisu",
+         "Image": "Gui/Icons/evangelion_playlist.jpeg",
+         "Duration": 24
+      }
+   },
+   "RadioMod - Evangelion Playlist No. 2" : {
+      "parameterList": {
+         "CAE_Volume": 1.0,
+         "CAE_Pitch": 1.0,
+         "CAE_Reverb": 1.0,
+         "CAE_ReverbIdx": -1.0,
+         "CAE_Position": 0.0
+      },
+      "effectList" : [
+         {
+            "delay" : 0.0,
+            "name" : "Evangelion_PlaylistTwo_Radio_RadioMod",
+            "type" : "audio",
+            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position" ]
+         }
+      ],
+      "radioMod": {
+         "Name": "Evangelion Playlist No. 2",
+         "Author": "Shiro Sagisu",
+         "Image": "Gui/Icons/evangelion_playlist.jpeg",
+         "Duration": 27
+      }
+   }
+}

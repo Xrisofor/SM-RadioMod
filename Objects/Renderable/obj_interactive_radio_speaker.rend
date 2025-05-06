@@ -1,0 +1,18 @@
+{
+	"lodList": [
+		{
+			"subMeshList": [
+				{
+					"textureList": [
+						"$CHALLENGE_DATA/Objects/Textures/interactive/obj_interactive_soundcube_dif.tga",
+						"$CHALLENGE_DATA/Objects/Textures/interactive/obj_interactive_soundcube_asg.tga",
+						"$CHALLENGE_DATA/Objects/Textures/interactive/obj_interactive_soundcube_nor.tga"
+					],
+					"material": "PoseAnimDifAsgNor"
+				}
+			],
+			"mesh": "$CHALLENGE_DATA/Objects/Mesh/interactive/obj_interactive_soundcube_off.fbx",
+			"pose0": "$CHALLENGE_DATA/Objects/Mesh/interactive/obj_interactive_soundcube_on.fbx"
+		}
+	]
+}

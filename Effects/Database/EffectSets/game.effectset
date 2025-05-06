@@ -1,0 +1,47 @@
+{
+   "Scrap Mechanic - Radio" : {
+      "effectList" : [
+         {
+            "delay" : 0.0,
+            "name" : "event:/tools/radio",
+            "type" : "audio"
+         }
+      ],
+      "radioMod": {
+         "Name": "Radio",
+         "Author": "Scrap Mechanic",
+         "Image": "Gui/Icons/default_image.png",
+         "Duration": 22
+      }
+   },
+   "Scrap Mechanic - North Korea" : {
+      "effectList" : [
+         {
+            "delay" : 0.0,
+            "name" : "event:/char/npc/bots/confettibot",
+            "type" : "audio"
+         }
+      ],
+      "radioMod": {
+         "Name": "North Korea",
+         "Author": "Scrap Mechanic",
+         "Image": "Gui/Icons/default_image.png",
+         "Duration": 2
+      }
+   },
+   "Scrap Mechanic - Elevator" : {
+      "effectList" : [
+         {
+            "delay" : 0.0,
+            "name" : "event:/music/elevator",
+            "type" : "audio"
+         }
+      ],
+      "radioMod": {
+         "Name": "Elevator",
+         "Author": "Scrap Mechanic",
+         "Image": "Gui/Icons/default_image.png",
+         "Duration": 2
+      }
+   }
+}

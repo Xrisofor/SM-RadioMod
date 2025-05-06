@@ -1,0 +1,26 @@
+{
+   "3f7a7d81-e33a-4a73-91b7-7f9f20d8489d" : {
+      "description" : "Device Timer is a convenient tool for automating the operation of connected components. It activates a device at a specified time and automatically turns it off after 24 hours. Perfect for managing music playback, lighting, or other systems.\n\nBy: Xrisofor.",
+      "title" : "Device Timer"
+   },
+   "8cef2bc5-e57f-4068-85a6-0082601dc2e5" : {
+      "description" : "Those bots are at it again! This portable radio broadcasts their favorite tracks — strange, noisy, and weirdly catchy. Take it anywhere and blast the tunes!\n\nBy Xrisofor.",
+      "title" : "Portable Radio"
+   },
+   "99ae2a73-b28d-4b7c-a558-104ed1b59b1d" : {
+      "description" : "Radio speaker is an excellent device for those who like to listen to music in any corner of their home or vehicle. Don't forget to connect your radio!\n\nBy Xrisofor.",
+      "title" : "Radio Speaker"
+   },
+   "a287092e-06c4-4dcf-8166-2224c251f47c" : {
+      "description" : "Radio remote control is an item for remote control linked to a specific radio. Now you can always change the music without looking for your radio!\n\nBy Xrisofor.",
+      "title" : "Radio Remote Control"
+   },
+   "d0ad87eb-22ef-41fb-8c39-002e7507d7e3" : {
+      "description" : "All hits, all the time. Those beastly bots have hijacked and are now transmitting classic selections from their deeply unusual taste in music. Activate it by interacting with it or by connecting it to a trigger.\n\nBy Xrisofor.",
+      "title" : "Custom Radio"
+   },
+   "f6b6faf5-2554-49cd-aa49-23af1a6cb2a3" : {
+      "description" : "Small size, big sound. The bots didn’t stop at one radio—this mini version blasts the same bizarre tunes, straight from their twisted playlist. Activate it by interacting with it or by connecting it to a trigger.\n\nBy Xrisofor.",
+      "title" : "Mini Custom Radio"
+   }
+}

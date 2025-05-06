@@ -1,0 +1,26 @@
+{
+   "toolList" : [
+      {
+         "name" : "tool_radio_remote",
+         "previewRenderable" : "$CONTENT_DATA/Tools/Remote/char_radio_remote.rend",
+         "previewRotation" : [ -1, 1, 0, 0, 0, 1, 0, 1, 0 ],
+         "script" : {
+            "class" : "RadioRemote",
+            "data" : {},
+            "file" : "$CONTENT_DATA/Scripts/game/tools/RadioRemote.lua"
+         },
+         "uuid" : "a287092e-06c4-4dcf-8166-2224c251f47c"
+      },
+      {
+         "name" : "tool_portable_radio",
+         "previewRenderable" : "$CONTENT_DATA/Tools/Portable/radio_portable_prev.rend",
+         "previewRotation" : [ 1, 0, 0, 0, 1, -1, 0, 1, 0 ],
+         "script" : {
+            "class" : "RadioPortable",
+            "data" : {},
+            "file" : "$CONTENT_DATA/Scripts/game/tools/RadioPortable.lua"
+         },
+         "uuid" : "8cef2bc5-e57f-4068-85a6-0082601dc2e5"
+      }
+   ]
+}

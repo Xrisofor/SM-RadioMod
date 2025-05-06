@@ -1,0 +1,23 @@
+{
+   /* Add your tracks here | Добавляйте свои треки сюда
+   The commented block is an example, you can use it to create subsequent tracks.
+   Прокомментированный блок является примером, вы можете использовать его для создания последующих треков.
+
+   "Kamazz - I'm alive (RU)" : {
+      "parameterList": {
+         "CAE_Volume": 1.0,
+         "CAE_Pitch": 1.0,
+         "CAE_Reverb": 1.0,
+         "CAE_ReverbIdx": -1.0,
+         "CAE_Position": 0.0
+      },
+      "effectList" : [
+         {
+            "delay" : 0.0,
+            "name" : "Russian_Kamazz_I_Alive",
+            "type" : "audio",
+            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position" ]
+         }
+      ]
+   } */
+}

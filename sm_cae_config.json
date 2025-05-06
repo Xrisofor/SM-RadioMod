@@ -1,0 +1,24 @@
+{
+    "soundList": {
+        "Phonk_PlaylistOne_Radio_RadioMod": {
+            "path": "$CONTENT_DATA/Audio/phonk_playlist_one_radio.ogg",
+            "is3D": false
+        },
+        "Russian_Hardbass_Radio_E": {
+            "path": "$CONTENT_DATA/Audio/russian_hardbass_radio.ogg",
+            "is3D": false
+        },
+        "Evangelion_PlaylistOne_Radio_RadioMod": {
+            "path": "$CONTENT_DATA/Audio/evangelion_playlist_one_radio.ogg",
+            "is3D": false
+        },
+        "Evangelion_PlaylistTwo_Radio_RadioMod": {
+            "path": "$CONTENT_DATA/Audio/evangelion_playlist_two_radio.ogg",
+            "is3D": false
+        },
+        "Korol_i_Shut_PlaylistOne_Radio_RadioMod": {
+            "path": "$CONTENT_DATA/Audio/korol_i_shut_playlist_one_radio.ogg",
+            "is3D": false
+        }
+    }
+}

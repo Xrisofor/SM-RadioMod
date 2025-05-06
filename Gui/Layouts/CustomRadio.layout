@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MyGUI type="Layout" version="3.2.0">
+    <Widget type="Canvas" skin="BackgroundEngineNoUpgrade" position="675 302 570 475" align="Center" name="MainPanel">
+        <Widget type="TextBox" skin="TextBox" position="0 0 574 98">
+            <Property key="Caption" value="CUSTOM RADIO"/>
+            <Property key="FontName" value="SM_HeaderLarge_Wide"/>
+            <Property key="TextAlign" value="Center"/>
+        </Widget>
+        <Widget type="TextBox" skin="TextBox" position="20 115 530 45">
+            <Property key="TextAlign" value="Center"/>
+            <Property key="Caption" value="VOLUME"/>
+            <Property key="FontName" value="SM_Button"/>
+        </Widget>
+        <Widget type="Canvas" skin="Canvas" position="20 170 530 65" name="VolumeSlider"/>
+        <Widget type="Button" skin="SettingsButton" position="208 390 142 60" name="PlayStopButton">
+            <Property key="Caption" value="Play"/>
+            <Property key="TextAlign" value="Center"/>
+            <Property key="FontName" value="SM_Button"/>
+        </Widget>
+        <Widget type="Button" skin="SettingsButton" position="53 390 142 60" name="BackButton">
+            <Property key="TextAlign" value="Center"/>
+            <Property key="FontName" value="SM_Button"/>
+            <Property key="Caption" value="Back"/>
+        </Widget>
+        <Widget type="Button" skin="SettingsButton" position="370 390 142 60" name="NextButton">
+            <Property key="TextAlign" value="Center"/>
+            <Property key="Caption" value="Next"/>
+            <Property key="FontName" value="SM_Button"/>
+        </Widget>
+        <Widget type="TextBox" skin="TextBox" position="20 250 300 44">
+            <Property key="FontName" value="SM_Button"/>
+            <Property key="Caption" value="CONNECTED ELEMENTS:"/>
+            <Property key="TextAlign" value="Center"/>
+        </Widget>
+        <Widget type="TextBox" skin="TextBox" position="325 250 225 45" name="ConnectedElem">
+            <Property key="Caption" value="0"/>
+            <Property key="FontName" value="SM_Button"/>
+            <Property key="TextAlign" value="Center"/>
+        </Widget>
+    </Widget>
+    <Widget type="Canvas" skin="BackgroundCookbot" position="265 273 400 502" name="TrackPanel">
+        <Widget type="TextBox" skin="TextBox" position="15 345 370 145" name="TrackName">
+            <Property key="Caption" value="NAME"/>
+            <Property key="FontName" value="SM_Button"/>
+            <Property key="TextAlign" value="HCenter Top"/>
+        </Widget>
+        <Widget type="ImageBox" skin="ImageBox" position="15 200 135 135" name="TrackImage"/>
+        <Widget type="TextBox" skin="TextBox" position="0 120 400 95">
+            <Property key="Caption" value="INFO"/>
+            <Property key="TextAlign" value="Center"/>
+            <Property key="FontName" value="SM_HeaderLarge_Wide"/>
+        </Widget>
+        <Widget type="TextBox" skin="TextBox" position="160 200 225 65" name="TrackAuthor">
+            <Property key="Caption" value="AUTHOR"/>
+            <Property key="TextAlign" value="Center"/>
+            <Property key="FontName" value="SM_Button"/>
+        </Widget>
+        <Widget type="TextBox" skin="TextBox" position="160 270 225 65" name="TrackTime">
+            <Property key="FontName" value="SM_Button"/>
+            <Property key="TextAlign" value="Center"/>
+            <Property key="Caption" value="0 MIN"/>
+        </Widget>
+    </Widget>
+    <Widget type="Canvas" skin="BackgroundWorkbench" position="1255 284 400 493" name="TracksPanel">
+        <Widget type="TextBox" skin="TextBox" position="0 110 400 95">
+            <Property key="Caption" value="MUSIC"/>
+            <Property key="FontName" value="SM_HeaderLarge_Wide"/>
+            <Property key="TextAlign" value="Center"/>
+        </Widget>
+        <Widget type="Canvas" skin="DropDownExpandBackground" position="10 200 380 50" name="DropDown"/>
+        <Widget type="TextBox" skin="TextBox" position="10 270 380 45">
+            <Property key="Caption" value="Creator: Xrisofor"/>
+            <Property key="FontName" value="SM_Button"/>
+            <Property key="TextAlign" value="Center"/>
+        </Widget>
+        <Widget type="Button" skin="SettingsButton" position="130 410 142 60" name="RandomButton">
+            <Property key="Caption" value="Random"/>
+            <Property key="FontName" value="SM_Button"/>
+            <Property key="TextAlign" value="Center"/>
+        </Widget>
+    </Widget>
+    <CodeGeneratorSettings/>
+</MyGUI>

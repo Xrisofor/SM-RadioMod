@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MyGUI type="Layout" version="3.2.0">
+    <Widget type="Canvas" skin="BackgroundEngineNoUpgrade" position_real="0.351563 0.27963 0.296875 0.439815" align="Center" name="MainPanel">
+        <Widget type="TextBox" skin="TextBox" position_real="0 0 1.00702 0.206316">
+            <Property key="Caption" value="CUSTOM RADIO"/>
+            <Property key="FontName" value="SM_HeaderLarge_Wide"/>
+            <Property key="TextAlign" value="Center"/>
+        </Widget>
+        <Widget type="Canvas" skin="Canvas" position_real="0.0298246 0.294737 0.929825 0.0926316" name="DropDown"/>
+        <Widget type="TextBox" skin="TextBox" position_real="0.0298246 0.189474 0.929825 0.0926316">
+            <Property key="TextAlign" value="Center"/>
+            <Property key="FontName" value="SM_Button"/>
+            <Property key="Caption" value="MUSIC"/>
+        </Widget>
+        <Widget type="TextBox" skin="TextBox" position_real="0.0298246 0.431579 0.931579 0.0926316">
+            <Property key="TextAlign" value="Center"/>
+            <Property key="Caption" value="VOLUME"/>
+            <Property key="FontName" value="SM_Button"/>
+        </Widget>
+        <Widget type="Canvas" skin="Canvas" position_real="0.0298246 0.534737 0.931579 0.126316" name="VolumeSlider"/>
+        <Widget type="Button" skin="SettingsButton" position_real="0.368421 0.821053 0.249123 0.126316" name="PlayStopButton">
+            <Property key="Caption" value="Play"/>
+            <Property key="TextAlign" value="Center"/>
+            <Property key="FontName" value="SM_Button"/>
+        </Widget>
+        <Widget type="Button" skin="SettingsButton" position_real="0.0929825 0.821053 0.249123 0.126316" name="BackButton">
+            <Property key="TextAlign" value="Center"/>
+            <Property key="FontName" value="SM_Button"/>
+            <Property key="Caption" value="Back"/>
+        </Widget>
+        <Widget type="Button" skin="SettingsButton" position_real="0.649123 0.821053 0.249123 0.126316" name="NextButton">
+            <Property key="TextAlign" value="Center"/>
+            <Property key="Caption" value="Next"/>
+            <Property key="FontName" value="SM_Button"/>
+        </Widget>
+    </Widget>
+    <CodeGeneratorSettings/>
+</MyGUI>

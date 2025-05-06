@@ -1,0 +1,19 @@
+{
+   "lodList" : [
+      {
+         "mesh" : "$CONTENT_DATA/Tools/Portable/radio_portable.dae",
+         "includes" : ["POSITION", "UV0", "NORMAL", "TANGENTS", "BLEND_INDICES", "BLEND_WEIGHTS"],
+         "maxViewDistance": 1500,
+            "subMeshMap" : {
+               "radio" : {
+                  "material" : "DifAsgNor",
+                  "textureList" : [
+                     "$GAME_DATA/Objects/Textures/interactive/obj_interactive_radio_dif.tga",
+                     "$GAME_DATA/Objects/Textures/interactive/obj_interactive_radio_asg.tga",
+                     "$GAME_DATA/Objects/Textures/interactive/obj_interactive_radio_nor.tga"
+                  ]
+               }
+            }
+         }
+   ]
+}
