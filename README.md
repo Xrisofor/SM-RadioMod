@@ -1,24 +1,27 @@
-**Custom Radio** is a modification that adds a new radio that allows you to enjoy a variety of tracks, both specially selected by the developer and added by the user himself.
+## Custom Radio (Radio Mod)
+**Custom Radio** is a mod for [Scrap Mechanic](https://store.steampowered.com/app/387990/Scrap_Mechanic/) that adds radios capable of playing both built-in and user-added music — all without replacing core game files.
 
 ## How does it work?
-* Install [SM-DLL-Injector](https://github.com/QuestionableM/SM-DLL-Injector/releases/) and [SM-CustomAudioExtension](https://github.com/QuestionableM/SM-CustomAudioExtension/releases/)
-* Activate the mod in the game world
+* Install the required dependencies:
+  * [SM-DLL-Injector](https://github.com/QuestionableM/SM-DLL-Injector/releases/)
+  * [SM-CustomAudioExtension](https://github.com/QuestionableM/SM-CustomAudioExtension/releases/)
+* Enable the mod and [Mod Database](https://steamcommunity.com/workshop/filedetails/?id=2504530003) in your game world.
 
-## Available objects
+## What objects are included?
 * Custom Radio
 * Mini Custom Radio
 * Portable Radio
 * Radio Speaker
 * Radio Remote Control
-* Device Timer (works only in worlds where time flows)
+* Device Timer *(only works in worlds where time flows)*
 
-## Why choose this mod?
-* **Without replacing files:** You do not need to restart the game or replace the bank files, as required in traditional versions.
-* **Compatibility:** Minimal conflicts with other mods that may use different versions of the bank files.
-* **Ease of use:** Manage your music quickly and conveniently using ready-made objects!
+## Why use Custom Radio?
+* **No file replacement** — You don’t need to restart the game or replace ``.bank`` files.
+* **High compatibility** — Minimal conflicts with other mods, even those using their own sounds.
+* **Ease of use** — Control music with intuitive in-game devices.
 
-## What tracks are waiting for you?
-The mod is in beta and includes the following playlists:
+## Included tracks
+This beta version includes the following playlists:
 * Scrap Mechanic - Radio
 * Scrap Mechanic - Elevator Music
 * Scrap Mechanic - North Korea
@@ -27,13 +30,28 @@ The mod is in beta and includes the following playlists:
 * [Neon Genesis Evangelion - Shiro SAGISU](https://en.wikipedia.org/wiki/Neon_Genesis_Evangelion)
 * [Compilation #1 - Korol i Shut (RU)](https://en.wikipedia.org/wiki/Korol_i_Shut)
 
-## Add your tracks!
-You can easily customize the radio to suit your tastes.:
-* **Manual addition:** [Add tracks via the mod files](https://github.com/Xrisofor/SM-RadioMod/wiki).
-* **Custom Radio Manager:** Use [the Custom Radio Manager program](https://drive.google.com/file/d/1ndqaF3vAaxhKE7nunuXn1MYdKF-Y13Tn/view), which automatically downloads the necessary extensions and simplifies configuration.
-  * ⚠ For the Custom Radio Manager to work, [Microsoft is required.Net Framework 4.7.2](https://dotnet.microsoft.com/ru-ru/download/dotnet-framework/net472).
+## Want to add your own music?
+You can customize the radio to play your own tracks in two ways:
 
-## Future plans
-* New music tracks
-* New devices
-* Troubleshooting
+### Option 1 — Manual setup
+Follow [the wiki guide](https://github.com/Xrisofor/SM-RadioMod/wiki/How-to-Use-Custom-Radio) to configure ``sm_cae_config.json`` and ``custom_effects.json``.
+
+### Option 2 — Custom Radio Manager
+Use the [Custom Radio Manager](https://drive.google.com/file/d/1ndqaF3vAaxhKE7nunuXn1MYdKF-Y13Tn/view) app to:
+* Automate setup
+* Install required extensions
+> ⚠️ Requires [Microsoft .NET Framework 4.7.2](https://dotnet.microsoft.com/ru-ru/download/dotnet-framework/net472).
+
+> ⚠️ IMPORTANT:
+> If you're using your own mod with Custom Radio, it must be published and enabled in the game.
+> Otherwise, [Mod Database](https://steamcommunity.com/workshop/filedetails/?id=2504530003) will not detect or load your mod.
+
+## Editing the Main Mod
+You can manually modify the main mod files. However:
+> ❗ Any **mod update or reinstallation** may **overwrite your changes**.
+For long-term use, it's recommended to create your own **separate mod** that works with Custom Radio.
+
+## Future Plans
+* More music playlists
+* Additional radio devices
+* General bug fixes and improvements
