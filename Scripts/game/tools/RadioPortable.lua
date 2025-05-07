@@ -376,6 +376,7 @@ function RadioPortable.createGui(self)
     self.gui = sm.gui.createGuiFromLayout("$CONTENT_DATA/Gui/Layouts/CustomRadio.layout")
     self.gui:createDropDown("DropDown", "cl_onDropdownInteract", self.tracks)
     self.gui:createHorizontalSlider("VolumeSlider", 11, self.cl_currentAudioVolume * 10, "client_onSliderMoved")
+    self.gui:createHorizontalSlider("SpeedSlider", 0, 0, "")
 
     self.gui:setButtonCallback("PlayStopButton", "onSetPlayState")
     self.gui:setButtonCallback("NextButton", "onNextSound")

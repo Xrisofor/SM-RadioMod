@@ -3,10 +3,10 @@ dofile("$SURVIVAL_DATA/Scripts/util.lua")
 
 RadioRemote = class()
 
-local renderables = {"$CONTENT_DATA/Tools/Remote/char_radio_remote.rend"}
+local renderables = {"$CONTENT_DATA/Tools/Remote/char_liftremote.rend"}
 local renderablesTp = {"$GAME_DATA/Character/Char_Male/Animations/char_male_tp_weldtool.rend",
-                       "$CONTENT_DATA/Tools/Remote/char_radio_remote_tp_animlist.rend"}
-local renderablesFp = {"$CONTENT_DATA/Tools/Remote/char_radio_remote_fp_animlist.rend"}
+                       "$GAME_DATA/Character/Char_Tools/Char_liftremote/char_liftremote_tp_animlist.rend"}
+local renderablesFp = {"$GAME_DATA/Character/Char_Tools/Char_liftremote/char_liftremote_fp_animlist.rend"}
 
 local currentRenderablesTp = {}
 local currentRenderablesFp = {}

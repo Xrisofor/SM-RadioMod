@@ -11,6 +11,7 @@ function CustomRadioSpeaker.client_onCreate(self)
     self.cl_currentAudioName = "No Playing"
     self.cl_currentAudioVolume = 1
     self.cl_playState = false
+    self.cl_playSpeed = 0
     self.cl_audio_effect = sm.effect.createEffect("No Playing", self.interactable)
 end
 
@@ -80,6 +81,13 @@ function CustomRadioSpeaker.remote_radio_controller_volume(self, param)
     if sm.exists(self.cl_audio_effect) then
         self.cl_currentAudioVolume = param
         self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
+    end
+end
+
+function CustomRadioSpeaker.remote_radio_controller_speed(self, param)
+    if sm.exists(self.cl_audio_effect) then
+        self.cl_playSpeed = param
+        self.cl_audio_effect:setParameter("CAE_Pitch", self.cl_playSpeed > 0 and self.cl_playSpeed or 0.5)
     end
 end
 

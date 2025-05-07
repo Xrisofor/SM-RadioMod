@@ -46,12 +46,14 @@ function CustomRadio.server_onCreate(self)
     self.storageSave = self.storage:load() or {
         track = "No Playing",
         volume = 1,
-        play_state = false
+        play_state = false,
+        play_speed = 1
     }
 
     self.sv_audioName = self.storageSave.track
     self.sv_volumeLevel = self.storageSave.volume
     self.sv_playState = self.storageSave.play_state
+    self.sv_playSpeed = self.storageSave.play_speed
 
     self.connectedElements = self.interactable:getChildren()
 
@@ -126,11 +128,16 @@ function CustomRadio.sv_changePlayState(self, setting, player)
     self:sv_updateSetting("play_state", setting, "cl_changePlayState")
 end
 
+function CustomRadio.sv_changePlaySpeed(self, setting, player)
+    self:sv_updateSetting("play_speed", setting, "cl_changePlaySpeed")
+end
+
 function CustomRadio.sv_getRadioInfo(self, _, player)
     self.network:sendToClient(player, "cl_updateRadioInfo", {
         track = self.sv_audioName,
         volume = self.sv_volumeLevel,
-        playState = self.sv_playState
+        playState = self.sv_playState,
+        playSpeed = self.sv_playSpeed
     })
 end
 
@@ -139,7 +146,7 @@ function CustomRadio.client_onCreate(self)
     self.cl_currentAudioName = "No Playing"
     self.cl_currentAudioVolume = 1
     self.cl_playState = false
-    self.cl_lastUpdate = sm.game.getTimeOfDay()
+    self.cl_playSpeed = 1
 
     self.cl_audio_effect = sm.effect.createEffect("No Playing", self.interactable)
 
@@ -157,6 +164,7 @@ function CustomRadio.cl_updateRadioInfo(self, data)
     self:cl_changeTrack(data.track)
     self:cl_changeTrackVolume(data.volume)
     self:cl_changePlayState(data.playState)
+    self:cl_changePlaySpeed(data.playSpeed)
 end
 
 function CustomRadio.send_toSpeaker(self, fun, params)
@@ -216,6 +224,7 @@ function CustomRadio.client_onUpdate(self)
 
     if self:isValidEffect() then
         self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
+        self.cl_audio_effect:setParameter("CAE_Pitch", self.cl_playSpeed > 0 and self.cl_playSpeed or 0.5)
     end
 end
 
@@ -247,7 +256,8 @@ function CustomRadio:createGui()
     self.gui = sm.gui.createGuiFromLayout("$CONTENT_DATA/Gui/Layouts/CustomRadio.layout")
 
     self.gui:createDropDown("DropDown", "cl_onDropdownInteract", self.tracks)
-    self.gui:createHorizontalSlider("VolumeSlider", 11, self.cl_currentAudioVolume * 10, "client_onSliderMoved")
+    self.gui:createHorizontalSlider("VolumeSlider", 11, self.cl_currentAudioVolume * 10, "client_onVolumeSliderMoved")
+    self.gui:createHorizontalSlider("SpeedSlider", 5, self.cl_playSpeed, "client_onSpeedSliderMoved")
 
     self.gui:setButtonCallback("PlayStopButton", "onSetPlayState")
     self.gui:setButtonCallback("NextButton", "onNextSound")
@@ -269,8 +279,12 @@ function CustomRadio.cl_onDropdownInteract(self, option)
     self:selectTrack(option)
 end
 
-function CustomRadio.client_onSliderMoved(self, value)
+function CustomRadio.client_onVolumeSliderMoved(self, value)
     self.network:sendToServer("sv_changeTrackVolume", value / 10.0)
+end
+
+function CustomRadio.client_onSpeedSliderMoved(self, value)
+    self.network:sendToServer("sv_changePlaySpeed", value)
 end
 
 function CustomRadio.cl_changePlayState(self, newState)
@@ -311,6 +325,11 @@ end
 function CustomRadio.cl_changeTrackVolume(self, newVolume)
     self.cl_currentAudioVolume = newVolume or 1
     self:send_toSpeaker("remote_radio_controller_volume", self.cl_currentAudioVolume)
+end
+
+function CustomRadio.cl_changePlaySpeed(self, newVolume)
+    self.cl_playSpeed = newVolume or 1
+    self:send_toSpeaker("remote_radio_controller_speed", self.cl_playSpeed)
 end
 
 function CustomRadio:selectTrack(trackName)

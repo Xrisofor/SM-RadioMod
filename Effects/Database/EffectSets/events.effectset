@@ -12,7 +12,7 @@
             "delay" : 0.0,
             "name" : "Phonk_PlaylistOne_Radio_RadioMod",
             "type" : "audio",
-            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position" ]
+            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position", "progress" ]
          }
       ],
       "radioMod": {
@@ -35,7 +35,7 @@
             "delay" : 0.0,
             "name" : "Russian_Hardbass_Radio_E",
             "type" : "audio",
-            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position" ]
+            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position", "progress" ]
          }
       ],
       "radioMod": {
@@ -58,7 +58,7 @@
             "delay" : 0.0,
             "name" : "Korol_i_Shut_PlaylistOne_Radio_RadioMod",
             "type" : "audio",
-            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position" ]
+            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position", "progress" ]
          }
       ],
       "radioMod": {

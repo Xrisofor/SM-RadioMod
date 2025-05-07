@@ -27,16 +27,12 @@
             <Property key="Caption" value="Next"/>
             <Property key="FontName" value="SM_Button"/>
         </Widget>
-        <Widget type="TextBox" skin="TextBox" position="20 250 300 44">
-            <Property key="FontName" value="SM_Button"/>
-            <Property key="Caption" value="CONNECTED ELEMENTS:"/>
-            <Property key="TextAlign" value="Center"/>
-        </Widget>
-        <Widget type="TextBox" skin="TextBox" position="325 250 225 45" name="ConnectedElem">
-            <Property key="Caption" value="0"/>
+        <Widget type="TextBox" skin="TextBox" position="20 245 530 45">
             <Property key="FontName" value="SM_Button"/>
             <Property key="TextAlign" value="Center"/>
+            <Property key="Caption" value="SPEED"/>
         </Widget>
+        <Widget type="Canvas" skin="Canvas" position="20 305 530 65" name="SpeedSlider"/>
     </Widget>
     <Widget type="Canvas" skin="BackgroundCookbot" position="265 273 400 502" name="TrackPanel">
         <Widget type="TextBox" skin="TextBox" position="15 345 370 145" name="TrackName">
@@ -68,7 +64,7 @@
             <Property key="TextAlign" value="Center"/>
         </Widget>
         <Widget type="Canvas" skin="DropDownExpandBackground" position="10 200 380 50" name="DropDown"/>
-        <Widget type="TextBox" skin="TextBox" position="10 270 380 45">
+        <Widget type="TextBox" skin="TextBox" position="10 330 380 45">
             <Property key="Caption" value="Creator: Xrisofor"/>
             <Property key="FontName" value="SM_Button"/>
             <Property key="TextAlign" value="Center"/>
@@ -77,6 +73,16 @@
             <Property key="Caption" value="Random"/>
             <Property key="FontName" value="SM_Button"/>
             <Property key="TextAlign" value="Center"/>
+        </Widget>
+        <Widget type="TextBox" skin="TextBox" position="10 270 265 44">
+            <Property key="Caption" value="Connected Elements:"/>
+            <Property key="TextAlign" value="Center"/>
+            <Property key="FontName" value="SM_Button"/>
+        </Widget>
+        <Widget type="TextBox" skin="TextBox" position="280 270 110 45" name="ConnectedElem">
+            <Property key="Caption" value="0"/>
+            <Property key="TextAlign" value="Center"/>
+            <Property key="FontName" value="SM_Button"/>
         </Widget>
     </Widget>
     <CodeGeneratorSettings/>

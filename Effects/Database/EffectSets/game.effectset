@@ -4,7 +4,8 @@
          {
             "delay" : 0.0,
             "name" : "event:/tools/radio",
-            "type" : "audio"
+            "type" : "audio",
+            "parameters": [ "progress" ]
          }
       ],
       "radioMod": {
@@ -19,7 +20,8 @@
          {
             "delay" : 0.0,
             "name" : "event:/char/npc/bots/confettibot",
-            "type" : "audio"
+            "type" : "audio",
+            "parameters": [ "progress" ]
          }
       ],
       "radioMod": {
@@ -34,7 +36,8 @@
          {
             "delay" : 0.0,
             "name" : "event:/music/elevator",
-            "type" : "audio"
+            "type" : "audio",
+            "parameters": [ "progress" ]
          }
       ],
       "radioMod": {
