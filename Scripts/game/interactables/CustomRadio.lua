@@ -3,7 +3,7 @@ dofile("$CONTENT_DATA/Scripts/game/Utilities.lua")
 CustomRadio = class()
 
 CustomRadio.maxParentCount = 1
-CustomRadio.connectionInput = sm.interactable.connectionType.logic + (sm.interactable.connectionType.composite or 0)
+CustomRadio.connectionInput = sm.interactable.connectionType.logic + sm.interactable.connectionType.seated + (sm.interactable.connectionType.composite or 0)
 CustomRadio.connectionOutput = sm.interactable.connectionType.logic
 CustomRadio.colorNormal = sm.color.new("#df6d2d")
 CustomRadio.colorHighlight = sm.color.new("#c84c05")
