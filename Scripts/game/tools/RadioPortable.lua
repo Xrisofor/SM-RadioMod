@@ -1,12 +1,14 @@
 dofile("$GAME_DATA/Scripts/game/AnimationUtil.lua")
-dofile("$SURVIVAL_DATA/Scripts/util.lua" )
+dofile("$SURVIVAL_DATA/Scripts/util.lua")
 dofile("$CONTENT_DATA/Scripts/game/Utilities.lua")
 
 RadioPortable = class()
 
-local renderables = { "$CONTENT_DATA/Tools/Portable/radio_portable.rend" } -- "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool.rend"
-local renderablesTp = { "$SURVIVAL_DATA/Character/Char_Male/Animations/char_male_tp_heavytool.rend", "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool_tp_animlist.rend" }
-local renderablesFp = { "$SURVIVAL_DATA/Character/Char_Male/Animations/char_male_fp_heavytool.rend", "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool_fp_animlist.rend" }
+local renderables = {"$CONTENT_DATA/Tools/Portable/radio_portable.rend"} -- "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool.rend"
+local renderablesTp = {"$SURVIVAL_DATA/Character/Char_Male/Animations/char_male_tp_heavytool.rend",
+                       "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool_tp_animlist.rend"}
+local renderablesFp = {"$SURVIVAL_DATA/Character/Char_Male/Animations/char_male_fp_heavytool.rend",
+                       "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool_fp_animlist.rend"}
 
 local currentRenderablesTp = {}
 local currentRenderablesFp = {}
@@ -16,12 +18,15 @@ sm.tool.preloadRenderables(renderablesTp)
 sm.tool.preloadRenderables(renderablesFp)
 
 -- Server
-
 function RadioPortable.server_onCreate(self)
     self.storageSave = self.storage:load()
 
     if self.storageSave == nil then
-        self.storageSave = { track = "No Playing", volume = 1, play_state = false }
+        self.storageSave = {
+            track = "No Playing",
+            volume = 1,
+            play_state = false
+        }
     end
 
     self.sv_audioName = self.storageSave.track
@@ -65,7 +70,6 @@ function RadioPortable.sv_getRadioInfo(self, _, player)
 end
 
 -- Client
-
 function RadioPortable.client_onCreate(self)
     self.isLocal = self.tool:isLocal()
     self.cl_currentAudioName = "No Playing"
@@ -78,14 +82,15 @@ function RadioPortable.client_onCreate(self)
     self.network:sendToServer("sv_getRadioInfo")
 
     if sm.cae_injected == nil then
-        sm.gui.chatMessage("(Radio Mod / Custom Radio) You have not installed #ff0000SM-CustomAudioExtension#ffffff, all music in the radio will not be played until you install the library!")
+        sm.gui.chatMessage(
+            "(Radio Mod / Custom Radio) You have not installed #ff0000SM-CustomAudioExtension#ffffff, all music in the radio will not be played until you install the library!")
     end
 
     Utilities.loadCustomMusicTracks(self)
 end
 
-function RadioPortable.client_onRefresh( self )
-	self:loadAnimations()
+function RadioPortable.client_onRefresh(self)
+    self:loadAnimations()
 end
 
 function RadioPortable.cl_updateRadioInfo(self, data)
@@ -96,17 +101,18 @@ end
 
 -- Loading
 
-function RadioPortable.loadAnimations( self )
+function RadioPortable.loadAnimations(self)
 
-	self.tpAnimations = createTpAnimations(
-        self.tool,
-        {
-            idle = { "heavytool_idle", { looping = true } },
-			sprint = { "heavytool_sprint_idle" },
-			pickup = { "heavytool_pickup", { nextAnimation = "idle" } },
-			putdown = { "heavytool_putdown" }
-        }
-    )
+    self.tpAnimations = createTpAnimations(self.tool, {
+        idle = {"heavytool_idle", {
+            looping = true
+        }},
+        sprint = {"heavytool_sprint_idle"},
+        pickup = {"heavytool_pickup", {
+            nextAnimation = "idle"
+        }},
+        putdown = {"heavytool_putdown"}
+    })
 
     local movementAnimations = {
         idle = "heavytool_idle",
@@ -129,43 +135,52 @@ function RadioPortable.loadAnimations( self )
         crouchBwd = "heavytool_crouch_runbwd"
     }
 
-    for name, animation in pairs( movementAnimations ) do
-        self.tool:setMovementAnimation( name, animation )
+    for name, animation in pairs(movementAnimations) do
+        self.tool:setMovementAnimation(name, animation)
     end
 
     if self.tool:isLocal() then
-        self.fpAnimations = createFpAnimations(
-            self.tool,
-            {
-                idle = { "heavytool_idle", { looping = true } },
+        self.fpAnimations = createFpAnimations(self.tool, {
+            idle = {"heavytool_idle", {
+                looping = true
+            }},
 
-                sprintInto = { "heavytool_sprint_into", { nextAnimation = "sprintIdle",  blendNext = 0.2 } },
-                sprintIdle = { "heavytool_sprint_idle", { looping = true } },
-                sprintExit = { "heavytool_sprint_exit", { nextAnimation = "idle",  blendNext = 0 } },
+            sprintInto = {"heavytool_sprint_into", {
+                nextAnimation = "sprintIdle",
+                blendNext = 0.2
+            }},
+            sprintIdle = {"heavytool_sprint_idle", {
+                looping = true
+            }},
+            sprintExit = {"heavytool_sprint_exit", {
+                nextAnimation = "idle",
+                blendNext = 0
+            }},
 
-                equip = { "heavytool_pickup", { nextAnimation = "idle" } },
-                unequip = { "heavytool_putdown" }
-            }
-        )
+            equip = {"heavytool_pickup", {
+                nextAnimation = "idle"
+            }},
+            unequip = {"heavytool_putdown"}
+        })
     end
-      
-    setTpAnimation( self.tpAnimations, "idle", 5.0 )
+
+    setTpAnimation(self.tpAnimations, "idle", 5.0)
     self.blendTime = 0.2
 
 end
 
 -- Client
 
-function RadioPortable.client_onUpdate( self, dt )
+function RadioPortable.client_onUpdate(self, dt)
     local isSprinting = self.tool:isSprinting()
     local isCrouching = self.tool:isCrouching()
 
     local crouchWeight = self.tool:isCrouching() and 1.0 or 0.0
-    local normalWeight = 1.0 - crouchWeight 
+    local normalWeight = 1.0 - crouchWeight
     local totalWeight = 0.0
 
     if self.tool:isLocal() then
-        updateFpAnimations( self.fpAnimations, self.equipped, dt )
+        updateFpAnimations(self.fpAnimations, self.equipped, dt)
     end
 
     if not self.equipped then
@@ -174,51 +189,51 @@ function RadioPortable.client_onUpdate( self, dt )
             self.intendedEquipped = false
             self.equipped = true
         end
-        
+
         return
 
     end
 
-    for name, animation in pairs( self.tpAnimations.animations ) do
+    for name, animation in pairs(self.tpAnimations.animations) do
         animation.time = animation.time + dt
-    
+
         if name == self.tpAnimations.currentAnimation then
-            animation.weight = math.min( animation.weight + ( self.tpAnimations.blendSpeed * dt ), 1.0 )
-          
+            animation.weight = math.min(animation.weight + (self.tpAnimations.blendSpeed * dt), 1.0)
+
             if animation.looping == true then
                 if animation.time >= animation.info.duration then
-                animation.time = animation.time - animation.info.duration
+                    animation.time = animation.time - animation.info.duration
                 end
             end
 
             if animation.time >= animation.info.duration - self.blendTime and not animation.looping then
                 if name == "use" then
-                    setTpAnimation( self.tpAnimations, "idle", 10.0 )
+                    setTpAnimation(self.tpAnimations, "idle", 10.0)
                 elseif name == "pickup" then
-                    setTpAnimation( self.tpAnimations, "idle", 0.001 )
+                    setTpAnimation(self.tpAnimations, "idle", 0.001)
                 elseif animation.nextAnimation ~= "" then
-                    setTpAnimation( self.tpAnimations, animation.nextAnimation, 0.001 )
+                    setTpAnimation(self.tpAnimations, animation.nextAnimation, 0.001)
                 end
-            
+
             end
         else
-            animation.weight = math.max( animation.weight - ( self.tpAnimations.blendSpeed * dt ), 0.0 )
+            animation.weight = math.max(animation.weight - (self.tpAnimations.blendSpeed * dt), 0.0)
         end
-    
+
         totalWeight = totalWeight + animation.weight
     end
 
     totalWeight = totalWeight == 0 and 1.0 or totalWeight
-    for name, animation in pairs( self.tpAnimations.animations ) do
-    
+    for name, animation in pairs(self.tpAnimations.animations) do
+
         local weight = animation.weight / totalWeight
         if name == "idle" then
-            self.tool:updateMovementAnimation( animation.time, weight )
+            self.tool:updateMovementAnimation(animation.time, weight)
         elseif animation.crouch then
-            self.tool:updateAnimation( animation.info.name, animation.time, weight * normalWeight )
-            self.tool:updateAnimation( animation.crouch.name, animation.time, weight * crouchWeight )
+            self.tool:updateAnimation(animation.info.name, animation.time, weight * normalWeight)
+            self.tool:updateAnimation(animation.crouch.name, animation.time, weight * crouchWeight)
         else
-            self.tool:updateAnimation( animation.info.name, animation.time, weight )
+            self.tool:updateAnimation(animation.info.name, animation.time, weight)
         end
 
     end
@@ -248,54 +263,62 @@ function RadioPortable.client_onUpdate( self, dt )
     end
 end
 
-function RadioPortable.client_onEquip( self )
-	sm.audio.play( "Sledgehammer - Equip", self.tool:getPosition() )
-  
+function RadioPortable.client_onEquip(self)
+    sm.audio.play("Sledgehammer - Equip", self.tool:getPosition())
+
     self.intendedEquipped = true
-  
+
     currentRenderablesTp = {}
     currentRenderablesFp = {}
-  
-    for k,v in pairs( renderablesTp ) do currentRenderablesTp[#currentRenderablesTp+1] = v end
-    for k,v in pairs( renderablesFp ) do currentRenderablesFp[#currentRenderablesFp+1] = v end
-    for k,v in pairs( renderables ) do currentRenderablesTp[#currentRenderablesTp+1] = v end
-    for k,v in pairs( renderables ) do currentRenderablesFp[#currentRenderablesFp+1] = v end
-  
-    self.tool:setTpRenderables( currentRenderablesTp )
-    if self.tool:isLocal() then
-      self.tool:setFpRenderables( currentRenderablesFp )
-    end
-  
-    self:loadAnimations()
-  
-    setTpAnimation( self.tpAnimations, "pickup", 0.0001 )
-    if self.tool:isLocal() then
-        swapFpAnimation( self.fpAnimations, "unequip", "equip", 0.2 )
-    end
-  end
 
-function RadioPortable.client_onUnequip( self )
-    sm.audio.play( "Sledgehammer - Unequip", self.tool:getPosition() )
+    for k, v in pairs(renderablesTp) do
+        currentRenderablesTp[#currentRenderablesTp + 1] = v
+    end
+    for k, v in pairs(renderablesFp) do
+        currentRenderablesFp[#currentRenderablesFp + 1] = v
+    end
+    for k, v in pairs(renderables) do
+        currentRenderablesTp[#currentRenderablesTp + 1] = v
+    end
+    for k, v in pairs(renderables) do
+        currentRenderablesFp[#currentRenderablesFp + 1] = v
+    end
+
+    self.tool:setTpRenderables(currentRenderablesTp)
+    if self.tool:isLocal() then
+        self.tool:setFpRenderables(currentRenderablesFp)
+    end
+
+    self:loadAnimations()
+
+    setTpAnimation(self.tpAnimations, "pickup", 0.0001)
+    if self.tool:isLocal() then
+        swapFpAnimation(self.fpAnimations, "unequip", "equip", 0.2)
+    end
+end
+
+function RadioPortable.client_onUnequip(self)
+    sm.audio.play("Sledgehammer - Unequip", self.tool:getPosition())
 
     self.intendedEquipped = false
     self.equipped = false
 
-    if sm.exists( self.tool ) then
-        setTpAnimation( self.tpAnimations, "putdown" )
+    if sm.exists(self.tool) then
+        setTpAnimation(self.tpAnimations, "putdown")
         if self.tool:isLocal() and self.fpAnimations.currentAnimation ~= "unequip" then
-            swapFpAnimation( self.fpAnimations, "equip", "unequip", 0.2 )
+            swapFpAnimation(self.fpAnimations, "equip", "unequip", 0.2)
         end
     end
 
 end
 
-function RadioPortable.client_onToggle( self )
-	return false
+function RadioPortable.client_onToggle(self)
+    return false
 end
 
-function RadioPortable.client_onEquippedUpdate( self, primaryState, secondaryState, forceBuildActive )
+function RadioPortable.client_onEquippedUpdate(self, primaryState, secondaryState, forceBuildActive)
 
-    local _, result = sm.localPlayer.getRaycast( 7.5 )
+    local _, result = sm.localPlayer.getRaycast(7.5)
     local shape = nil
 
     if primaryState == sm.tool.interactState.start and not forceBuildActive then
@@ -303,7 +326,12 @@ function RadioPortable.client_onEquippedUpdate( self, primaryState, secondarySta
             self:createGui()
         end
 
-        local trackInfo = self.trackInfo[self.cl_currentAudioName] or { Name = "Unknown", Author = "Unknown", Image = "Gui/Icons/default_image.png", Duration = 0 }
+        local trackInfo = self.trackInfo[self.cl_currentAudioName] or {
+            Name = "Unknown",
+            Author = "Unknown",
+            Image = "Gui/Icons/default_image.png",
+            Duration = 0
+        }
         self.gui:setText("TrackName", trackInfo.Name)
         self.gui:setText("TrackAuthor", trackInfo.Author)
         self.gui:setText("TrackTime", string.format("%d Min", trackInfo.Duration))
@@ -315,11 +343,11 @@ function RadioPortable.client_onEquippedUpdate( self, primaryState, secondarySta
         self.gui:setText("PlayStopButton", self.cl_playState and "Stop" or "Play")
         self.gui:open()
 
-        sm.audio.play( "ConnectTool - Selected" )
+        sm.audio.play("ConnectTool - Selected")
     end
 
     return true, true
-    
+
 end
 
 function RadioPortable.cl_onDropdownInteract(self, option)
@@ -333,9 +361,9 @@ function RadioPortable.cl_onDropdownInteract(self, option)
 end
 
 function RadioPortable.createGui(self)
-    local options = { "No Playing" }
+    local options = {"No Playing"}
     local effects = sm.json.open("$CONTENT_DATA/Effects/Database/EffectSets/events.effectset")
-    
+
     for name, _ in pairs(effects) do
         if name:gsub(":", "") == name then
             options[#options + 1] = name
@@ -348,7 +376,7 @@ function RadioPortable.createGui(self)
     self.gui = sm.gui.createGuiFromLayout("$CONTENT_DATA/Gui/Layouts/CustomRadio.layout")
     self.gui:createDropDown("DropDown", "cl_onDropdownInteract", self.tracks)
     self.gui:createHorizontalSlider("VolumeSlider", 11, self.cl_currentAudioVolume * 10, "client_onSliderMoved")
-    
+
     self.gui:setButtonCallback("PlayStopButton", "onSetPlayState")
     self.gui:setButtonCallback("NextButton", "onNextSound")
     self.gui:setButtonCallback("BackButton", "onBackSound")
@@ -370,7 +398,12 @@ function RadioPortable.cl_changeTrack(self, newSetting)
         end
 
         if sm.exists(self.gui) then
-            local trackInfo = self.trackInfo[self.cl_currentAudioName] or { Name = "Unknown", Author = "Unknown", Image = "Gui/Icons/default_image.png", Duration = 0 }
+            local trackInfo = self.trackInfo[self.cl_currentAudioName] or {
+                Name = "Unknown",
+                Author = "Unknown",
+                Image = "Gui/Icons/default_image.png",
+                Duration = 0
+            }
             self.gui:setSelectedDropDownItem("DropDown", self.cl_currentAudioName)
             self.gui:setText("TrackName", trackInfo.Name)
             self.gui:setText("TrackAuthor", trackInfo.Author)

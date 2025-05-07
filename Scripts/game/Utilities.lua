@@ -4,7 +4,7 @@ Utilities = class()
 
 function Utilities.loadCustomMusicTracks(customRadio)
     customRadio.trackInfo = {}
-    customRadio.tracks = { "No Playing" }
+    customRadio.tracks = {"No Playing"}
 
     local function loadTracks(filePath)
         if not sm.json.fileExists(filePath) then
@@ -88,7 +88,7 @@ function Utilities.initCustomTracks(customRadio)
     local loadedMods = ModDatabase.getAllInstalledMods()
 
     for _, localId in ipairs(loadedMods) do
-        if localId ~= sm.uuid.new("e8d9c47d-8029-4441-b662-95ef4ccd55be") and ModDatabase.isModInstalled(localId) then
+        if localId ~= sm.uuid.new("e8d9c47d-8029-4441-b662-95ef4ccd55be") then
             local modPath = "$CONTENT_" .. localId
             local customEffectsPath = modPath .. "/Effects/custom_effects.json"
 
