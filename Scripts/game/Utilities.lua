@@ -85,11 +85,10 @@ function Utilities.initCustomTracks(customRadio)
     print("Load Custom Tracks")
 
     ModDatabase.loadDescriptions()
-    ModDatabase.loadShapesets()
-    local loadedMods = ModDatabase.getAllLoadedMods()
+    local loadedMods = ModDatabase.getAllInstalledMods()
 
     for _, localId in ipairs(loadedMods) do
-        if localId ~= sm.uuid.new("e8d9c47d-8029-4441-b662-95ef4ccd55be") and ModDatabase.isModLoaded(localId) then
+        if localId ~= sm.uuid.new("e8d9c47d-8029-4441-b662-95ef4ccd55be") and ModDatabase.isModInstalled(localId) then
             local modPath = "$CONTENT_" .. localId
             local customEffectsPath = modPath .. "/Effects/custom_effects.json"
 
@@ -133,5 +132,4 @@ function Utilities.initCustomTracks(customRadio)
     end
 
     ModDatabase.unloadDescriptions()
-    ModDatabase.unloadShapesets()
 end
