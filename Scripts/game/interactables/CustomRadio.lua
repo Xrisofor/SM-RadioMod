@@ -240,10 +240,12 @@ function CustomRadio:openGui()
         Duration = 0
     }
 
+    local modPrefix = trackInfo.ModUUID and ("$CONTENT_" .. tostring(trackInfo.ModUUID)) or "$CONTENT_DATA"
+
     self.gui:setText("TrackName", trackInfo.Name)
     self.gui:setText("TrackAuthor", trackInfo.Author)
     self.gui:setText("TrackTime", string.format("%d Min", trackInfo.Duration))
-    self.gui:setImage("TrackImage", "$CONTENT_DATA/" .. trackInfo.Image)
+    self.gui:setImage("TrackImage", modPrefix .. "/" .. trackInfo.Image)
 
     self.gui:setText("ConnectedElem", tostring(#self.connectedElements) .. " / " .. tostring(CustomRadio.maxChildCount))
 
@@ -313,11 +315,13 @@ function CustomRadio.cl_changeTrack(self, newTrack)
                 Duration = 0
             }
 
+            local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
+
             self.gui:setSelectedDropDownItem("DropDown", newTrack)
             self.gui:setText("TrackName", info.Name)
             self.gui:setText("TrackAuthor", info.Author)
             self.gui:setText("TrackTime", string.format("%d Min", info.Duration))
-            self.gui:setImage("TrackImage", "$CONTENT_DATA/" .. info.Image)
+            self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
         end
     end
 end

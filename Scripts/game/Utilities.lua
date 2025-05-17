@@ -84,8 +84,8 @@ end
 function Utilities.initCustomTracks(customRadio)
     print("Load Custom Tracks")
 
-    ModDatabase.loadDescriptions()
-    local loadedMods = ModDatabase.getAllInstalledMods()
+    ModDatabase.loadShapesets()
+    local loadedMods = ModDatabase.getAllLoadedMods()
 
     for _, localId in ipairs(loadedMods) do
         if localId ~= sm.uuid.new("e8d9c47d-8029-4441-b662-95ef4ccd55be") then
@@ -112,7 +112,8 @@ function Utilities.initCustomTracks(customRadio)
                                                 Name = effect.radioMod.Name or name,
                                                 Author = effect.radioMod.Author or "Unknown",
                                                 Image = effect.radioMod.Image or "Gui/Icons/default_image.png",
-                                                Duration = effect.radioMod.Duration or 0
+                                                Duration = effect.radioMod.Duration or 0,
+                                                ModUUID = localId
                                             }
                                         end
                                     end
@@ -131,5 +132,5 @@ function Utilities.initCustomTracks(customRadio)
         end
     end
 
-    ModDatabase.unloadDescriptions()
+    ModDatabase.unloadShapesets()
 end

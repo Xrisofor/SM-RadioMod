@@ -332,10 +332,13 @@ function RadioPortable.client_onEquippedUpdate(self, primaryState, secondaryStat
             Image = "Gui/Icons/default_image.png",
             Duration = 0
         }
+
+        local modPrefix = trackInfo.ModUUID and ("$CONTENT_" .. tostring(trackInfo.ModUUID)) or "$CONTENT_DATA"
+
         self.gui:setText("TrackName", trackInfo.Name)
         self.gui:setText("TrackAuthor", trackInfo.Author)
         self.gui:setText("TrackTime", string.format("%d Min", trackInfo.Duration))
-        self.gui:setImage("TrackImage", "$CONTENT_DATA/" .. trackInfo.Image)
+        self.gui:setImage("TrackImage", modPrefix .. "/" .. trackInfo.Image)
 
         self.gui:setText("ConnectedElem", "0 / 0")
 
@@ -405,11 +408,12 @@ function RadioPortable.cl_changeTrack(self, newSetting)
                 Image = "Gui/Icons/default_image.png",
                 Duration = 0
             }
+            local modPrefix = trackInfo.ModUUID and ("$CONTENT_" .. tostring(trackInfo.ModUUID)) or "$CONTENT_DATA"
             self.gui:setSelectedDropDownItem("DropDown", self.cl_currentAudioName)
             self.gui:setText("TrackName", trackInfo.Name)
             self.gui:setText("TrackAuthor", trackInfo.Author)
             self.gui:setText("TrackTime", string.format("%d Min", trackInfo.Duration))
-            self.gui:setImage("TrackImage", "$CONTENT_DATA/" .. trackInfo.Image)
+            self.gui:setImage("TrackImage", modPrefix .. "/" .. trackInfo.Image)
         end
     else
         self.cl_currentAudioName = "No Playing"
