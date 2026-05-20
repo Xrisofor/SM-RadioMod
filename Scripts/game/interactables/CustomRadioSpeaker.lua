@@ -1,101 +1,91 @@
 CustomRadioSpeaker = class()
 
 CustomRadioSpeaker.maxParentCount = 1
-CustomRadioSpeaker.connectionInput = 1
 CustomRadioSpeaker.poseWeightCount = 1
 CustomRadioSpeaker.connectionInput = sm.interactable.connectionType.logic
 CustomRadioSpeaker.colorNormal = sm.color.new("#df6d2d")
 CustomRadioSpeaker.colorHighlight = sm.color.new("#c84c05")
 
+local function effectExists(e)
+    return e ~= nil and sm.exists(e)
+end
+
 function CustomRadioSpeaker.client_onCreate(self)
-    self.cl_currentAudioName = "No Playing"
+    self.cl_currentAudioName = nil
     self.cl_currentAudioVolume = 1
     self.cl_playState = false
-    self.cl_playSpeed = 0
-    self.cl_audio_effect = sm.effect.createEffect("No Playing", self.interactable)
+    self.cl_playSpeed = 1
+    self.cl_audio_effect = nil
 end
 
 function CustomRadioSpeaker.client_onFixedUpdate(self)
     local parent = self.interactable:getSingleParent()
-
     if not sm.exists(parent) then
         self:remote_radio_controller_destroy()
     end
 end
 
 function CustomRadioSpeaker.remote_radio_controller(self, params)
-    self.cl_currentAudioName = params["currentAudioName"]
-    self.cl_currentAudioVolume = params["currentAudioVolume"]
-    self.cl_playState = params["currentPlayState"]
+    local newName = params["currentAudioName"]
+    local newVolume = params["currentAudioVolume"]
+    local newState = params["currentPlayState"]
 
-    if params["actived"] == nil then
-        if self.cl_playState then
-            if not sm.exists(self.cl_audio_effect) or not self.cl_audio_effect:isPlaying() then
-                if self.cl_currentAudioName ~= "No Playing" then
-                    self.interactable:setPoseWeight(0, 1)
-                    if not sm.exists(self.cl_audio_effect) then
-                        self.cl_audio_effect = sm.effect.createEffect(self.cl_currentAudioName, self.interactable)
-                        self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
-                    end
-                    self.cl_audio_effect:start()
-                else
-                    if sm.exists(self.cl_audio_effect) then
-                        self.cl_audio_effect:destroy()
-                    end
-                    self.interactable:setPoseWeight(0, 0)
-                end
-            end
-        else
-            if sm.exists(self.cl_audio_effect) and self.cl_audio_effect:isPlaying() then
+    if newName ~= self.cl_currentAudioName then
+        if effectExists(self.cl_audio_effect) then
+            if self.cl_audio_effect:isPlaying() then
                 self.cl_audio_effect:stop()
-                self.interactable:setPoseWeight(0, 0)
             end
+            self.cl_audio_effect:destroy()
+        end
+        self.cl_audio_effect = nil
+    end
+
+    self.cl_currentAudioName = newName
+    self.cl_currentAudioVolume = newVolume
+    self.cl_playState = newState
+
+    local isRealTrack = newName ~= nil and newName ~= ""
+
+    if newState and isRealTrack then
+        if not effectExists(self.cl_audio_effect) then
+            self.cl_audio_effect = sm.effect.createEffect(newName, self.interactable)
+            self.cl_audio_effect:setParameter("CAE_Volume", newVolume / 10.0)
+        end
+        if not self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:start()
+            self.interactable:setPoseWeight(0, 1)
         end
     else
-        if self.cl_playState then
-            if active and not sm.exists(self.cl_audio_effect) or not self.cl_audio_effect:isPlaying() then
-                if self.cl_currentAudioName ~= "No Playing" then
-                    self.interactable:setPoseWeight(0, 1)
-                    if not sm.exists(self.cl_audio_effect) then
-                        self.cl_audio_effect = sm.effect.createEffect(self.cl_currentAudioName, self.interactable)
-                        self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
-                    end
-                    self.cl_audio_effect:start()
-                else
-                    if sm.exists(self.cl_audio_effect) then
-                        self.cl_audio_effect:destroy()
-                    end
-                    self.interactable:setPoseWeight(0, 0)
-                end
-            end
-        else
-            if sm.exists(self.cl_audio_effect) and self.cl_audio_effect:isPlaying() then
-                self.cl_audio_effect:stop()
-                self.interactable:setPoseWeight(0, 0)
-            end
+        if effectExists(self.cl_audio_effect) and self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:stop()
         end
+        self.interactable:setPoseWeight(0, 0)
     end
 end
 
 function CustomRadioSpeaker.remote_radio_controller_volume(self, param)
-    if sm.exists(self.cl_audio_effect) then
-        self.cl_currentAudioVolume = param
-        self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
+    self.cl_currentAudioVolume = param
+    if effectExists(self.cl_audio_effect) then
+        self.cl_audio_effect:setParameter("CAE_Volume", param / 10.0)
     end
 end
 
 function CustomRadioSpeaker.remote_radio_controller_speed(self, param)
-    if sm.exists(self.cl_audio_effect) then
-        self.cl_playSpeed = param
-        self.cl_audio_effect:setParameter("CAE_Pitch", self.cl_playSpeed > 0 and self.cl_playSpeed or 0.5)
+    self.cl_playSpeed = param
+    if effectExists(self.cl_audio_effect) then
+        self.cl_audio_effect:setParameter("CAE_Pitch", param > 0 and param or 0.5)
     end
 end
 
 function CustomRadioSpeaker.remote_radio_controller_destroy(self)
-    if sm.exists(self.cl_audio_effect) then
+    if effectExists(self.cl_audio_effect) then
+        if self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:stop()
+        end
         self.cl_audio_effect:destroy()
-        self.cl_currentAudioName = "No Playing"
-        self.cl_currentAudioVolume = 1
-        self.interactable:setPoseWeight(0, 0)
     end
+    self.cl_audio_effect = nil
+    self.cl_currentAudioName = nil
+    self.cl_currentAudioVolume = 1
+    self.interactable:setPoseWeight(0, 0)
 end

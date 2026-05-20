@@ -4,7 +4,7 @@ dofile("$CONTENT_DATA/Scripts/game/Utilities.lua")
 
 RadioPortable = class()
 
-local renderables = {"$CONTENT_DATA/Tools/Portable/radio_portable.rend"} -- "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool.rend"
+local renderables = {"$CONTENT_DATA/Tools/Portable/radio_portable.rend"}
 local renderablesTp = {"$SURVIVAL_DATA/Character/Char_Male/Animations/char_male_tp_heavytool.rend",
                        "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool_tp_animlist.rend"}
 local renderablesFp = {"$SURVIVAL_DATA/Character/Char_Male/Animations/char_male_fp_heavytool.rend",
@@ -17,16 +17,22 @@ sm.tool.preloadRenderables(renderables)
 sm.tool.preloadRenderables(renderablesTp)
 sm.tool.preloadRenderables(renderablesFp)
 
--- Server
-function RadioPortable.server_onCreate(self)
-    self.storageSave = self.storage:load()
+-- ─────────────────────────────────────────────
+--  SERVER
+-- ─────────────────────────────────────────────
 
-    if self.storageSave == nil then
-        self.storageSave = {
-            track = "No Playing",
-            volume = 1,
-            play_state = false
-        }
+function RadioPortable.server_onCreate(self)
+    self.storageSave = self.storage:load() or {}
+
+    local defaults = {
+        track = nil,
+        volume = 1,
+        play_state = false
+    }
+    for k, v in pairs(defaults) do
+        if self.storageSave[k] == nil then
+            self.storageSave[k] = v
+        end
     end
 
     self.sv_audioName = self.storageSave.track
@@ -69,22 +75,24 @@ function RadioPortable.sv_getRadioInfo(self, _, player)
     })
 end
 
--- Client
+-- ─────────────────────────────────────────────
+--  CLIENT
+-- ─────────────────────────────────────────────
+
 function RadioPortable.client_onCreate(self)
     self.isLocal = self.tool:isLocal()
-    self.cl_currentAudioName = "No Playing"
+    self.cl_currentAudioName = nil
     self.cl_currentAudioVolume = 1
     self.cl_playState = false
-    self.cl_audio_effect = sm.effect.createEffect("No Playing", self.tool:getOwner():getCharacter())
+    self.cl_shuffle = false
+    self.cl_shuffleQueue = {}
+    self.cl_audio_effect = nil
 
     self:loadAnimations()
 
     self.network:sendToServer("sv_getRadioInfo")
 
-    if sm.cae_injected == nil then
-        sm.gui.chatMessage(
-            "(Radio Mod / Custom Radio) You have not installed #ff0000SM-CustomAudioExtension#ffffff, all music in the radio will not be played until you install the library!")
-    end
+    Utilities.checkCAE()
 
     Utilities.loadCustomMusicTracks(self)
 end
@@ -99,10 +107,11 @@ function RadioPortable.cl_updateRadioInfo(self, data)
     self:cl_changePlayState(data.playState)
 end
 
--- Loading
+-- ─────────────────────────────────────────────
+--  ANIMATION
+-- ─────────────────────────────────────────────
 
 function RadioPortable.loadAnimations(self)
-
     self.tpAnimations = createTpAnimations(self.tool, {
         idle = {"heavytool_idle", {
             looping = true
@@ -116,25 +125,19 @@ function RadioPortable.loadAnimations(self)
 
     local movementAnimations = {
         idle = "heavytool_idle",
-
         runFwd = "heavytool_run",
         runBwd = "heavytool_runbwd",
-
         sprint = "heavytool_sprint_idle",
-
         jump = "heavytool_jump",
         jumpUp = "heavytool_jump_up",
         jumpDown = "heavytool_jump_down",
-
         land = "heavytool_jump_land",
         landFwd = "heavytool_jump_land_fwd",
         landBwd = "heavytool_jump_land_bwd",
-
         crouchIdle = "heavytool_crouch_idle",
         crouchFwd = "heavytool_crouch_run",
         crouchBwd = "heavytool_crouch_runbwd"
     }
-
     for name, animation in pairs(movementAnimations) do
         self.tool:setMovementAnimation(name, animation)
     end
@@ -144,7 +147,6 @@ function RadioPortable.loadAnimations(self)
             idle = {"heavytool_idle", {
                 looping = true
             }},
-
             sprintInto = {"heavytool_sprint_into", {
                 nextAnimation = "sprintIdle",
                 blendNext = 0.2
@@ -156,7 +158,6 @@ function RadioPortable.loadAnimations(self)
                 nextAnimation = "idle",
                 blendNext = 0
             }},
-
             equip = {"heavytool_pickup", {
                 nextAnimation = "idle"
             }},
@@ -166,16 +167,15 @@ function RadioPortable.loadAnimations(self)
 
     setTpAnimation(self.tpAnimations, "idle", 5.0)
     self.blendTime = 0.2
-
 end
 
--- Client
+-- ─────────────────────────────────────────────
+--  CLIENT UPDATE
+-- ─────────────────────────────────────────────
 
 function RadioPortable.client_onUpdate(self, dt)
-    local isSprinting = self.tool:isSprinting()
     local isCrouching = self.tool:isCrouching()
-
-    local crouchWeight = self.tool:isCrouching() and 1.0 or 0.0
+    local crouchWeight = isCrouching and 1.0 or 0.0
     local normalWeight = 1.0 - crouchWeight
     local totalWeight = 0.0
 
@@ -184,14 +184,11 @@ function RadioPortable.client_onUpdate(self, dt)
     end
 
     if not self.equipped then
-
         if self.intendedEquipped then
             self.intendedEquipped = false
             self.equipped = true
         end
-
         return
-
     end
 
     for name, animation in pairs(self.tpAnimations.animations) do
@@ -200,7 +197,7 @@ function RadioPortable.client_onUpdate(self, dt)
         if name == self.tpAnimations.currentAnimation then
             animation.weight = math.min(animation.weight + (self.tpAnimations.blendSpeed * dt), 1.0)
 
-            if animation.looping == true then
+            if animation.looping then
                 if animation.time >= animation.info.duration then
                     animation.time = animation.time - animation.info.duration
                 end
@@ -214,7 +211,6 @@ function RadioPortable.client_onUpdate(self, dt)
                 elseif animation.nextAnimation ~= "" then
                     setTpAnimation(self.tpAnimations, animation.nextAnimation, 0.001)
                 end
-
             end
         else
             animation.weight = math.max(animation.weight - (self.tpAnimations.blendSpeed * dt), 0.0)
@@ -225,7 +221,6 @@ function RadioPortable.client_onUpdate(self, dt)
 
     totalWeight = totalWeight == 0 and 1.0 or totalWeight
     for name, animation in pairs(self.tpAnimations.animations) do
-
         local weight = animation.weight / totalWeight
         if name == "idle" then
             self.tool:updateMovementAnimation(animation.time, weight)
@@ -235,52 +230,58 @@ function RadioPortable.client_onUpdate(self, dt)
         else
             self.tool:updateAnimation(animation.info.name, animation.time, weight)
         end
-
     end
 
-    local function updateAudioEffect(play)
-        if play then
-            if not sm.exists(self.cl_audio_effect) or not self.cl_audio_effect:isPlaying() then
-                if self.cl_currentAudioName ~= "No Playing" then
-                    self.cl_audio_effect:start()
-                else
-                    if sm.exists(self.cl_audio_effect) then
-                        self.cl_audio_effect:destroy()
-                    end
-                end
+    local function isValidEffect()
+        return self.cl_audio_effect ~= nil and sm.exists(self.cl_audio_effect)
+    end
+
+    if self.cl_playState then
+        if self.cl_currentAudioName ~= nil then
+            if isValidEffect() and not self.cl_audio_effect:isPlaying() then
+                self.cl_audio_effect:start()
             end
         else
-            if sm.exists(self.cl_audio_effect) and self.cl_audio_effect:isPlaying() then
-                self.cl_audio_effect:stop()
+            if isValidEffect() then
+                self.cl_audio_effect:destroy()
+                self.cl_audio_effect = nil
             end
+        end
+    else
+        if isValidEffect() and self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:stop()
         end
     end
 
-    updateAudioEffect(self.cl_playState)
-
-    if sm.exists(self.cl_audio_effect) then
+    if isValidEffect() then
         self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
     end
 end
+
+-- ─────────────────────────────────────────────
+--  EQUIP / UNEQUIP
+-- ─────────────────────────────────────────────
 
 function RadioPortable.client_onEquip(self)
     sm.audio.play("Sledgehammer - Equip", self.tool:getPosition())
 
     self.intendedEquipped = true
-
     currentRenderablesTp = {}
     currentRenderablesFp = {}
 
-    for k, v in pairs(renderablesTp) do
+    for _, v in pairs(renderablesTp) do
         currentRenderablesTp[#currentRenderablesTp + 1] = v
     end
-    for k, v in pairs(renderablesFp) do
+
+    for _, v in pairs(renderablesFp) do
         currentRenderablesFp[#currentRenderablesFp + 1] = v
     end
-    for k, v in pairs(renderables) do
+
+    for _, v in pairs(renderables) do
         currentRenderablesTp[#currentRenderablesTp + 1] = v
     end
-    for k, v in pairs(renderables) do
+
+    for _, v in pairs(renderables) do
         currentRenderablesFp[#currentRenderablesFp + 1] = v
     end
 
@@ -290,7 +291,6 @@ function RadioPortable.client_onEquip(self)
     end
 
     self:loadAnimations()
-
     setTpAnimation(self.tpAnimations, "pickup", 0.0001)
     if self.tool:isLocal() then
         swapFpAnimation(self.fpAnimations, "unequip", "equip", 0.2)
@@ -309,206 +309,207 @@ function RadioPortable.client_onUnequip(self)
             swapFpAnimation(self.fpAnimations, "equip", "unequip", 0.2)
         end
     end
-
 end
 
 function RadioPortable.client_onToggle(self)
     return false
 end
 
+-- ─────────────────────────────────────────────
+--  EQUIPPED UPDATE
+-- ─────────────────────────────────────────────
+
 function RadioPortable.client_onEquippedUpdate(self, primaryState, secondaryState, forceBuildActive)
-
-    local _, result = sm.localPlayer.getRaycast(7.5)
-    local shape = nil
-
     if primaryState == sm.tool.interactState.start and not forceBuildActive then
         if not sm.exists(self.gui) then
             self:createGui()
         end
 
-        local trackInfo = self.trackInfo[self.cl_currentAudioName] or {
-            Name = "Unknown",
-            Author = "Unknown",
-            Image = "Gui/Icons/default_image.png",
-            Duration = 0
-        }
+        local info = Utilities.getTrackInfo(self, self.cl_currentAudioName)
+        local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
 
-        local modPrefix = trackInfo.ModUUID and ("$CONTENT_" .. tostring(trackInfo.ModUUID)) or "$CONTENT_DATA"
+        self.gui:setText("TrackName", info.Name)
+        self.gui:setText("TrackAuthor", info.Author)
+        self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
+        self.gui:setText("SubTitle", "Music is always nearby")
 
-        self.gui:setText("TrackName", trackInfo.Name)
-        self.gui:setText("TrackAuthor", trackInfo.Author)
-        self.gui:setText("TrackTime", string.format("%d Min", trackInfo.Duration))
-        self.gui:setImage("TrackImage", modPrefix .. "/" .. trackInfo.Image)
+        self:cl_refreshTrackGrid()
 
-        self.gui:setText("ConnectedElem", "0 / 0")
+        self.gui:setImage("PlayerIcon", self.cl_playState and STOP_ICON or PLAY_ICON)
+        self.gui:setButtonState("ShuffleButton", self.cl_shuffle)
 
-        self.gui:setSelectedDropDownItem("DropDown", self.cl_currentAudioName)
-        self.gui:setText("PlayStopButton", self.cl_playState and "Stop" or "Play")
         self.gui:open()
-
         sm.audio.play("ConnectTool - Selected")
     end
 
     return true, true
-
 end
 
-function RadioPortable.cl_onDropdownInteract(self, option)
-    self.network:sendToServer("sv_changeTrack", option)
-
-    if self.cl_playState then
-        self.gui:setText("PlayStopButton", "Stop")
-    else
-        self.gui:setText("PlayStopButton", "Play")
-    end
-end
+-- ─────────────────────────────────────────────
+--  GUI
+-- ─────────────────────────────────────────────
 
 function RadioPortable.createGui(self)
-    local options = {"No Playing"}
-    local effects = sm.json.open("$CONTENT_DATA/Effects/Database/EffectSets/events.effectset")
+    self.gui = sm.gui.createGuiFromLayout(MAIN_LAYOUT)
 
-    for name, _ in pairs(effects) do
-        if name:gsub(":", "") == name then
-            options[#options + 1] = name
-        end
-    end
+    self.gui:setIconImage("Icon", sm.uuid.new("8cef2bc5-e57f-4068-85a6-0082601dc2e5"))
 
-    table.sort(options)
-    options[1] = options[1]:gsub("No Playing", "")
+    self.gui:createHorizontalSlider("VolumeSlider", 11, self.cl_currentAudioVolume * 10, "client_onVolumeSliderMoved")
 
-    self.gui = sm.gui.createGuiFromLayout("$CONTENT_DATA/Gui/Layouts/CustomRadio.layout")
-    self.gui:createDropDown("DropDown", "cl_onDropdownInteract", self.tracks)
-    self.gui:createHorizontalSlider("VolumeSlider", 11, self.cl_currentAudioVolume * 10, "client_onSliderMoved")
-    self.gui:createHorizontalSlider("SpeedSlider", 0, 0, "")
-
-    self.gui:setButtonCallback("PlayStopButton", "onSetPlayState")
+    self.gui:setButtonCallback("PlayerButton", "onSetPlayState")
     self.gui:setButtonCallback("NextButton", "onNextSound")
     self.gui:setButtonCallback("BackButton", "onBackSound")
-    self.gui:setButtonCallback("RandomButton", "onRandom")
+    self.gui:setButtonCallback("ShuffleButton", "onToggleShuffle")
 end
 
-function RadioPortable.cl_changeTrack(self, newSetting)
-    if self.cl_currentAudioName ~= newSetting and newSetting ~= "" then
-        self.cl_currentAudioName = newSetting
+function RadioPortable.cl_refreshTrackGrid(self)
+    local activeTracks = self.tracks or {}
 
-        if sm.exists(self.cl_audio_effect) then
-            self.cl_audio_effect:destroy()
+    self.gui:createGridFromJson("TrackGrid", {
+        type = "itemGrid",
+        layout = TRACK_ITEM_LAYOUT,
+        itemWidth = 270,
+        itemHeight = 90,
+        itemCount = #activeTracks
+    })
+    self.gui:setGridButtonCallback("MainPanel", "cl_onTrackClicked")
+
+    for i, trackKey in ipairs(activeTracks) do
+        local info = Utilities.getTrackInfo(self, trackKey)
+        self.gui:setGridItem("TrackGrid", i - 1, {
+            Name = info.Name,
+            Author = info.Author,
+            HighlightItemIcon = (trackKey == self.cl_currentAudioName),
+            itemId = "00000000-0000-0000-0000-000000000000"
+        })
+    end
+end
+
+function RadioPortable.cl_onTrackClicked(self, grid, index)
+    local activeTracks = self.tracks or {}
+    local trackKey = activeTracks[index + 1]
+    if trackKey then
+        self:selectTrack(trackKey)
+        self:cl_refreshTrackGrid()
+    end
+end
+
+-- ─────────────────────────────────────────────
+--  GUI CALLBACKS
+-- ─────────────────────────────────────────────
+
+function RadioPortable.client_onVolumeSliderMoved(self, value)
+    self.network:sendToServer("sv_changeTrackVolume", value / 10.0)
+
+    if sm.exists(self.gui) then
+        self.gui:setImage("VolumeIcon", value > 0 and VOLUME_ON_ICON or VOLUME_OFF_ICON)
+    end
+end
+
+function RadioPortable.onToggleShuffle(self)
+    self.cl_shuffle = not self.cl_shuffle
+    Utilities.rebuildShuffleQueue(self)
+    if sm.exists(self.gui) then
+        self.gui:setButtonState("ShuffleButton", self.cl_shuffle)
+    end
+end
+
+-- ─────────────────────────────────────────────
+--  CLIENT STATE SETTERS
+-- ─────────────────────────────────────────────
+
+function RadioPortable.cl_changePlayState(self, newState)
+    self.cl_playState = newState
+    if sm.exists(self.gui) then
+        self.gui:setImage("PlayerIcon", newState and STOP_ICON or PLAY_ICON)
+    end
+end
+
+function RadioPortable.cl_changeTrack(self, newTrack)
+    if newTrack == self.cl_currentAudioName then
+        return
+    end
+
+    if self.cl_audio_effect ~= nil and sm.exists(self.cl_audio_effect) then
+        if self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:stop()
         end
-
-        if self.cl_currentAudioName ~= nil then
-            self.cl_audio_effect = sm.effect.createEffect(self.cl_currentAudioName, self.tool:getOwner():getCharacter())
-        else
-            print("(Radio Mod) Track path is nil? " .. self.cl_currentAudioName)
-        end
-
-        if sm.exists(self.gui) then
-            local trackInfo = self.trackInfo[self.cl_currentAudioName] or {
-                Name = "Unknown",
-                Author = "Unknown",
-                Image = "Gui/Icons/default_image.png",
-                Duration = 0
-            }
-            local modPrefix = trackInfo.ModUUID and ("$CONTENT_" .. tostring(trackInfo.ModUUID)) or "$CONTENT_DATA"
-            self.gui:setSelectedDropDownItem("DropDown", self.cl_currentAudioName)
-            self.gui:setText("TrackName", trackInfo.Name)
-            self.gui:setText("TrackAuthor", trackInfo.Author)
-            self.gui:setText("TrackTime", string.format("%d Min", trackInfo.Duration))
-            self.gui:setImage("TrackImage", modPrefix .. "/" .. trackInfo.Image)
-        end
-    else
-        self.cl_currentAudioName = "No Playing"
-    end
-end
-
-function RadioPortable.cl_changePlayState(self, newSetting)
-    if self.cl_playState ~= newSetting then
-        self.cl_playState = newSetting
-    end
-end
-
-function RadioPortable.cl_changeTrackVolume(self, newSetting)
-    if self.cl_currentAudioVolume ~= newSetting and newSetting ~= "" then
-        self.cl_currentAudioVolume = newSetting
-    else
-        self.cl_currentAudioVolume = 1
-    end
-end
-
-function RadioPortable.client_onSliderMoved(self, value)
-    if self.cl_audio_effect and sm.exists(self.cl_audio_effect) then
-        self.network:sendToServer("sv_changeTrackVolume", value / 10.0)
-    end
-end
-
-function RadioPortable.client_onDestroy(self)
-    if sm.exists(self.cl_audio_effect) then
         self.cl_audio_effect:destroy()
+        self.cl_audio_effect = nil
+    end
+
+    self.cl_currentAudioName = newTrack
+
+    if newTrack ~= nil and newTrack ~= "" then
+        self.cl_audio_effect = sm.effect.createEffect(newTrack, self.tool:getOwner():getCharacter())
     end
 
     if sm.exists(self.gui) then
-        self.gui:destroy()
+        local info = Utilities.getTrackInfo(self, newTrack)
+        local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
+
+        self.gui:setText("TrackName", info.Name)
+        self.gui:setText("TrackAuthor", info.Author)
+        self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
+
+        local activeTracks = self.tracks or {}
+        for i, trackKey in ipairs(activeTracks) do
+            self.gui:setGridItem("TrackGrid", i - 1, {
+                HighlightItemIcon = (trackKey == newTrack)
+            })
+        end
     end
+end
+
+function RadioPortable.cl_changeTrackVolume(self, newVolume)
+    self.cl_currentAudioVolume = newVolume or 1
+end
+
+-- ─────────────────────────────────────────────
+--  TRACK SELECTION
+-- ─────────────────────────────────────────────
+
+function RadioPortable.selectTrack(self, trackName)
+    if not trackName or trackName == "" then
+        return
+    end
+    self:cl_changeTrack(trackName)
+    self.network:sendToServer("sv_changeTrack", trackName)
 end
 
 function RadioPortable.onSetPlayState(self)
-    if sm.exists(self.cl_audio_effect) then
-        if self.cl_audio_effect:isPlaying() then
-            self.network:sendToServer("sv_changePlayState", false)
-            self.gui:setText("PlayStopButton", "Play")
-        else
-            if self.cl_currentAudioName == "No Playing" then
-                local randomIndex = math.random(1, #self.tracks)
-                self.gui:setSelectedDropDownItem("DropDown", self.tracks[randomIndex])
-                self.network:sendToServer("sv_changeTrack", self.tracks[randomIndex])
-            end
-            self.network:sendToServer("sv_changePlayState", true)
-            self.gui:setText("PlayStopButton", "Stop")
-        end
-    else
-        if self.cl_currentAudioName == "No Playing" then
-            local randomIndex = math.random(1, #self.tracks)
-            self.gui:setSelectedDropDownItem("DropDown", self.tracks[randomIndex])
-            self.network:sendToServer("sv_changeTrack", self.tracks[randomIndex])
-        end
-        self.network:sendToServer("sv_changePlayState", true)
-        self.gui:setText("PlayStopButton", "Stop")
-    end
-end
+    local shouldPlay = not self.cl_playState
 
-function RadioPortable.changeSound(self, direction)
-    local trackNames = self.tracks
-    table.sort(trackNames)
-
-    local currentIndex = 1
-    for i, name in ipairs(trackNames) do
-        if name == self.cl_currentAudioName then
-            currentIndex = i
-            break
-        end
+    if shouldPlay and self.cl_currentAudioName == nil then
+        Utilities.selectRandomTrack(self, function(track)
+            self:selectTrack(track)
+        end)
     end
 
-    currentIndex = currentIndex + direction
-
-    if currentIndex > #trackNames then
-        currentIndex = 1
-    elseif currentIndex < 1 then
-        currentIndex = #trackNames
-    end
-
-    self.gui:setSelectedDropDownItem("DropDown", trackNames[currentIndex])
-    self.network:sendToServer("sv_changeTrack", trackNames[currentIndex])
+    self.network:sendToServer("sv_changePlayState", shouldPlay)
 end
 
 function RadioPortable.onNextSound(self)
-    self:changeSound(1)
+    Utilities.changeSound(self, 1, self.tracks, function(track)
+        self:selectTrack(track)
+    end)
 end
 
 function RadioPortable.onBackSound(self)
-    self:changeSound(-1)
+    Utilities.changeSound(self, -1, self.tracks, function(track)
+        self:selectTrack(track)
+    end)
 end
 
-function RadioPortable.onRandom(self)
-    local randomIndex = math.random(1, #self.tracks)
-    self.gui:setSelectedDropDownItem("DropDown", self.tracks[randomIndex])
-    self.network:sendToServer("sv_changeTrack", self.tracks[randomIndex])
+-- ─────────────────────────────────────────────
+--  DESTROY
+-- ─────────────────────────────────────────────
+
+function RadioPortable.client_onDestroy(self)
+    if self.cl_audio_effect ~= nil and sm.exists(self.cl_audio_effect) then
+        self.cl_audio_effect:destroy()
+    end
+    if sm.exists(self.gui) then
+        self.gui:destroy()
+    end
 end

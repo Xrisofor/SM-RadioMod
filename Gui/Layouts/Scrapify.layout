@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MyGUI type="Layout" version="3.2.0">
+    <Widget type="Widget" skin="PanelEmpty" position_real="0 0 1 1" name="Root">
+        <Property key="NeedKey" value="false"/>
+        <Property key="NeedMouse" value="true"/>
+        <Property key="InheritsAlpha" value="false"/>
+        <Widget type="Widget" skin="BackgroundSequenceController" position_real="0.041666666666666664 0.059259259259259262 0.91614583333333333 0.75740740740740742" name="MainPanel">
+            <Widget type="ItemBox" skin="InventoryItemBox2" position="38 179 1643 527" name="TrackGrid">
+                <Property key="NeedKey" value="false"/>
+            </Widget>
+            <Widget type="ScrollBar" skin="InventoryVSlider" position="1699 179 26 522" name="TrackScroll">
+                <Property key="Range" value="101"/>
+            </Widget>
+            <Widget type="TextBox" skin="TextBox" position_real="0 0.079462102689486558 1 0.041564792176039117">
+                <Property key="Caption" value="SCRAPIFY"/>
+                <Property key="FontName" value="SM_HeaderLarge_Wide"/>
+                <Property key="TextAlign" value="Center"/>
+            </Widget>
+            <Widget type="ImageBox" skin="ImageBox" position_real="0.014212620807276862 0 0.08982376350198977 0.19315403422982885" name="Icon"/>
+            <Widget type="TextBox" skin="TextBox" position_real="0 0.12224938875305623 1 0.034229828850855744" name="SubTitle">
+                <Property key="TextAlign" value="Center"/>
+                <Property key="TextColour" value="1 0.803922 0.247059"/>
+                <Property key="FontName" value="SM_SubHeader"/>
+                <Property key="Caption" value="0 / 15"/>
+            </Widget>
+            <Widget type="Widget" skin="PanelEmpty" position="439 720 878 85" name="StateController">
+                <Widget type="Button" skin="SettingsButton" position="380 12 120 60" name="PlayerButton">
+                    <Property key="TextAlign" value="Center"/>
+                    <Property key="FontName" value="SM_Button"/>
+                    <Widget type="ImageBox" skin="ImageBox" position="45 15 30 30" name="PlayerIcon">
+                        <Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/play-circle.png"/>
+                        <Property key="NeedKey" value="false"/>
+                        <Property key="NeedMouse" value="false"/>
+                    </Widget>
+                </Widget>
+                <Widget type="Button" skin="SettingsButton" position="505 12 120 60" name="NextButton">
+                    <Widget type="ImageBox" skin="ImageBox" position="45 15 30 30" name="NextIcon">
+                        <Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/arrow-right-circle.png"/>
+                        <Property key="NeedKey" value="false"/>
+                        <Property key="NeedMouse" value="false"/>
+                        <Property key="Alpha" value="1"/>
+                    </Widget>
+                </Widget>
+                <Widget type="Button" skin="SettingsButton" position="255 12 120 60" name="BackButton">
+                    <Widget type="ImageBox" skin="ImageBox" position="45 15 30 30" name="NextIcon">
+                        <Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/arrow-left-circle.png"/>
+                        <Property key="NeedKey" value="false"/>
+                        <Property key="NeedMouse" value="false"/>
+                        <Property key="Alpha" value="1"/>
+                    </Widget>
+                </Widget>
+                <Widget type="Button" skin="ToggleButton" position="630 12 120 60" name="RepeatButton">
+                    <Property key="FontName" value="Default"/>
+                    <Property key="TextAlign" value="Center"/>
+                    <Widget type="ImageBox" skin="ImageBox" position="45 15 30 30">
+                        <Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/repeat.png"/>
+                        <Property key="NeedKey" value="false"/>
+                        <Property key="NeedMouse" value="false"/>
+                    </Widget>
+                </Widget>
+                <Widget type="Button" skin="ToggleButton" position="130 12 120 60" name="ShuffleButton">
+                    <Property key="FontName" value="Default"/>
+                    <Property key="TextAlign" value="Center"/>
+                    <Widget type="ImageBox" skin="ImageBox" position="45 15 30 30">
+                        <Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/shuffle.png"/>
+                        <Property key="NeedKey" value="false"/>
+                        <Property key="NeedMouse" value="false"/>
+                    </Widget>
+                </Widget>
+            </Widget>
+            <Widget type="Widget" skin="PanelEmpty" position="35 720 390 85" name="TrackPanel">
+                <Widget type="ImageBox" skin="ImageBox" position="0 0 85 85" name="TrackImage"/>
+                <Widget type="TextBox" skin="TextBox" position="95 0 295 45" name="TrackName">
+                    <Property key="Caption" value="Name"/>
+                    <Property key="FontName" value="SM_Button"/>
+                    <Property key="TextAlign" value="Left VCenter"/>
+                    <Property key="FontHeight" value="22"/>
+                </Widget>
+                <Widget type="TextBox" skin="TextBox" position="95 45 295 40" name="TrackAuthor">
+                    <Property key="Caption" value="Author"/>
+                    <Property key="FontName" value="SM_Button"/>
+                    <Property key="TextAlign" value="Left Top"/>
+                    <Property key="FontHeight" value="16"/>
+                </Widget>
+            </Widget>
+            <Widget type="Widget" skin="PanelEmpty" position="1330 720 405 84">
+                <Widget type="ScrollBar" skin="LargeHorizontalSliderBackground" position="0 12 405 60" name="VolumeSlider"/>
+                <Widget type="ImageBox" skin="ImageBox" position="240 35 50 50" name="VolumeIcon">
+                    <Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/volume-up.png"/>
+                    <Property key="NeedKey" value="false"/>
+                    <Property key="NeedMouse" value="false"/>
+                </Widget>
+            </Widget>
+        </Widget>
+    </Widget>
+    <CodeGeneratorSettings/>
+</MyGUI>
