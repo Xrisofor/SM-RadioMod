@@ -12,6 +12,8 @@ CustomRadio.poseWeightCount = 1
 CustomRadio.maxChildCount = 15
 CustomRadio.componentType = "customRadio"
 
+local ANTENNA = sm.uuid.new("70eda77b-aff9-4c23-a818-0fcaaf6d577d")
+
 local function repeatModeState(mode)
     return mode == REPEAT_TRACK or mode == REPEAT_PLAYLIST
 end
@@ -19,6 +21,14 @@ end
 local function formatTime(seconds)
     local s = math.floor(seconds)
     return string.format("%d:%02d", math.floor(s / 60), s % 60)
+end
+
+if not fmdata then
+    fmdata = {}
+end
+
+if not fmantenna then
+    fmantenna = {}
 end
 
 -- ─────────────────────────────────────────────
@@ -73,6 +83,69 @@ function CustomRadio:nextShuffleTrack()
 end
 
 -- ─────────────────────────────────────────────
+--  FM HELPERS
+-- ─────────────────────────────────────────────
+
+function CustomRadio:getFMSignal()
+    local freq = self.cl_fmFrequency
+    if not fmdata[freq] then
+        return nil
+    end
+    for _, entry in pairs(fmdata[freq]) do
+        if entry and entry.track then
+            return entry
+        end
+    end
+    return nil
+end
+
+function CustomRadio:findAntennaChild()
+    for _, child in ipairs(self.interactable:getChildren()) do
+        local shape = child:getShape()
+        if shape and shape.uuid == ANTENNA then
+            return child
+        end
+    end
+    return nil
+end
+
+function CustomRadio:cl_updateFMSender()
+    local myId = self.interactable.id
+
+    local targetFreq = nil
+    local antenna = self:findAntennaChild()
+    if antenna and sm.exists(antenna) then
+        targetFreq = fmantenna[antenna.id]
+    end
+
+    if self.cl_lastAntennaFreq ~= nil and self.cl_lastAntennaFreq ~= targetFreq then
+        if fmdata[self.cl_lastAntennaFreq] then
+            fmdata[self.cl_lastAntennaFreq][myId] = nil
+        end
+    end
+    self.cl_lastAntennaFreq = targetFreq
+
+    if targetFreq == nil then
+        return
+    end
+
+    if not fmdata[targetFreq] then
+        fmdata[targetFreq] = {}
+    end
+
+    if self.cl_currentAudioName and self.cl_currentAudioName ~= "" then
+        fmdata[targetFreq][myId] = {
+            track = self.cl_currentAudioName,
+            volume = self.cl_currentAudioVolume,
+            playState = self.cl_playState,
+            playSpeed = self.cl_playSpeed
+        }
+    else
+        fmdata[targetFreq][myId] = nil
+    end
+end
+
+-- ─────────────────────────────────────────────
 --  SERVER
 -- ─────────────────────────────────────────────
 
@@ -86,7 +159,9 @@ function CustomRadio.server_onCreate(self)
         play_speed = 1,
         playlist = "All Tracks",
         repeat_mode = REPEAT_NONE,
-        shuffle = false
+        shuffle = false,
+        fm_mode = false,
+        fm_frequency = 0
     }
     for k, v in pairs(defaults) do
         if self.storageSave[k] == nil then
@@ -101,6 +176,8 @@ function CustomRadio.server_onCreate(self)
     self.sv_playlist = self.storageSave.playlist
     self.sv_repeatMode = self.storageSave.repeat_mode
     self.sv_shuffle = self.storageSave.shuffle
+    self.sv_fmMode = self.storageSave.fm_mode
+    self.sv_fmFrequency = self.storageSave.fm_frequency
 
     self.connectedElements = self.interactable:getChildren()
 
@@ -116,7 +193,9 @@ function CustomRadio.server_onCreate(self)
                         play_speed = self.sv_playSpeed,
                         playlist = self.sv_playlist,
                         repeat_mode = self.sv_repeatMode,
-                        shuffle = self.sv_shuffle
+                        shuffle = self.sv_shuffle,
+                        fm_mode = self.sv_fmMode,
+                        fm_frequency = self.sv_fmFrequency
                     }
                 end,
                 play = function()
@@ -126,10 +205,14 @@ function CustomRadio.server_onCreate(self)
                     self.sc_stop = true
                 end,
                 next = function()
-                    self.sc_next_sound = true
+                    if not self.sv_fmMode then
+                        self.sc_next_sound = true
+                    end
                 end,
                 back = function()
-                    self.sc_back_sound = true
+                    if not self.sv_fmMode then
+                        self.sc_back_sound = true
+                    end
                 end
             }
         }
@@ -186,6 +269,12 @@ end
 function CustomRadio.sv_changeShuffle(self, s)
     self:sv_updateSetting("shuffle", s, "cl_changeShuffle")
 end
+function CustomRadio.sv_toggleFmMode(self, s)
+    self:sv_updateSetting("fm_mode", s, "cl_setFmMode")
+end
+function CustomRadio.sv_setFmFrequency(self, freq)
+    self:sv_updateSetting("fm_frequency", freq, "cl_setFmFrequency")
+end
 
 function CustomRadio.sv_getRadioInfo(self, _, player)
     self.network:sendToClient(player, "cl_updateRadioInfo", {
@@ -195,7 +284,9 @@ function CustomRadio.sv_getRadioInfo(self, _, player)
         playSpeed = self.sv_playSpeed,
         playlist = self.sv_playlist,
         repeatMode = self.sv_repeatMode,
-        shuffle = self.sv_shuffle
+        shuffle = self.sv_shuffle,
+        fmMode = self.sv_fmMode,
+        fmFrequency = self.sv_fmFrequency
     })
 end
 
@@ -216,6 +307,10 @@ function CustomRadio.client_onCreate(self)
     self.cl_trackTimer = 0
     self.cl_pendingRadioInfo = nil
     self.cl_audio_effect = nil
+    self.cl_fmMode = false
+    self.cl_fmFrequency = 0
+    self.cl_fmCurrentTrack = nil
+    self.cl_lastAntennaFreq = nil
 
     self.network:sendToServer("sv_getRadioInfo")
 
@@ -244,6 +339,8 @@ function CustomRadio:applyRadioInfo(data)
     self:cl_changeTrackVolume(data.volume)
     self:cl_changePlayState(data.playState)
     self:cl_changePlaySpeed(data.playSpeed)
+    self:cl_setFmMode(data.fmMode or false)
+    self:cl_setFmFrequency(data.fmFrequency or 0)
 end
 
 -- ─────────────────────────────────────────────
@@ -264,6 +361,10 @@ end
 -- ─────────────────────────────────────────────
 
 function CustomRadio:onTrackEnded()
+    if self.cl_fmMode then
+        return
+    end
+
     if self.cl_repeatMode == REPEAT_TRACK then
         if self:isValidEffect() then
             if self.cl_audio_effect:isPlaying() then
@@ -286,7 +387,13 @@ function CustomRadio:onTrackEnded()
     end
 
     local activeTracks = self:getActiveTracks()
-    local idx = table.indexOf(activeTracks, self.cl_currentAudioName) or 0
+    local idx = 0
+    for i, t in ipairs(activeTracks) do
+        if t == self.cl_currentAudioName then
+            idx = i
+            break
+        end
+    end
 
     if idx >= #activeTracks then
         if self.cl_repeatMode == REPEAT_PLAYLIST then
@@ -331,6 +438,67 @@ function CustomRadio:updateAudioEffect(play)
     end
 end
 
+function CustomRadio:updateFmAudio(shouldPlay)
+    local signal = self:getFMSignal()
+
+    if not signal then
+        if self:isValidEffect() and self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:stop()
+        end
+        self.interactable:setPoseWeight(0, 0)
+        self.cl_fmCurrentTrack = nil
+        self:send_toSpeaker("remote_radio_controller", {
+            currentAudioName = nil,
+            currentAudioVolume = self.cl_currentAudioVolume,
+            currentPlayState = false
+        })
+        return
+    end
+
+    if signal.track ~= self.cl_fmCurrentTrack then
+        if self:isValidEffect() then
+            if self.cl_audio_effect:isPlaying() then
+                self.cl_audio_effect:stop()
+            end
+            self.cl_audio_effect:destroy()
+            self:send_toSpeaker("remote_radio_controller_destroy", "")
+        end
+        self.cl_audio_effect = nil
+        self.cl_fmCurrentTrack = signal.track
+
+        if signal.track and signal.track ~= "" then
+            self.cl_audio_effect = sm.effect.createEffect(signal.track, self.interactable)
+        end
+    end
+
+    local antennaPlaying = signal.playState
+    local actualPlay = shouldPlay and antennaPlaying
+
+    if actualPlay then
+        if self:isValidEffect() and not self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:start()
+            self.interactable:setPoseWeight(0, 1)
+        end
+    else
+        if self:isValidEffect() and self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:stop()
+        end
+        self.interactable:setPoseWeight(0, 0)
+    end
+
+    if self:isValidEffect() then
+        self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
+        local spd = signal.playSpeed or 1
+        self.cl_audio_effect:setParameter("CAE_Pitch", spd > 0 and spd or 0.5)
+    end
+
+    self:send_toSpeaker("remote_radio_controller", {
+        currentAudioName = signal.track,
+        currentAudioVolume = self.cl_currentAudioVolume,
+        currentPlayState = actualPlay
+    })
+end
+
 function CustomRadio.client_onUpdate(self, dt)
     local parent = self.interactable:getSingleParent()
     self.connectedElements = self.interactable:getChildren()
@@ -346,6 +514,16 @@ function CustomRadio.client_onUpdate(self, dt)
     end
 
     local shouldPlay = (not parent and self.cl_playState) or (active and self.cl_playState)
+
+    if self.cl_fmMode then
+        self:updateFmAudio(shouldPlay)
+
+        if sm.exists(self.gui) then
+            self:updateGuiProgress()
+        end
+        return
+    end
+
     self:updateAudioEffect(shouldPlay)
 
     if shouldPlay and self:isValidEffect() then
@@ -379,8 +557,39 @@ function CustomRadio.client_onUpdate(self, dt)
 end
 
 -- ─────────────────────────────────────────────
+--  CLIENT FIXED UPDATE — FM SENDER
+-- ─────────────────────────────────────────────
+
+function CustomRadio.client_onFixedUpdate(self)
+    self:cl_updateFMSender()
+end
+
+-- ─────────────────────────────────────────────
+--  CLIENT DESTROY
+-- ─────────────────────────────────────────────
+
+function CustomRadio.client_onDestroy(self)
+    local myId = self.interactable.id
+    if self.cl_lastAntennaFreq ~= nil and fmdata[self.cl_lastAntennaFreq] then
+        fmdata[self.cl_lastAntennaFreq][myId] = nil
+    end
+end
+
+-- ─────────────────────────────────────────────
 --  GUI
 -- ─────────────────────────────────────────────
+
+function CustomRadio:updateGuiProgress()
+    local info = self.trackInfo and self.trackInfo[self.cl_currentAudioName]
+    local durationSec = info and info.Duration and (info.Duration * 60) or 0
+    local elapsed = self.cl_trackTimer or 0
+
+    if durationSec > 0 then
+        self.gui:setText("ProgressLabel", formatTime(elapsed) .. " / " .. formatTime(durationSec))
+    else
+        self.gui:setText("ProgressLabel", elapsed > 0 and (formatTime(elapsed) .. " / --:--") or "--:-- / --:--")
+    end
+end
 
 function CustomRadio:openGui()
     if not sm.exists(self.gui) then
@@ -401,18 +610,52 @@ function CustomRadio:openGui()
     self.gui:setButtonState("RepeatButton", repeatModeState(self.cl_repeatMode))
     self.gui:setButtonState("ShuffleButton", self.cl_shuffle)
 
+    self:cl_refreshFmGui()
+
     self.gui:open()
 end
 
-function CustomRadio:updateGuiProgress()
-    local info = self.trackInfo and self.trackInfo[self.cl_currentAudioName]
-    local durationSec = info and info.Duration and (info.Duration * 60) or 0
-    local elapsed = self.cl_trackTimer or 0
+function CustomRadio:cl_refreshFmGui()
+    if not sm.exists(self.gui) then
+        return
+    end
 
-    if durationSec > 0 then
-        self.gui:setText("ProgressLabel", formatTime(elapsed) .. " / " .. formatTime(durationSec))
+    local hasAntenna = self:findAntennaChild() ~= nil
+    self.gui:setVisible("FmButton", not hasAntenna)
+    self.gui:setVisible("FmFrequencyPanel", hasAntenna and false or (self.cl_fmMode and true or false))
+
+    local fm = self.cl_fmMode
+    self.gui:setButtonState("FmButton", fm)
+    self.gui:setVisible("FmFrequencyPanel", fm)
+
+    if fm then
+        self.gui:setText("FmFrequencyLabel", "FM " .. tostring(self.cl_fmFrequency))
+
+        self.gui:setVisible("NextButton", false)
+        self.gui:setVisible("BackButton", false)
+        self.gui:setVisible("RepeatButton", false)
+        self.gui:setVisible("ShuffleButton", false)
+        self.gui:setVisible("TrackGrid", false)
+
+        local signal = self:getFMSignal()
+        if signal and signal.track then
+            local info = Utilities.getTrackInfo(self, signal.track)
+            local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
+
+            self.gui:setText("TrackName", info.Name)
+            self.gui:setText("TrackAuthor", info.Author)
+            self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
+        else
+            self.gui:setText("TrackName", "No FM signal")
+            self.gui:setText("TrackAuthor", "Frequency: " .. tostring(self.cl_fmFrequency))
+            self.gui:setImage("TrackImage", "$CONTENT_DATA/Gui/Icons/default_image.png")
+        end
     else
-        self.gui:setText("ProgressLabel", elapsed > 0 and (formatTime(elapsed) .. " / --:--") or "--:-- / --:--")
+        self.gui:setVisible("NextButton", true)
+        self.gui:setVisible("BackButton", true)
+        self.gui:setVisible("RepeatButton", true)
+        self.gui:setVisible("ShuffleButton", true)
+        self.gui:setVisible("TrackGrid", true)
     end
 end
 
@@ -428,11 +671,16 @@ function CustomRadio:createGui()
     self.gui:setButtonCallback("BackButton", "onBackSound")
     self.gui:setButtonCallback("RepeatButton", "onCycleRepeat")
     self.gui:setButtonCallback("ShuffleButton", "onToggleShuffle")
+
+    self.gui:setButtonCallback("FmButton", "onToggleFmMode")
+    self.gui:setButtonCallback("FmFrequencyUp", "onFmFrequencyUp")
+    self.gui:setButtonCallback("FmFrequencyDown", "onFmFrequencyDown")
 end
 
 function CustomRadio.remote_control(self)
     self:openGui()
 end
+
 function CustomRadio.client_onInteract(self, char, lookAt)
     if lookAt then
         self:remote_control()
@@ -463,6 +711,10 @@ function CustomRadio:cl_refreshTrackGrid()
 end
 
 function CustomRadio.cl_onTrackClicked(self, grid, index)
+    if self.cl_fmMode then
+        return
+    end
+
     local activeTracks = self:getActiveTracks()
     local trackKey = activeTracks[index + 1]
     if trackKey then
@@ -476,6 +728,9 @@ end
 -- ─────────────────────────────────────────────
 
 function CustomRadio.cl_onPlaylistDropdownInteract(self, option)
+    if self.cl_fmMode then
+        return
+    end
     self.network:sendToServer("sv_changePlaylist", option)
     self:cl_changePlaylist(option)
     if sm.exists(self.gui) then
@@ -492,19 +747,71 @@ function CustomRadio.client_onVolumeSliderMoved(self, value)
 end
 
 function CustomRadio.client_onSpeedSliderMoved(self, value)
+    if self.cl_fmMode then
+        return
+    end
     self.network:sendToServer("sv_changePlaySpeed", value)
 end
 
 function CustomRadio:onCycleRepeat()
+    if self.cl_fmMode then
+        return
+    end
     local next = (self.cl_repeatMode + 1) % 3
     self.network:sendToServer("sv_changeRepeatMode", next)
     self:cl_changeRepeatMode(next)
 end
 
 function CustomRadio:onToggleShuffle()
+    if self.cl_fmMode then
+        return
+    end
     local next = not self.cl_shuffle
     self.network:sendToServer("sv_changeShuffle", next)
     self:cl_changeShuffle(next)
+end
+
+function CustomRadio:onToggleFmMode()
+    local next = not self.cl_fmMode
+    self.network:sendToServer("sv_toggleFmMode", next)
+    self:cl_setFmMode(next)
+
+    if not next then
+        self.cl_fmCurrentTrack = nil
+        if self:isValidEffect() then
+            if self.cl_audio_effect:isPlaying() then
+                self.cl_audio_effect:stop()
+            end
+            self.cl_audio_effect:destroy()
+            self:send_toSpeaker("remote_radio_controller_destroy", "")
+        end
+        self.cl_audio_effect = nil
+        if self.cl_currentAudioName and self.cl_currentAudioName ~= "" then
+            self.cl_audio_effect = sm.effect.createEffect(self.cl_currentAudioName, self.interactable)
+        end
+    end
+
+    if sm.exists(self.gui) then
+        self:cl_refreshFmGui()
+    end
+end
+
+function CustomRadio:onFmFrequencyUp()
+    local next = math.min(255, self.cl_fmFrequency + 1)
+    self.network:sendToServer("sv_setFmFrequency", next)
+    self:cl_setFmFrequency(next)
+    if sm.exists(self.gui) then
+        self:cl_refreshFmGui()
+    end
+end
+
+function CustomRadio:onFmFrequencyDown()
+    local next = math.max(0, self.cl_fmFrequency - 1)
+    self.network:sendToServer("sv_setFmFrequency", next)
+    self:cl_setFmFrequency(next)
+    if sm.exists(self.gui) then
+        self:cl_refreshFmGui()
+    end
 end
 
 -- ─────────────────────────────────────────────
@@ -519,6 +826,9 @@ function CustomRadio.cl_changePlayState(self, newState)
 end
 
 function CustomRadio.cl_changeTrack(self, newTrack)
+    if self.cl_fmMode then
+        return
+    end
     if self.cl_currentAudioName == newTrack then
         return
     end
@@ -566,7 +876,9 @@ end
 
 function CustomRadio.cl_changePlaySpeed(self, newSpeed)
     self.cl_playSpeed = newSpeed or 1
-    self:send_toSpeaker("remote_radio_controller_speed", self.cl_playSpeed)
+    if not self.cl_fmMode then
+        self:send_toSpeaker("remote_radio_controller_speed", self.cl_playSpeed)
+    end
 end
 
 function CustomRadio.cl_changePlaylist(self, newPlaylist)
@@ -592,11 +904,30 @@ function CustomRadio.cl_changeShuffle(self, state)
     end
 end
 
+function CustomRadio.cl_setFmMode(self, state)
+    self.cl_fmMode = state
+    if sm.exists(self.gui) then
+        self.gui:setButtonState("FmButton", state)
+    end
+end
+
+function CustomRadio.cl_setFmFrequency(self, freq)
+    self.cl_fmFrequency = freq
+    if sm.exists(self.gui) then
+        if self.cl_fmMode then
+            self.gui:setText("FmFrequencyLabel", "FM " .. tostring(freq))
+        end
+    end
+end
+
 -- ─────────────────────────────────────────────
 --  TRACK SELECTION
 -- ─────────────────────────────────────────────
 
 function CustomRadio:selectTrack(trackName)
+    if self.cl_fmMode then
+        return
+    end
     if not trackName or trackName == "" then
         return
     end
@@ -607,9 +938,15 @@ end
 function CustomRadio:onSetPlayState()
     local shouldPlay = not self.cl_playState
 
-    if shouldPlay then
+    if shouldPlay and not self.cl_fmMode then
         local activeTracks = self:getActiveTracks()
-        local trackInPlaylist = table.indexOf(activeTracks, self.cl_currentAudioName) ~= nil
+        local trackInPlaylist = false
+        for _, t in ipairs(activeTracks) do
+            if t == self.cl_currentAudioName then
+                trackInPlaylist = true
+                break
+            end
+        end
 
         if self.cl_currentAudioName == nil or not self:isValidEffect() or not trackInPlaylist then
             if self.cl_shuffle then
@@ -629,18 +966,27 @@ function CustomRadio:onSetPlayState()
 end
 
 function CustomRadio:onNextSound()
+    if self.cl_fmMode then
+        return
+    end
     Utilities.changeSound(self, 1, self:getActiveTracks(), function(track)
         self:selectTrack(track)
     end)
 end
 
 function CustomRadio:onBackSound()
+    if self.cl_fmMode then
+        return
+    end
     Utilities.changeSound(self, -1, self:getActiveTracks(), function(track)
         self:selectTrack(track)
     end)
 end
 
 function CustomRadio:onRandomSound()
+    if self.cl_fmMode then
+        return
+    end
     Utilities.selectRandomTrack(self, function(track)
         self:selectTrack(track)
     end)

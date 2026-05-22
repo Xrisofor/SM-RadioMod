@@ -22,5 +22,9 @@
    "f6b6faf5-2554-49cd-aa49-23af1a6cb2a3" : {
       "description" : "Small size, big sound. The bots didn’t stop at one radio—this mini version blasts the same bizarre tunes, straight from their twisted playlist. Activate it by interacting with it or by connecting it to a trigger.\n\nBy Xrisofor.",
       "title" : "Mini Custom Radio"
+   },
+   "70eda77b-aff9-4c23-a818-0fcaaf6d577d" : {
+      "description" : "Test.\n\nBy Xrisofor.",
+      "title" : "Custom Antenna"
    }
 }

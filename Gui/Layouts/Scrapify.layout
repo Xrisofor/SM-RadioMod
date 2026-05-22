@@ -67,6 +67,11 @@
                         <Property key="NeedMouse" value="false"/>
                     </Widget>
                 </Widget>
+                <Widget type="Button" skin="ToggleButton" position="755 12 120 60" name="FmButton">
+                    <Property key="FontName" value="SM_Button"/>
+                    <Property key="TextAlign" value="Center"/>
+                    <Property key="Caption" value="FM"/>
+                </Widget>
             </Widget>
             <Widget type="Widget" skin="PanelEmpty" position="35 720 390 85" name="TrackPanel">
                 <Widget type="ImageBox" skin="ImageBox" position="0 0 85 85" name="TrackImage"/>
@@ -89,6 +94,23 @@
                     <Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/volume-up.png"/>
                     <Property key="NeedKey" value="false"/>
                     <Property key="NeedMouse" value="false"/>
+                </Widget>
+            </Widget>
+            <Widget type="Widget" skin="PanelEmpty" position="875 25 878 50" name="FmFrequencyPanel">
+                <Widget type="Button" skin="SettingsButton" position="329 0 60 45" name="FmFrequencyDown">
+                    <Property key="Caption" value="-"/>
+                    <Property key="FontName" value="SM_Button"/>
+                    <Property key="TextAlign" value="Center"/>
+                </Widget>
+                <Widget type="TextBox" skin="TextBox" position="394 0 90 45" name="FmFrequencyLabel">
+                    <Property key="Caption" value="FM 0"/>
+                    <Property key="FontName" value="SM_Button"/>
+                    <Property key="TextAlign" value="Center"/>
+                </Widget>
+                <Widget type="Button" skin="SettingsButton" position="489 0 60 45" name="FmFrequencyUp">
+                    <Property key="Caption" value="+"/>
+                    <Property key="FontName" value="SM_Button"/>
+                    <Property key="TextAlign" value="Center"/>
                 </Widget>
             </Widget>
         </Widget>

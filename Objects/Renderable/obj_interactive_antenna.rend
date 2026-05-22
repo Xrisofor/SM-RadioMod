@@ -1,0 +1,17 @@
+{
+   "lodList": [
+      {
+         "subMeshList": [
+            {
+               "textureList": [
+                  "$GAME_DATA/Objects/Textures/industrial/obj_industrial_satellite_dif.tga",
+                  "$GAME_DATA/Objects/Textures/industrial/obj_industrial_satellite_asg.tga",
+                  "$GAME_DATA/Objects/Textures/industrial/obj_industrial_satellite_nor.tga"
+               ],
+               "material": "DifAsgNor"
+            }
+         ],
+         "mesh": "$GAME_DATA/Objects/Mesh/industrial/obj_industrial_antenna02.fbx"
+      }
+   ]
+}
