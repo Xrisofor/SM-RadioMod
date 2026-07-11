@@ -53,31 +53,6 @@
       {
          "box" : {
             "x" : 2,
-            "y" : 2,
-            "z" : 1
-         },
-         "color" : "8b5dff",
-         "flammable" : true,
-         "name" : "obj_custom_radio_clock",
-         "physicsMaterial" : "Mechanical",
-         "ratings" : {
-            "buoyancy" : 6,
-            "density" : 2,
-            "durability" : 3,
-            "friction" : 5
-         },
-         "renderable" : "$SURVIVAL_DATA/Objects/Renderable/decor/obj_decor_clock.rend",
-         "rotationSet" : "PropYZm",
-         "scripted" : {
-            "classname" : "CustomRadioClock",
-            "filename" : "$CONTENT_DATA/Scripts/game/interactables/CustomRadioClock.lua"
-         },
-         "showInInventory" : true,
-         "uuid" : "3f7a7d81-e33a-4a73-91b7-7f9f20d8489d"
-      },
-      {
-         "box" : {
-            "x" : 2,
             "y" : 1,
             "z" : 1
          },
