@@ -1,17 +1,17 @@
 <MyGUI type="Layout" version="3.2.0">
-	<Widget type="Widget" skin="PanelEmpty" name="Root" position_real="0 0 1 1">
+	<Widget type="Widget" skin="PanelEmpty" name="Root" position="0 0 1920 1080">
 		<Property key="NeedKey" value="false" />
 		<Property key="NeedMouse" value="true" />
 		<Property key="InheritsAlpha" value="false" />
-		<Widget type="Widget" skin="BackgroundSequenceController" name="MainPanel" position_real="0.041666666666666664 0.05925925925925926 0.9161458333333333 0.7574074074074074">
-			<Widget type="Widget" skin="PanelEmpty" name="TrackListPanel" position_real="0.25014212620807275 0.2200488997555012 0.7362137578169414 0.5562347188264058">
+		<Widget type="Widget" skin="BackgroundSequenceController" name="MainPanel" position="80 64 1759 818">
+			<Widget type="Widget" skin="PanelEmpty" name="TrackListPanel" position="440 180 1295 455">
 				<Property key="NeedKey" value="false" />
-				<Widget type="Button" skin="GenderButton" name="TrackSlot_1" position_real="0 0 0.3127413127413127 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_1" position_real="0.037037037037037035 0.16 0.20987654320987653 0.68">
+				<Widget type="Button" skin="GenderButton" name="TrackSlot_1" position="0 0 405 125">
+					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_1" position="15 20 85 85">
 						<Property key="NeedMouse" value="false" />
 						<Property key="NeedToolTip" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackName_1" position_real="0.2716049382716049 0.16 0.691358024691358 0.36">
+					<Widget type="TextBox" skin="TextBox" name="TrackName_1" position="110 20 280 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -19,7 +19,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_1" position_real="0.2716049382716049 0.52 0.691358024691358 0.32">
+					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_1" position="110 65 280 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -28,12 +28,12 @@
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="GenderButton" name="TrackSlot_2" position_real="0.3436293436293436 0 0.3127413127413127 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_2" position_real="0.037037037037037035 0.16 0.20987654320987653 0.68">
+				<Widget type="Button" skin="GenderButton" name="TrackSlot_2" position="445 0 405 125">
+					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_2" position="15 20 85 85">
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackName_2" position_real="0.2716049382716049 0.16 0.691358024691358 0.36">
+					<Widget type="TextBox" skin="TextBox" name="TrackName_2" position="110 20 280 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -41,7 +41,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_2" position_real="0.2716049382716049 0.52 0.691358024691358 0.32">
+					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_2" position="110 65 280 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -50,12 +50,12 @@
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="GenderButton" name="TrackSlot_3" position_real="0.6872586872586872 0 0.3127413127413127 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_3" position_real="0.037037037037037035 0.16 0.20987654320987653 0.68">
+				<Widget type="Button" skin="GenderButton" name="TrackSlot_3" position="890 0 405 125">
+					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_3" position="15 20 85 85">
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackName_3" position_real="0.2716049382716049 0.16 0.691358024691358 0.36">
+					<Widget type="TextBox" skin="TextBox" name="TrackName_3" position="110 20 280 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -63,7 +63,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_3" position_real="0.2716049382716049 0.52 0.691358024691358 0.32">
+					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_3" position="110 65 280 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -72,12 +72,12 @@
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="GenderButton" name="TrackSlot_4" position_real="0 0.3626373626373626 0.3127413127413127 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_4" position_real="0.037037037037037035 0.16 0.20987654320987653 0.68">
+				<Widget type="Button" skin="GenderButton" name="TrackSlot_4" position="0 165 405 125">
+					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_4" position="15 20 85 85">
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackName_4" position_real="0.2716049382716049 0.16 0.691358024691358 0.36">
+					<Widget type="TextBox" skin="TextBox" name="TrackName_4" position="110 20 280 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -85,7 +85,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_4" position_real="0.2716049382716049 0.52 0.691358024691358 0.32">
+					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_4" position="110 65 280 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -94,12 +94,12 @@
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="GenderButton" name="TrackSlot_7" position_real="0 0.7252747252747253 0.3127413127413127 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_7" position_real="0.037037037037037035 0.16 0.20987654320987653 0.68">
+				<Widget type="Button" skin="GenderButton" name="TrackSlot_7" position="0 330 405 125">
+					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_7" position="15 20 85 85">
 						<Property key="NeedMouse" value="false" />
 						<Property key="NeedKey" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackName_7" position_real="0.2716049382716049 0.16 0.691358024691358 0.36">
+					<Widget type="TextBox" skin="TextBox" name="TrackName_7" position="110 20 280 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -107,7 +107,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_7" position_real="0.2716049382716049 0.52 0.691358024691358 0.32">
+					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_7" position="110 65 280 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -116,12 +116,12 @@
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="GenderButton" name="TrackSlot_5" position_real="0.3436293436293436 0.3626373626373626 0.3127413127413127 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_5" position_real="0.037037037037037035 0.16 0.20987654320987653 0.68">
+				<Widget type="Button" skin="GenderButton" name="TrackSlot_5" position="445 165 405 125">
+					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_5" position="15 20 85 85">
 						<Property key="NeedMouse" value="false" />
 						<Property key="NeedKey" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackName_5" position_real="0.2716049382716049 0.16 0.691358024691358 0.36">
+					<Widget type="TextBox" skin="TextBox" name="TrackName_5" position="110 20 280 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -129,7 +129,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_5" position_real="0.2716049382716049 0.52 0.691358024691358 0.32">
+					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_5" position="110 65 280 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -138,12 +138,12 @@
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="GenderButton" name="TrackSlot_8" position_real="0.3436293436293436 0.7252747252747253 0.3127413127413127 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_8" position_real="0.037037037037037035 0.16 0.20987654320987653 0.68">
+				<Widget type="Button" skin="GenderButton" name="TrackSlot_8" position="445 330 405 125">
+					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_8" position="15 20 85 85">
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackName_8" position_real="0.2716049382716049 0.16 0.691358024691358 0.36">
+					<Widget type="TextBox" skin="TextBox" name="TrackName_8" position="110 20 280 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -151,7 +151,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_8" position_real="0.2716049382716049 0.52 0.691358024691358 0.32">
+					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_8" position="110 65 280 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -160,12 +160,12 @@
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="GenderButton" name="TrackSlot_6" position_real="0.6872586872586872 0.3626373626373626 0.3127413127413127 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_6" position_real="0.037037037037037035 0.16 0.20987654320987653 0.68">
+				<Widget type="Button" skin="GenderButton" name="TrackSlot_6" position="890 165 405 125">
+					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_6" position="15 20 85 85">
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackName_6" position_real="0.2716049382716049 0.16 0.691358024691358 0.36">
+					<Widget type="TextBox" skin="TextBox" name="TrackName_6" position="110 20 280 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -173,7 +173,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_6" position_real="0.2716049382716049 0.52 0.691358024691358 0.32">
+					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_6" position="110 65 280 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -182,12 +182,12 @@
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="GenderButton" name="TrackSlot_9" position_real="0.6872586872586872 0.7252747252747253 0.3127413127413127 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_9" position_real="0.037037037037037035 0.16 0.20987654320987653 0.68">
+				<Widget type="Button" skin="GenderButton" name="TrackSlot_9" position="890 330 405 125">
+					<Widget type="ImageBox" skin="ImageBox" name="TrackImage_9" position="15 20 85 85">
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackName_9" position_real="0.2716049382716049 0.16 0.691358024691358 0.36">
+					<Widget type="TextBox" skin="TextBox" name="TrackName_9" position="110 20 280 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -195,7 +195,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_9" position_real="0.2716049382716049 0.52 0.691358024691358 0.32">
+					<Widget type="TextBox" skin="TextBox" name="TrackAuthor_9" position="110 65 280 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -205,114 +205,114 @@
 					</Widget>
 				</Widget>
 			</Widget>
-			<Widget type="TextBox" skin="TextBox" position_real="0 0.07946210268948656 1 0.04156479217603912">
+			<Widget type="TextBox" skin="TextBox" position="0 65 1759 34">
 				<Property key="Caption" value="SCRAPIFY" />
 				<Property key="FontName" value="SM_HeaderLarge_Wide" />
 				<Property key="TextAlign" value="Center" />
 			</Widget>
-			<Widget type="ImageBox" skin="ImageBox" name="Icon" position_real="0.014212620807276862 0 0.08982376350198977 0.19315403422982885" />
-			<Widget type="TextBox" skin="TextBox" name="SubTitle" position_real="0 0.12224938875305623 1 0.034229828850855744">
+			<Widget type="ImageBox" skin="ImageBox" name="Icon" position="25 0 158 158" />
+			<Widget type="TextBox" skin="TextBox" name="SubTitle" position="0 100 1759 28">
 				<Property key="TextAlign" value="Center" />
 				<Property key="TextColour" value="1 0.803922 0.247059" />
 				<Property key="FontName" value="SM_SubHeader" />
 				<Property key="Caption" value="0 / 15" />
 			</Widget>
-			<Widget type="Widget" skin="PanelEmpty" name="StateController" position_real="0.2495736213757817 0.8801955990220048 0.4991472427515634 0.1039119804400978">
-				<Widget type="Button" skin="SettingsButton" name="PlayerButton" position_real="0.4328018223234624 0.1411764705882353 0.1366742596810934 0.7058823529411765">
+			<Widget type="Widget" skin="PanelEmpty" name="StateController" position="439 720 878 85">
+				<Widget type="Button" skin="SettingsButton" name="PlayerButton" position="380 12 120 60">
 					<Property key="TextAlign" value="Center" />
 					<Property key="FontName" value="SM_Button" />
-					<Widget type="ImageBox" skin="ImageBox" name="PlayerIcon" position_real="0.375 0.25 0.25 0.5">
+					<Widget type="ImageBox" skin="ImageBox" name="PlayerIcon" position="45 15 30 30">
 						<Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/play-circle.png" />
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="SettingsButton" name="NextButton" position_real="0.5751708428246014 0.1411764705882353 0.1366742596810934 0.7058823529411765">
-					<Widget type="ImageBox" skin="ImageBox" name="NextIcon" position_real="0.375 0.25 0.25 0.5">
+				<Widget type="Button" skin="SettingsButton" name="NextButton" position="505 12 120 60">
+					<Widget type="ImageBox" skin="ImageBox" name="NextIcon" position="45 15 30 30">
 						<Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/arrow-right-circle.png" />
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 						<Property key="Alpha" value="1" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="SettingsButton" name="BackButton" position_real="0.29043280182232345 0.1411764705882353 0.1366742596810934 0.7058823529411765">
-					<Widget type="ImageBox" skin="ImageBox" name="NextIcon" position_real="0.375 0.25 0.25 0.5">
+				<Widget type="Button" skin="SettingsButton" name="BackButton" position="255 12 120 60">
+					<Widget type="ImageBox" skin="ImageBox" name="NextIcon" position="45 15 30 30">
 						<Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/arrow-left-circle.png" />
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 						<Property key="Alpha" value="1" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="ToggleButton" name="RepeatButton" position_real="0.7175398633257403 0.1411764705882353 0.1366742596810934 0.7058823529411765">
+				<Widget type="Button" skin="ToggleButton" name="RepeatButton" position="630 12 120 60">
 					<Property key="FontName" value="Default" />
 					<Property key="TextAlign" value="Center" />
-					<Widget type="ImageBox" skin="ImageBox" position_real="0.375 0.25 0.25 0.5">
+					<Widget type="ImageBox" skin="ImageBox" position="45 15 30 30">
 						<Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/repeat.png" />
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="ToggleButton" name="ShuffleButton" position_real="0.1480637813211845 0.1411764705882353 0.1366742596810934 0.7058823529411765">
+				<Widget type="Button" skin="ToggleButton" name="ShuffleButton" position="130 12 120 60">
 					<Property key="FontName" value="Default" />
 					<Property key="TextAlign" value="Center" />
-					<Widget type="ImageBox" skin="ImageBox" position_real="0.375 0.25 0.25 0.5">
+					<Widget type="ImageBox" skin="ImageBox" position="45 15 30 30">
 						<Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/shuffle.png" />
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
 			</Widget>
-			<Widget type="Widget" skin="PanelEmpty" name="TrackPanel" position_real="0.019897669130187607 0.8801955990220048 0.22171688459351904 0.1039119804400978">
-				<Widget type="ImageBox" skin="ImageBox" name="TrackImage" position_real="0 0 0.21794871794871795 1" />
-				<Widget type="TextBox" skin="TextBox" name="TrackName" position_real="0.24358974358974358 0 0.7564102564102564 0.5294117647058824">
+			<Widget type="Widget" skin="PanelEmpty" name="TrackPanel" position="35 720 390 85">
+				<Widget type="ImageBox" skin="ImageBox" name="TrackImage" position="0 0 85 85" />
+				<Widget type="TextBox" skin="TextBox" name="TrackName" position="95 0 295 45">
 					<Property key="Caption" value="Name" />
 					<Property key="FontName" value="SM_Button" />
 					<Property key="TextAlign" value="Left VCenter" />
 					<Property key="FontHeight" value="22" />
 				</Widget>
-				<Widget type="TextBox" skin="TextBox" name="TrackAuthor" position_real="0.24358974358974358 0.5294117647058824 0.7564102564102564 0.47058823529411764">
+				<Widget type="TextBox" skin="TextBox" name="TrackAuthor" position="95 45 295 40">
 					<Property key="Caption" value="Author" />
 					<Property key="FontName" value="SM_Button" />
 					<Property key="TextAlign" value="Left Top" />
 					<Property key="FontHeight" value="16" />
 				</Widget>
 			</Widget>
-			<Widget type="Widget" skin="PanelEmpty" position_real="0.7561114269471291 0.8801955990220048 0.23024445707788516 0.10268948655256724">
-				<Widget type="ScrollBar" skin="LargeHorizontalSliderBackground" name="VolumeSlider" position_real="0 0.14285714285714285 1 0.7142857142857143" />
-				<Widget type="ImageBox" skin="ImageBox" name="VolumeIcon" position_real="0.9259259259259259 0.5357142857142857 0.12345679012345678 0.5952380952380952">
+			<Widget type="Widget" skin="PanelEmpty" position="1330 720 405 84">
+				<Widget type="ScrollBar" skin="LargeHorizontalSliderBackground" name="VolumeSlider" position="0 12 405 60" />
+				<Widget type="ImageBox" skin="ImageBox" name="VolumeIcon" position="375 45 50 50">
 					<Property key="ImageTexture" value="$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/volume-up.png" />
 					<Property key="NeedKey" value="false" />
 					<Property key="NeedMouse" value="false" />
 					<Property key="Visible" value="false" />
 				</Widget>
 			</Widget>
-			<Widget type="Widget" skin="PanelEmpty" name="FmFrequencyPanel" position_real="0.014212620807276862 0.2200488997555012 0.9721432632177374 0.5562347188264058">
+			<Widget type="Widget" skin="PanelEmpty" name="FmFrequencyPanel" position="25 180 1710 455">
 				<Property key="NeedMouse" value="false" />
 				<Property key="NeedKey" value="false" />
-				<Widget type="Button" skin="SettingsButton" name="FmFrequencyDown" position_real="0.38596491228070173 0.42857142857142855 0.07017543859649122 0.13186813186813187">
+				<Widget type="Button" skin="SettingsButton" name="FmFrequencyDown" position="660 195 120 60">
 					<Property key="Caption" value="-" />
 					<Property key="FontName" value="SM_Button" />
 					<Property key="TextAlign" value="Center" />
 				</Widget>
-				<Widget type="TextBox" skin="TextBox" name="FmFrequencyLabel" position_real="0.4649122807017544 0.42857142857142855 0.07017543859649122 0.13186813186813187">
+				<Widget type="TextBox" skin="TextBox" name="FmFrequencyLabel" position="795 195 120 60">
 					<Property key="Caption" value="FM 0" />
 					<Property key="FontName" value="SM_Button" />
 					<Property key="TextAlign" value="Center" />
 				</Widget>
-				<Widget type="Button" skin="SettingsButton" name="FmFrequencyUp" position_real="0.543859649122807 0.42857142857142855 0.07017543859649122 0.13186813186813187">
+				<Widget type="Button" skin="SettingsButton" name="FmFrequencyUp" position="930 195 120 60">
 					<Property key="Caption" value="+" />
 					<Property key="FontName" value="SM_Button" />
 					<Property key="TextAlign" value="Center" />
 				</Widget>
 			</Widget>
-			<Widget type="Widget" skin="PanelEmpty" name="PlaylistPanel" position_real="0.014212620807276862 0.2200488997555012 0.20750426378624218 0.5562347188264058">
+			<Widget type="Widget" skin="PanelEmpty" name="PlaylistPanel" position="25 180 365 455">
 				<Property key="NeedKey" value="false" />
-				<Widget type="Button" skin="GenderButton" name="PlaylistSlot_1" position_real="0 0 1 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="PlaylistImage_1" position_real="0.0410958904109589 0.16 0.2328767123287671 0.68">
+				<Widget type="Button" skin="GenderButton" name="PlaylistSlot_1" position="0 0 365 125">
+					<Widget type="ImageBox" skin="ImageBox" name="PlaylistImage_1" position="15 20 85 85">
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="PlaylistName_1" position_real="0.3013698630136986 0.16 0.6575342465753424 0.36">
+					<Widget type="TextBox" skin="TextBox" name="PlaylistName_1" position="110 20 240 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -320,7 +320,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="PlaylistAuthor_1" position_real="0.3013698630136986 0.52 0.6575342465753424 0.32">
+					<Widget type="TextBox" skin="TextBox" name="PlaylistAuthor_1" position="110 65 240 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -329,12 +329,12 @@
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="GenderButton" name="PlaylistSlot_2" position_real="0 0.3626373626373626 1 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="PlaylistImage_2" position_real="0.0410958904109589 0.16 0.2328767123287671 0.68">
+				<Widget type="Button" skin="GenderButton" name="PlaylistSlot_2" position="0 165 365 125">
+					<Widget type="ImageBox" skin="ImageBox" name="PlaylistImage_2" position="15 20 85 85">
 						<Property key="NeedMouse" value="false" />
 						<Property key="NeedKey" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="PlaylistName_2" position_real="0.3013698630136986 0.16 0.6575342465753424 0.36">
+					<Widget type="TextBox" skin="TextBox" name="PlaylistName_2" position="110 20 240 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -342,7 +342,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="PlaylistAuthor_2" position_real="0.3013698630136986 0.52 0.6575342465753424 0.32">
+					<Widget type="TextBox" skin="TextBox" name="PlaylistAuthor_2" position="110 65 240 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -351,12 +351,12 @@
 						<Property key="NeedMouse" value="false" />
 					</Widget>
 				</Widget>
-				<Widget type="Button" skin="GenderButton" name="PlaylistSlot_3" position_real="0 0.7252747252747253 1 0.27472527472527475">
-					<Widget type="ImageBox" skin="ImageBox" name="PlaylistImage_3" position_real="0.0410958904109589 0.16 0.2328767123287671 0.68">
+				<Widget type="Button" skin="GenderButton" name="PlaylistSlot_3" position="0 330 365 125">
+					<Widget type="ImageBox" skin="ImageBox" name="PlaylistImage_3" position="15 20 85 85">
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="PlaylistName_3" position_real="0.3013698630136986 0.16 0.6575342465753424 0.36">
+					<Widget type="TextBox" skin="TextBox" name="PlaylistName_3" position="110 20 240 45">
 						<Property key="Caption" value="Name" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left VCenter" />
@@ -364,7 +364,7 @@
 						<Property key="NeedKey" value="false" />
 						<Property key="NeedMouse" value="false" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="PlaylistAuthor_3" position_real="0.3013698630136986 0.52 0.6575342465753424 0.32">
+					<Widget type="TextBox" skin="TextBox" name="PlaylistAuthor_3" position="110 65 240 40">
 						<Property key="Caption" value="Author" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Left Top" />
@@ -374,44 +374,44 @@
 					</Widget>
 				</Widget>
 			</Widget>
-			<Widget type="Widget" skin="DressbotQueueBackground" name="PlaylistPanel" position_real="0.2274019329164298 0.2139364303178484 0.017055144968732235 0.5684596577017115" />
-			<Widget type="Widget" skin="PanelEmpty" position_real="0.014212620807276862 0.7762836185819071 0.9721432632177374 0.0550122249388753">
-				<Widget type="Widget" skin="PanelEmpty" name="PlaylistPanel" position_real="0 0 0.2134502923976608 1">
-					<Widget type="TextBox" skin="TextBox" name="PlaylistPageLabel" position_real="0.410958904109589 0 0.1917808219178082 1">
+			<Widget type="Widget" skin="DressbotQueueBackground" name="PlaylistPanel" position="400 175 30 465" />
+			<Widget type="Widget" skin="PanelEmpty" position="25 635 1710 45">
+				<Widget type="Widget" skin="PanelEmpty" name="PlaylistPanel" position="0 0 365 45">
+					<Widget type="TextBox" skin="TextBox" name="PlaylistPageLabel" position="150 0 70 45">
 						<Property key="Caption" value="0 / 0" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Center" />
 					</Widget>
-					<Widget type="Button" skin="SettingsButton" name="PlaylistPageDown" position_real="0.2328767123287671 0 0.1643835616438356 1">
+					<Widget type="Button" skin="SettingsButton" name="PlaylistPageDown" position="85 0 60 45">
 						<Property key="Caption" value="&lt;" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Center" />
 					</Widget>
-					<Widget type="Button" skin="SettingsButton" name="PlaylistPageUp" position_real="0.6164383561643836 0 0.1643835616438356 1">
+					<Widget type="Button" skin="SettingsButton" name="PlaylistPageUp" position="225 0 60 45">
 						<Property key="Caption" value="&gt;" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Center" />
 					</Widget>
 				</Widget>
-				<Widget type="Widget" skin="PanelEmpty" name="TrackListPanel" position_real="0.2134502923976608 0 0.7865497076023392 1">
-					<Widget type="Button" skin="SettingsButton" name="TrackPageDown" position_real="0.4349442379182156 0 0.04460966542750929 1">
+				<Widget type="Widget" skin="PanelEmpty" name="TrackListPanel" position="365 0 1345 45">
+					<Widget type="Button" skin="SettingsButton" name="TrackPageDown" position="585 0 60 45">
 						<Property key="Caption" value="&lt;" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Center" />
 					</Widget>
-					<Widget type="TextBox" skin="TextBox" name="TrackPageLabel" position_real="0.48698884758364314 0 0.06319702602230483 1">
+					<Widget type="TextBox" skin="TextBox" name="TrackPageLabel" position="655 0 85 45">
 						<Property key="Caption" value="0 / 0" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Center" />
 					</Widget>
-					<Widget type="Button" skin="SettingsButton" name="TrackPageUp" position_real="0.5576208178438662 0 0.04460966542750929 1">
+					<Widget type="Button" skin="SettingsButton" name="TrackPageUp" position="750 0 60 45">
 						<Property key="Caption" value="&gt;" />
 						<Property key="FontName" value="SM_Button" />
 						<Property key="TextAlign" value="Center" />
 					</Widget>
 				</Widget>
 			</Widget>
-			<Widget type="Button" skin="ToggleButton" name="FmButton" position_real="0.9152927799886299 0.07946210268948656 0.06822057987492894 0.07334963325183375">
+			<Widget type="Button" skin="ToggleButton" name="FmButton" position="1610 65 120 60">
 				<Property key="FontName" value="SM_Button" />
 				<Property key="TextAlign" value="Center" />
 				<Property key="Caption" value="FM" />

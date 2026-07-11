@@ -1,5 +1,3 @@
-dofile("$CONTENT_40639a2c-bb9f-4d4f-b88c-41bfe264ffa8/Scripts/ModDatabase.lua")
-
 Utilities = class()
 
 MAIN_LAYOUT = "$CONTENT_DATA/Gui/Layouts/Scrapify.layout"
@@ -90,73 +88,130 @@ function Utilities.loadCustomMusicTracks(customRadio)
 
     loadTracks("$CONTENT_DATA/Effects/Database/EffectSets/game.effectset")
     loadTracks("$CONTENT_DATA/Effects/Database/EffectSets/events.effectset")
-    loadTracks("$CONTENT_DATA/Effects/custom_effects.json")
-
-    Utilities.initCustomTracks(customRadio)
+    loadTracks("$CONTENT_DATA/Effects/Database/EffectSets/custom_events.effectset")
 
     table.sort(customRadio.tracks)
 
     Utilities.loadPlaylists(customRadio)
+    Utilities.initCustomTracks(customRadio)
+end
+
+function Utilities.extractPlaylistData(raw)
+    if type(raw) ~= "table" then
+        return nil, nil
+    end
+
+    if type(raw.Tracks) == "table" then
+        local tracks = {}
+        for _, trackName in ipairs(raw.Tracks) do
+            if type(trackName) == "string" then
+                table.insert(tracks, trackName)
+            end
+        end
+        local info = {
+            Name = raw.Name,
+            Author = raw.Author,
+            Image = raw.Image,
+            ModUUID = raw.ModUUID
+        }
+        return tracks, info
+    end
+
+    local tracks = {}
+    for _, trackName in ipairs(raw) do
+        if type(trackName) == "string" then
+            table.insert(tracks, trackName)
+        end
+    end
+    return tracks, nil
+end
+
+function Utilities.buildTrackKey(name, modUUID)
+    if modUUID and tostring(modUUID) ~= "" then
+        return tostring(modUUID) .. name
+    end
+    return name
+end
+
+function Utilities.getPlaylistInfo(customRadio, playlistName)
+    return (customRadio.playlistInfo and playlistName and customRadio.playlistInfo[playlistName]) or {
+        Name = playlistName or "Unknown",
+        Author = "",
+        Image = "Gui/Icons/default_image.png"
+    }
 end
 
 function Utilities.initCustomTracks(customRadio)
-    print("Load Custom Tracks")
+    print("(Radio Mod) Loading tracks from registered mods")
 
-    ModDatabase.loadShapesets()
-    local loadedMods = ModDatabase.getAllLoadedMods()
+    sm.radioMod = sm.radioMod or {}
+    sm.radioMod.tracks = sm.radioMod.tracks or {}
+    sm.radioMod.playlists = sm.radioMod.playlists or {}
 
-    for _, localId in ipairs(loadedMods) do
-        if localId ~= sm.uuid.new("e8d9c47d-8029-4441-b662-95ef4ccd55be") then
-            local modPath = "$CONTENT_" .. localId
-            local customEffectsPath = modPath .. "/Effects/custom_effects.json"
+    for _, entry in ipairs(sm.radioMod.tracks) do
+        local name = entry.Name
+        local trackInfo = entry.TrackInfo
+        local modUUID = entry.ModUUID
 
-            sm.log.info(customEffectsPath)
+        if type(name) == "string" and name:gsub(":", "") == name then
+            local key = Utilities.buildTrackKey(name, modUUID)
 
-            if sm.json.fileExists(customEffectsPath) then
-                print("Find 'custom_effects.json' in " .. localId)
-
-                local success, effectList = pcall(sm.json.open, customEffectsPath)
-                if success and type(effectList) == "table" then
-                    for _, filename in ipairs(effectList) do
-                        local fullPath = modPath .. "/Effects/Database/EffectSets/" .. filename
-                        if sm.json.fileExists(fullPath) then
-                            local success2, effects = pcall(sm.json.open, fullPath)
-                            if success2 and type(effects) == "table" then
-                                for name, effect in pairs(effects) do
-                                    if type(name) == "string" and name:gsub(":", "") == name then
-                                        table.insert(customRadio.tracks, name)
-                                        if effect.radioMod then
-                                            customRadio.trackInfo[name] = {
-                                                Name = effect.radioMod.Name or name,
-                                                Author = effect.radioMod.Author or "Unknown",
-                                                Image = effect.radioMod.Image or "Gui/Icons/default_image.png",
-                                                Duration = effect.radioMod.Duration or 0,
-                                                ModUUID = localId
-                                            }
-                                        end
-                                    end
-                                end
-                            else
-                                print("Couldn't load effects from: " .. fullPath)
-                            end
-                        else
-                            print("File not found: " .. fullPath)
-                        end
-                    end
-                else
-                    print("Couldn't load list of effects from: " .. customEffectsPath)
-                end
-            end
-
-            local modPlaylistPath = modPath .. "/Effects/playlists.json"
-            if sm.json.fileExists(modPlaylistPath) then
-                print("Find 'playlists.json' in " .. localId)
-                Utilities._loadPlaylistFile(customRadio, modPlaylistPath)
+            table.insert(customRadio.tracks, key)
+            if trackInfo then
+                customRadio.trackInfo[key] = {
+                    Name = trackInfo.Name or name,
+                    Author = trackInfo.Author or "Unknown",
+                    Image = trackInfo.Image or "Gui/Icons/default_image.png",
+                    Duration = trackInfo.Duration or 0,
+                    ModUUID = modUUID
+                }
             end
         end
     end
 
-    ModDatabase.unloadShapesets()
+    for playlistName, rawEntry in pairs(sm.radioMod.playlists) do
+        if type(playlistName) == "string" and type(rawEntry) == "table" then
+            local rawTracks, info = Utilities.extractPlaylistData(rawEntry)
+
+            if rawTracks and #rawTracks > 0 then
+                local playlistModUUID = info and info.ModUUID
+                local tracks = {}
+                for _, t in ipairs(rawTracks) do
+                    table.insert(tracks, Utilities.buildTrackKey(t, playlistModUUID))
+                end
+
+                if customRadio.playlists[playlistName] then
+                    for _, t in ipairs(tracks) do
+                        table.insert(customRadio.playlists[playlistName], t)
+                    end
+                else
+                    customRadio.playlists[playlistName] = tracks
+                    table.insert(customRadio.playlistNames, playlistName)
+                end
+                for _, t in ipairs(tracks) do
+                    local found = false
+                    for _, existing in ipairs(customRadio.playlists["All Tracks"]) do
+                        if existing == t then
+                            found = true
+                            break
+                        end
+                    end
+                    if not found then
+                        table.insert(customRadio.playlists["All Tracks"], t)
+                    end
+                end
+
+                if not customRadio.playlistInfo[playlistName] then
+                    customRadio.playlistInfo[playlistName] = {
+                        Name = (info and info.Name) or playlistName,
+                        Author = (info and info.Author) or "Unknown",
+                        Image = (info and info.Image) or "Gui/Icons/default_image.png",
+                        ModUUID = info and info.ModUUID
+                    }
+                end
+            end
+        end
+    end
 end
 
 function Utilities._loadPlaylistFile(customRadio, filePath)
@@ -166,25 +221,35 @@ function Utilities._loadPlaylistFile(customRadio, filePath)
         return
     end
 
-    for playlistName, trackList in pairs(data) do
-        if type(playlistName) == "string" and type(trackList) == "table" then
-            local validated = {}
-            for _, trackName in ipairs(trackList) do
-                if type(trackName) == "string" then
-                    table.insert(validated, trackName)
-                end
-            end
+    for playlistName, rawEntry in pairs(data) do
+        if type(playlistName) == "string" and type(rawEntry) == "table" then
+            local rawTracks, info = Utilities.extractPlaylistData(rawEntry)
 
-            if #validated > 0 then
+            if rawTracks and #rawTracks > 0 then
+                local playlistModUUID = info and info.ModUUID
+                local tracks = {}
+                for _, t in ipairs(rawTracks) do
+                    table.insert(tracks, Utilities.buildTrackKey(t, playlistModUUID))
+                end
+
                 if customRadio.playlists[playlistName] then
-                    for _, t in ipairs(validated) do
+                    for _, t in ipairs(tracks) do
                         table.insert(customRadio.playlists[playlistName], t)
                     end
                     print("Merged playlist '" .. playlistName .. "' from " .. filePath)
                 else
-                    customRadio.playlists[playlistName] = validated
+                    customRadio.playlists[playlistName] = tracks
                     table.insert(customRadio.playlistNames, playlistName)
-                    print("Loaded playlist '" .. playlistName .. "' (" .. #validated .. " tracks) from " .. filePath)
+                    print("Loaded playlist '" .. playlistName .. "' (" .. #tracks .. " tracks) from " .. filePath)
+                end
+
+                if info and not customRadio.playlistInfo[playlistName] then
+                    customRadio.playlistInfo[playlistName] = {
+                        Name = info.Name or playlistName,
+                        Author = info.Author or "Unknown",
+                        Image = info.Image or "Gui/Icons/default_image.png",
+                        ModUUID = info.ModUUID
+                    }
                 end
             end
         end
@@ -194,18 +259,24 @@ end
 function Utilities.loadPlaylists(customRadio)
     customRadio.playlists = {}
     customRadio.playlistNames = {}
+    customRadio.playlistInfo = {}
 
     customRadio.playlists["All Tracks"] = {}
     customRadio.playlistNames[1] = "All Tracks"
     for _, t in ipairs(customRadio.tracks) do
         table.insert(customRadio.playlists["All Tracks"], t)
     end
+    customRadio.playlistInfo["All Tracks"] = {
+        Name = "All Tracks",
+        Author = "You",
+        Image = "Gui/Icons/default_image.png"
+    }
 
     local ownPath = "$CONTENT_DATA/Effects/playlists.json"
     if sm.json.fileExists(ownPath) then
         Utilities._loadPlaylistFile(customRadio, ownPath)
     else
-        print("(Radio Mod) No playlists.json found at " .. ownPath .. " — only 'All Tracks' available")
+        print("(Radio Mod) No playlists.json found at " .. ownPath .. " - only 'All Tracks' available")
     end
 
     local extras = {}
@@ -229,8 +300,8 @@ function Utilities.getPlaylistTracks(customRadio, playlistName)
     return customRadio.tracks or {}
 end
 
-function Utilities.getTrackInfo(radioObj, trackName)
-    return (radioObj.trackInfo and trackName and radioObj.trackInfo[trackName]) or {
+function Utilities.getTrackInfo(customRadio, trackName)
+    return (customRadio.trackInfo and trackName and customRadio.trackInfo[trackName]) or {
         Name = trackName or "Unknown",
         Author = "Unknown",
         Image = "Gui/Icons/default_image.png",
@@ -238,12 +309,12 @@ function Utilities.getTrackInfo(radioObj, trackName)
     }
 end
 
-function Utilities.rebuildShuffleQueue(radioObj)
-    local tracks = radioObj.tracks or {}
+function Utilities.rebuildShuffleQueue(customRadio)
+    local tracks = customRadio.tracks or {}
     local pool = {}
 
     for _, t in ipairs(tracks) do
-        if t ~= radioObj.cl_currentAudioName then
+        if t ~= customRadio.cl_currentAudioName then
             table.insert(pool, t)
         end
     end
@@ -253,25 +324,25 @@ function Utilities.rebuildShuffleQueue(radioObj)
         pool[i], pool[j] = pool[j], pool[i]
     end
 
-    radioObj.cl_shuffleQueue = pool
+    customRadio.cl_shuffleQueue = pool
 end
 
-function Utilities.nextShuffleTrack(radioObj)
-    if #(radioObj.cl_shuffleQueue or {}) == 0 then
-        Utilities.rebuildShuffleQueue(radioObj)
+function Utilities.nextShuffleTrack(customRadio)
+    if #(customRadio.cl_shuffleQueue or {}) == 0 then
+        Utilities.rebuildShuffleQueue(customRadio)
     end
 
-    if #radioObj.cl_shuffleQueue == 0 then
+    if #customRadio.cl_shuffleQueue == 0 then
         return nil
     end
 
-    local track = radioObj.cl_shuffleQueue[1]
-    table.remove(radioObj.cl_shuffleQueue, 1)
+    local track = customRadio.cl_shuffleQueue[1]
+    table.remove(customRadio.cl_shuffleQueue, 1)
     return track
 end
 
-function Utilities.selectRandomTrack(radioObj, callback)
-    local tracks = radioObj.tracks or {}
+function Utilities.selectRandomTrack(customRadio, callback)
+    local tracks = customRadio.tracks or {}
 
     if #tracks == 0 then
         return
@@ -280,20 +351,26 @@ function Utilities.selectRandomTrack(radioObj, callback)
     callback(tracks[math.random(1, #tracks)])
 end
 
-function Utilities.changeSound(radioObj, direction, tracks, callback)
+function Utilities.changeSound(customRadio, direction, tracks, callback)
     if not tracks or #tracks == 0 then
         return
     end
 
-    if radioObj.cl_shuffle then
-        local next = Utilities.nextShuffleTrack(radioObj)
+    if customRadio.cl_shuffle then
+        local next = Utilities.nextShuffleTrack(customRadio)
         if next then
             callback(next)
         end
         return
     end
 
-    local currentIndex = table.indexOf(tracks, radioObj.cl_currentAudioName)
+    local currentIndex = nil
+    for i, track in ipairs(tracks) do
+        if track == customRadio.cl_currentAudioName then
+            currentIndex = i
+            break
+        end
+    end
 
     if not currentIndex then
         callback(tracks[1])

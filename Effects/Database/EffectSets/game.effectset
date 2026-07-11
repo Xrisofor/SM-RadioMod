@@ -2,10 +2,8 @@
    "Scrap Mechanic - Radio" : {
       "effectList" : [
          {
-            "delay" : 0.0,
             "name" : "event:/tools/radio",
-            "type" : "audio",
-            "parameters": [ "progress" ]
+            "type" : "audio"
          }
       ],
       "radioMod": {
@@ -18,10 +16,8 @@
    "Scrap Mechanic - North Korea" : {
       "effectList" : [
          {
-            "delay" : 0.0,
             "name" : "event:/char/npc/bots/confettibot",
-            "type" : "audio",
-            "parameters": [ "progress" ]
+            "type" : "audio"
          }
       ],
       "radioMod": {
@@ -34,10 +30,8 @@
    "Scrap Mechanic - Elevator" : {
       "effectList" : [
          {
-            "delay" : 0.0,
             "name" : "event:/music/elevator",
-            "type" : "audio",
-            "parameters": [ "progress" ]
+            "type" : "audio"
          }
       ],
       "radioMod": {

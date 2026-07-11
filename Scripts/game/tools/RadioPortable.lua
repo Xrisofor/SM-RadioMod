@@ -17,6 +17,77 @@ sm.tool.preloadRenderables(renderables)
 sm.tool.preloadRenderables(renderablesTp)
 sm.tool.preloadRenderables(renderablesFp)
 
+local SLOTS_PER_PAGE = 9
+local PLAYLIST_SLOTS_PER_PAGE = 3
+
+local function repeatModeState(mode)
+    return mode == REPEAT_TRACK or mode == REPEAT_PLAYLIST
+end
+
+if not fmdata then
+    fmdata = {}
+end
+
+-- ─────────────────────────────────────────────
+--  HELPERS
+-- ─────────────────────────────────────────────
+
+function RadioPortable:isValidEffect()
+    return self.cl_audio_effect ~= nil and sm.exists(self.cl_audio_effect)
+end
+
+function RadioPortable:hasRealTrack()
+    return self.cl_currentAudioName ~= nil and self.cl_currentAudioName ~= ""
+end
+
+function RadioPortable:getActiveTracks()
+    return Utilities.getPlaylistTracks(self, self.cl_currentPlaylist)
+end
+
+function RadioPortable:rebuildShuffleQueue()
+    local activeTracks = self:getActiveTracks()
+    local pool = {}
+    for _, t in ipairs(activeTracks) do
+        if t ~= self.cl_currentAudioName then
+            table.insert(pool, t)
+        end
+    end
+    for i = #pool, 2, -1 do
+        local j = math.random(1, i)
+        pool[i], pool[j] = pool[j], pool[i]
+    end
+    self.cl_shuffleQueue = pool
+end
+
+function RadioPortable:nextShuffleTrack()
+    if #self.cl_shuffleQueue == 0 then
+        self:rebuildShuffleQueue()
+    end
+    if #self.cl_shuffleQueue == 0 then
+        return nil
+    end
+    local track = self.cl_shuffleQueue[1]
+    table.remove(self.cl_shuffleQueue, 1)
+    return track
+end
+
+-- ─────────────────────────────────────────────
+--  FM HELPERS (только приём — переносная рация не транслирует, антенны нет)
+-- ─────────────────────────────────────────────
+
+function RadioPortable:getFMSignal()
+    local freq = self.cl_fmFrequency
+    if not fmdata[freq] then
+        return nil
+    end
+    for _, entry in pairs(fmdata[freq]) do
+        if entry and entry.track then
+            return entry
+        end
+    end
+    return nil
+end
+
 -- ─────────────────────────────────────────────
 --  SERVER
 -- ─────────────────────────────────────────────
@@ -27,7 +98,12 @@ function RadioPortable.server_onCreate(self)
     local defaults = {
         track = nil,
         volume = 1,
-        play_state = false
+        play_state = false,
+        playlist = "All Tracks",
+        repeat_mode = REPEAT_NONE,
+        shuffle = false,
+        fm_mode = false,
+        fm_frequency = 0
     }
     for k, v in pairs(defaults) do
         if self.storageSave[k] == nil then
@@ -38,40 +114,57 @@ function RadioPortable.server_onCreate(self)
     self.sv_audioName = self.storageSave.track
     self.sv_volumeLevel = self.storageSave.volume
     self.sv_playState = self.storageSave.play_state
+    self.sv_playlist = self.storageSave.playlist
+    self.sv_repeatMode = self.storageSave.repeat_mode
+    self.sv_shuffle = self.storageSave.shuffle
+    self.sv_fmMode = self.storageSave.fm_mode
+    self.sv_fmFrequency = self.storageSave.fm_frequency
 end
 
-function RadioPortable.sv_changeTrack(self, setting, player)
-    if self.sv_audioName ~= setting then
-        self.sv_audioName = setting
-        self.storageSave.track = setting
+function RadioPortable:sv_updateSetting(key, value, clientFn)
+    if self.storageSave[key] ~= value then
+        self.storageSave[key] = value
+        self["sv_" .. key] = value
         self.storage:save(self.storageSave)
-        self.network:sendToClients("cl_changeTrack", setting)
+        self.network:sendToClients(clientFn, value)
     end
 end
 
-function RadioPortable.sv_changeTrackVolume(self, setting, player)
-    if self.sv_volumeLevel ~= setting then
-        self.sv_volumeLevel = setting
-        self.storageSave.volume = setting
-        self.storage:save(self.storageSave)
-        self.network:sendToClients("cl_changeTrackVolume", setting)
-    end
+function RadioPortable.sv_changeTrack(self, s)
+    self:sv_updateSetting("track", s, "cl_changeTrack")
 end
-
-function RadioPortable.sv_changePlayState(self, setting, player)
-    if self.sv_playState ~= setting then
-        self.sv_playState = setting
-        self.storageSave.play_state = setting
-        self.storage:save(self.storageSave)
-        self.network:sendToClients("cl_changePlayState", setting)
-    end
+function RadioPortable.sv_changeTrackVolume(self, s)
+    self:sv_updateSetting("volume", s, "cl_changeTrackVolume")
+end
+function RadioPortable.sv_changePlayState(self, s)
+    self:sv_updateSetting("play_state", s, "cl_changePlayState")
+end
+function RadioPortable.sv_changePlaylist(self, s)
+    self:sv_updateSetting("playlist", s, "cl_changePlaylist")
+end
+function RadioPortable.sv_changeRepeatMode(self, s)
+    self:sv_updateSetting("repeat_mode", s, "cl_changeRepeatMode")
+end
+function RadioPortable.sv_changeShuffle(self, s)
+    self:sv_updateSetting("shuffle", s, "cl_changeShuffle")
+end
+function RadioPortable.sv_toggleFmMode(self, s)
+    self:sv_updateSetting("fm_mode", s, "cl_setFmMode")
+end
+function RadioPortable.sv_setFmFrequency(self, freq)
+    self:sv_updateSetting("fm_frequency", freq, "cl_setFmFrequency")
 end
 
 function RadioPortable.sv_getRadioInfo(self, _, player)
     self.network:sendToClient(player, "cl_updateRadioInfo", {
         track = self.sv_audioName,
         volume = self.sv_volumeLevel,
-        playState = self.sv_playState
+        playState = self.sv_playState,
+        playlist = self.sv_playlist,
+        repeatMode = self.sv_repeatMode,
+        shuffle = self.sv_shuffle,
+        fmMode = self.sv_fmMode,
+        fmFrequency = self.sv_fmFrequency
     })
 end
 
@@ -84,17 +177,32 @@ function RadioPortable.client_onCreate(self)
     self.cl_currentAudioName = nil
     self.cl_currentAudioVolume = 1
     self.cl_playState = false
+    self.cl_currentPlaylist = "All Tracks"
+    self.cl_repeatMode = REPEAT_NONE
     self.cl_shuffle = false
     self.cl_shuffleQueue = {}
+    self.cl_trackPage = 0
+    self.cl_currentPageTracks = {}
+    self.cl_playlistPage = 0
+    self.cl_currentPagePlaylists = {}
+    self.cl_effectJustStarted = false
+    self.cl_pendingRadioInfo = nil
     self.cl_audio_effect = nil
+    self.cl_fmMode = false
+    self.cl_fmFrequency = 0
+    self.cl_fmCurrentTrack = nil
 
     self:loadAnimations()
 
     self.network:sendToServer("sv_getRadioInfo")
 
     Utilities.checkCAE()
-
     Utilities.loadCustomMusicTracks(self)
+
+    if self.cl_pendingRadioInfo then
+        self:applyRadioInfo(self.cl_pendingRadioInfo)
+        self.cl_pendingRadioInfo = nil
+    end
 end
 
 function RadioPortable.client_onRefresh(self)
@@ -102,9 +210,144 @@ function RadioPortable.client_onRefresh(self)
 end
 
 function RadioPortable.cl_updateRadioInfo(self, data)
+    if not self.tracks then
+        self.cl_pendingRadioInfo = data
+        return
+    end
+    self:applyRadioInfo(data)
+end
+
+function RadioPortable:applyRadioInfo(data)
+    self:cl_changePlaylist(data.playlist or "All Tracks")
+    self:cl_changeRepeatMode(data.repeatMode or REPEAT_NONE)
+    self:cl_changeShuffle(data.shuffle or false)
     self:cl_changeTrack(data.track)
     self:cl_changeTrackVolume(data.volume)
     self:cl_changePlayState(data.playState)
+    self:cl_setFmMode(data.fmMode or false)
+    self:cl_setFmFrequency(data.fmFrequency or 0)
+end
+
+-- ─────────────────────────────────────────────
+--  TRACK END LOGIC
+-- ─────────────────────────────────────────────
+
+function RadioPortable:onTrackEnded()
+    if self.cl_fmMode then
+        return
+    end
+
+    if self.cl_repeatMode == REPEAT_TRACK then
+        if self:isValidEffect() then
+            if self.cl_audio_effect:isPlaying() then
+                self.cl_audio_effect:stop()
+            end
+            self.cl_audio_effect:destroy()
+        end
+        self.cl_audio_effect = sm.effect.createEffect(self.cl_currentAudioName, self.tool:getOwner():getCharacter())
+        self.cl_effectJustStarted = true
+        return
+    end
+
+    if self.cl_shuffle then
+        local next = self:nextShuffleTrack()
+        if next then
+            self:selectTrack(next)
+        end
+        return
+    end
+
+    local activeTracks = self:getActiveTracks()
+    local idx = 0
+    for i, t in ipairs(activeTracks) do
+        if t == self.cl_currentAudioName then
+            idx = i
+            break
+        end
+    end
+
+    if idx >= #activeTracks then
+        if self.cl_repeatMode == REPEAT_PLAYLIST then
+            self:selectTrack(activeTracks[1])
+        else
+            self.network:sendToServer("sv_changePlayState", false)
+        end
+    else
+        self:selectTrack(activeTracks[idx + 1])
+    end
+end
+
+-- ─────────────────────────────────────────────
+--  AUDIO MANAGER
+-- ─────────────────────────────────────────────
+
+function RadioPortable:updateAudioEffect(play)
+    if play then
+        if self:hasRealTrack() then
+            if self:isValidEffect() and not self.cl_audio_effect:isPlaying() then
+                self.cl_audio_effect:start()
+                self.cl_effectJustStarted = true
+            end
+        else
+            if self:isValidEffect() then
+                if self.cl_audio_effect:isPlaying() then
+                    self.cl_audio_effect:stop()
+                end
+                self.cl_audio_effect:destroy()
+                self.cl_audio_effect = nil
+            end
+        end
+    else
+        if self:isValidEffect() then
+            if self.cl_audio_effect:isPlaying() then
+                self.cl_audio_effect:stop()
+            end
+        end
+    end
+end
+
+function RadioPortable:updateFmAudio(shouldPlay)
+    local signal = self:getFMSignal()
+
+    if not signal then
+        if self:isValidEffect() and self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:stop()
+        end
+        self.cl_fmCurrentTrack = nil
+        return
+    end
+
+    if signal.track ~= self.cl_fmCurrentTrack then
+        if self:isValidEffect() then
+            if self.cl_audio_effect:isPlaying() then
+                self.cl_audio_effect:stop()
+            end
+            self.cl_audio_effect:destroy()
+        end
+        self.cl_audio_effect = nil
+        self.cl_fmCurrentTrack = signal.track
+
+        if signal.track and signal.track ~= "" then
+            self.cl_audio_effect = sm.effect.createEffect(signal.track, self.tool:getOwner():getCharacter())
+        end
+    end
+
+    local antennaPlaying = signal.playState
+    local actualPlay = shouldPlay and antennaPlaying
+
+    if actualPlay then
+        if self:isValidEffect() and not self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:start()
+        end
+    else
+        if self:isValidEffect() and self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:stop()
+        end
+    end
+
+    if self:isValidEffect() then
+        self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
+    end
 end
 
 -- ─────────────────────────────────────────────
@@ -232,28 +475,26 @@ function RadioPortable.client_onUpdate(self, dt)
         end
     end
 
-    local function isValidEffect()
-        return self.cl_audio_effect ~= nil and sm.exists(self.cl_audio_effect)
+    if self.cl_fmMode then
+        self:updateFmAudio(self.cl_playState)
+        return
     end
 
-    if self.cl_playState then
-        if self.cl_currentAudioName ~= nil then
-            if isValidEffect() and not self.cl_audio_effect:isPlaying() then
-                self.cl_audio_effect:start()
+    self:updateAudioEffect(self.cl_playState)
+
+    if self.cl_playState and self:isValidEffect() then
+        if self.cl_effectJustStarted then
+            if self.cl_audio_effect:isPlaying() then
+                self.cl_effectJustStarted = false
             end
         else
-            if isValidEffect() then
-                self.cl_audio_effect:destroy()
-                self.cl_audio_effect = nil
+            if self.cl_audio_effect:isDone() then
+                self:onTrackEnded()
             end
-        end
-    else
-        if isValidEffect() and self.cl_audio_effect:isPlaying() then
-            self.cl_audio_effect:stop()
         end
     end
 
-    if isValidEffect() then
+    if self:isValidEffect() then
         self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
     end
 end
@@ -333,10 +574,14 @@ function RadioPortable.client_onEquippedUpdate(self, primaryState, secondaryStat
         self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
         self.gui:setText("SubTitle", "Music is always nearby")
 
-        self:cl_refreshTrackGrid()
+        self:cl_refreshTrackList()
+        self:cl_refreshPlaylistList()
 
         self.gui:setImage("PlayerIcon", self.cl_playState and STOP_ICON or PLAY_ICON)
+        self.gui:setButtonState("RepeatButton", repeatModeState(self.cl_repeatMode))
         self.gui:setButtonState("ShuffleButton", self.cl_shuffle)
+
+        self:cl_refreshFmGui()
 
         self.gui:open()
         sm.audio.play("ConnectTool - Selected")
@@ -359,39 +604,219 @@ function RadioPortable.createGui(self)
     self.gui:setButtonCallback("PlayerButton", "onSetPlayState")
     self.gui:setButtonCallback("NextButton", "onNextSound")
     self.gui:setButtonCallback("BackButton", "onBackSound")
+    self.gui:setButtonCallback("RepeatButton", "onCycleRepeat")
     self.gui:setButtonCallback("ShuffleButton", "onToggleShuffle")
-end
 
-function RadioPortable.cl_refreshTrackGrid(self)
-    local activeTracks = self.tracks or {}
+    self.gui:setButtonCallback("FmButton", "onToggleFmMode")
+    self.gui:setButtonCallback("FmFrequencyUp", "onFmFrequencyUp")
+    self.gui:setButtonCallback("FmFrequencyDown", "onFmFrequencyDown")
 
-    self.gui:createGridFromJson("TrackGrid", {
-        type = "itemGrid",
-        layout = TRACK_ITEM_LAYOUT,
-        itemWidth = 270,
-        itemHeight = 90,
-        itemCount = #activeTracks
-    })
-    self.gui:setGridButtonCallback("MainPanel", "cl_onTrackClicked")
+    for i = 1, SLOTS_PER_PAGE do
+        self.gui:setButtonCallback("TrackSlot_" .. i, "cl_onTrackSlot" .. i)
+    end
+    self.gui:setButtonCallback("TrackPageUp", "onTrackPageUp")
+    self.gui:setButtonCallback("TrackPageDown", "onTrackPageDown")
 
-    for i, trackKey in ipairs(activeTracks) do
-        local info = Utilities.getTrackInfo(self, trackKey)
-        self.gui:setGridItem("TrackGrid", i - 1, {
-            Name = info.Name,
-            Author = info.Author,
-            HighlightItemIcon = (trackKey == self.cl_currentAudioName),
-            itemId = "00000000-0000-0000-0000-000000000000"
-        })
+    self.gui:setButtonCallback("PlaylistPageUp", "onPlaylistPageUp")
+    self.gui:setButtonCallback("PlaylistPageDown", "onPlaylistPageDown")
+    for i = 1, PLAYLIST_SLOTS_PER_PAGE do
+        self.gui:setButtonCallback("PlaylistSlot_" .. i, "cl_onPlaylistSlot" .. i)
     end
 end
 
-function RadioPortable.cl_onTrackClicked(self, grid, index)
-    local activeTracks = self.tracks or {}
-    local trackKey = activeTracks[index + 1]
+function RadioPortable:cl_refreshFmGui()
+    if not sm.exists(self.gui) then
+        return
+    end
+
+    local fm = self.cl_fmMode
+    self.gui:setButtonState("FmButton", fm)
+    self.gui:setVisible("FmFrequencyPanel", fm)
+
+    if fm then
+        self.gui:setText("FmFrequencyLabel", "FM " .. tostring(self.cl_fmFrequency))
+
+        self.gui:setVisible("NextButton", false)
+        self.gui:setVisible("BackButton", false)
+        self.gui:setVisible("RepeatButton", false)
+        self.gui:setVisible("ShuffleButton", false)
+        self.gui:setVisible("TrackListPanel", false)
+        self.gui:setVisible("PlaylistPanel", false)
+
+        local signal = self:getFMSignal()
+        if signal and signal.track then
+            local info = Utilities.getTrackInfo(self, signal.track)
+            local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
+
+            self.gui:setText("TrackName", info.Name)
+            self.gui:setText("TrackAuthor", info.Author)
+            self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
+        else
+            self.gui:setText("TrackName", "No FM signal")
+            self.gui:setText("TrackAuthor", "Frequency: " .. tostring(self.cl_fmFrequency))
+            self.gui:setImage("TrackImage", "$CONTENT_DATA/Gui/Icons/default_image.png")
+        end
+    else
+        self.gui:setVisible("NextButton", true)
+        self.gui:setVisible("BackButton", true)
+        self.gui:setVisible("RepeatButton", true)
+        self.gui:setVisible("ShuffleButton", true)
+        self.gui:setVisible("TrackListPanel", true)
+        self.gui:setVisible("PlaylistPanel", true)
+    end
+end
+
+function RadioPortable:cl_refreshTrackList()
+    local activeTracks = self:getActiveTracks()
+    local totalPages = math.max(1, math.ceil(#activeTracks / SLOTS_PER_PAGE))
+
+    if self.cl_trackPage > totalPages - 1 then
+        self.cl_trackPage = totalPages - 1
+    end
+    if self.cl_trackPage < 0 then
+        self.cl_trackPage = 0
+    end
+
+    local start = self.cl_trackPage * SLOTS_PER_PAGE + 1
+    self.cl_currentPageTracks = {}
+
+    for slot = 1, SLOTS_PER_PAGE do
+        local trackKey = activeTracks[start + slot - 1]
+        self.cl_currentPageTracks[slot] = trackKey
+
+        if trackKey then
+            local info = Utilities.getTrackInfo(self, trackKey)
+            local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
+
+            self.gui:setVisible("TrackSlot_" .. slot, true)
+            self.gui:setText("TrackName_" .. slot, info.Name)
+            self.gui:setText("TrackAuthor_" .. slot, info.Author)
+            self.gui:setImage("TrackImage_" .. slot, modPrefix .. "/" .. info.Image)
+            self.gui:setButtonState("TrackSlot_" .. slot, trackKey == self.cl_currentAudioName)
+        else
+            self.gui:setVisible("TrackSlot_" .. slot, false)
+            self.gui:setButtonState("TrackSlot_" .. slot, false)
+        end
+    end
+
+    self.gui:setText("TrackPageLabel", tostring(self.cl_trackPage + 1) .. "/" .. tostring(totalPages))
+    self.gui:setVisible("TrackPageDown", self.cl_trackPage ~= 0)
+    self.gui:setVisible("TrackPageUp", self.cl_trackPage ~= (totalPages - 1))
+end
+
+function RadioPortable:cl_onTrackSlotClicked(slot)
+    if self.cl_fmMode then
+        return
+    end
+
+    local trackKey = self.cl_currentPageTracks[slot]
     if trackKey then
         self:selectTrack(trackKey)
-        self:cl_refreshTrackGrid()
+        self:cl_refreshTrackList()
     end
+end
+
+for i = 1, SLOTS_PER_PAGE do
+    RadioPortable["cl_onTrackSlot" .. i] = function(self)
+        self:cl_onTrackSlotClicked(i)
+    end
+end
+
+function RadioPortable:onTrackPageUp()
+    if self.cl_fmMode then
+        return
+    end
+    self.cl_trackPage = self.cl_trackPage + 1
+    self:cl_refreshTrackList()
+end
+
+function RadioPortable:onTrackPageDown()
+    if self.cl_fmMode then
+        return
+    end
+    if self.cl_trackPage > 0 then
+        self.cl_trackPage = self.cl_trackPage - 1
+    end
+    self:cl_refreshTrackList()
+end
+
+-- ─────────────────────────────────────────────
+--  PLAYLISTS
+-- ─────────────────────────────────────────────
+
+function RadioPortable:cl_refreshPlaylistList()
+    local names = self.playlistNames or {}
+    local totalPages = math.max(1, math.ceil(#names / PLAYLIST_SLOTS_PER_PAGE))
+
+    if self.cl_playlistPage > totalPages - 1 then
+        self.cl_playlistPage = totalPages - 1
+    end
+    if self.cl_playlistPage < 0 then
+        self.cl_playlistPage = 0
+    end
+
+    local start = self.cl_playlistPage * PLAYLIST_SLOTS_PER_PAGE + 1
+    self.cl_currentPagePlaylists = {}
+
+    for slot = 1, PLAYLIST_SLOTS_PER_PAGE do
+        local playlistName = names[start + slot - 1]
+        self.cl_currentPagePlaylists[slot] = playlistName
+
+        if playlistName then
+            local info = Utilities.getPlaylistInfo(self, playlistName)
+            local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
+
+            self.gui:setVisible("PlaylistSlot_" .. slot, true)
+            self.gui:setText("PlaylistName_" .. slot, info.Name)
+            self.gui:setText("PlaylistAuthor_" .. slot, info.Author)
+            self.gui:setImage("PlaylistImage_" .. slot, modPrefix .. "/" .. info.Image)
+            self.gui:setButtonState("PlaylistSlot_" .. slot, playlistName == self.cl_currentPlaylist)
+        else
+            self.gui:setVisible("PlaylistSlot_" .. slot, false)
+            self.gui:setButtonState("PlaylistSlot_" .. slot, false)
+        end
+    end
+
+    self.gui:setText("PlaylistPageLabel", tostring(self.cl_playlistPage + 1) .. "/" .. tostring(totalPages))
+    self.gui:setVisible("PlaylistPageDown", self.cl_playlistPage ~= 0)
+    self.gui:setVisible("PlaylistPageUp", self.cl_playlistPage ~= (totalPages - 1))
+end
+
+function RadioPortable:cl_onPlaylistSlotClicked(slot)
+    if self.cl_fmMode then
+        return
+    end
+
+    local playlistName = self.cl_currentPagePlaylists[slot]
+    if not playlistName or playlistName == self.cl_currentPlaylist then
+        return
+    end
+
+    self.network:sendToServer("sv_changePlaylist", playlistName)
+    self:cl_changePlaylist(playlistName)
+    self.cl_trackPage = 0
+    self:rebuildShuffleQueue()
+
+    self:cl_refreshTrackList()
+    self:cl_refreshPlaylistList()
+end
+
+for i = 1, PLAYLIST_SLOTS_PER_PAGE do
+    RadioPortable["cl_onPlaylistSlot" .. i] = function(self)
+        self:cl_onPlaylistSlotClicked(i)
+    end
+end
+
+function RadioPortable:onPlaylistPageUp()
+    self.cl_playlistPage = self.cl_playlistPage + 1
+    self:cl_refreshPlaylistList()
+end
+
+function RadioPortable:onPlaylistPageDown()
+    if self.cl_playlistPage > 0 then
+        self.cl_playlistPage = self.cl_playlistPage - 1
+    end
+    self:cl_refreshPlaylistList()
 end
 
 -- ─────────────────────────────────────────────
@@ -406,11 +831,63 @@ function RadioPortable.client_onVolumeSliderMoved(self, value)
     end
 end
 
-function RadioPortable.onToggleShuffle(self)
-    self.cl_shuffle = not self.cl_shuffle
-    Utilities.rebuildShuffleQueue(self)
+function RadioPortable:onCycleRepeat()
+    if self.cl_fmMode then
+        return
+    end
+    local next = (self.cl_repeatMode + 1) % 3
+    self.network:sendToServer("sv_changeRepeatMode", next)
+    self:cl_changeRepeatMode(next)
+end
+
+function RadioPortable:onToggleShuffle()
+    if self.cl_fmMode then
+        return
+    end
+    local next = not self.cl_shuffle
+    self.network:sendToServer("sv_changeShuffle", next)
+    self:cl_changeShuffle(next)
+end
+
+function RadioPortable:onToggleFmMode()
+    local next = not self.cl_fmMode
+    self.network:sendToServer("sv_toggleFmMode", next)
+    self:cl_setFmMode(next)
+
+    if not next then
+        self.cl_fmCurrentTrack = nil
+        if self:isValidEffect() then
+            if self.cl_audio_effect:isPlaying() then
+                self.cl_audio_effect:stop()
+            end
+            self.cl_audio_effect:destroy()
+        end
+        self.cl_audio_effect = nil
+        if self.cl_currentAudioName and self.cl_currentAudioName ~= "" then
+            self.cl_audio_effect = sm.effect.createEffect(self.cl_currentAudioName, self.tool:getOwner():getCharacter())
+        end
+    end
+
     if sm.exists(self.gui) then
-        self.gui:setButtonState("ShuffleButton", self.cl_shuffle)
+        self:cl_refreshFmGui()
+    end
+end
+
+function RadioPortable:onFmFrequencyUp()
+    local next = math.min(255, self.cl_fmFrequency + 1)
+    self.network:sendToServer("sv_setFmFrequency", next)
+    self:cl_setFmFrequency(next)
+    if sm.exists(self.gui) then
+        self:cl_refreshFmGui()
+    end
+end
+
+function RadioPortable:onFmFrequencyDown()
+    local next = math.max(0, self.cl_fmFrequency - 1)
+    self.network:sendToServer("sv_setFmFrequency", next)
+    self:cl_setFmFrequency(next)
+    if sm.exists(self.gui) then
+        self:cl_refreshFmGui()
     end
 end
 
@@ -426,18 +903,24 @@ function RadioPortable.cl_changePlayState(self, newState)
 end
 
 function RadioPortable.cl_changeTrack(self, newTrack)
-    if newTrack == self.cl_currentAudioName then
+    if self.cl_fmMode then
+        return
+    end
+    if self.cl_currentAudioName == newTrack then
+        return
+    end
+    if newTrack == "" then
         return
     end
 
-    if self.cl_audio_effect ~= nil and sm.exists(self.cl_audio_effect) then
+    if self:isValidEffect() then
         if self.cl_audio_effect:isPlaying() then
             self.cl_audio_effect:stop()
         end
         self.cl_audio_effect:destroy()
-        self.cl_audio_effect = nil
     end
-
+    self.cl_audio_effect = nil
+    self.cl_effectJustStarted = false
     self.cl_currentAudioName = newTrack
 
     if newTrack ~= nil and newTrack ~= "" then
@@ -452,12 +935,7 @@ function RadioPortable.cl_changeTrack(self, newTrack)
         self.gui:setText("TrackAuthor", info.Author)
         self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
 
-        local activeTracks = self.tracks or {}
-        for i, trackKey in ipairs(activeTracks) do
-            self.gui:setGridItem("TrackGrid", i - 1, {
-                HighlightItemIcon = (trackKey == newTrack)
-            })
-        end
+        self:cl_refreshTrackList()
     end
 end
 
@@ -465,11 +943,53 @@ function RadioPortable.cl_changeTrackVolume(self, newVolume)
     self.cl_currentAudioVolume = newVolume or 1
 end
 
+function RadioPortable.cl_changePlaylist(self, newPlaylist)
+    if newPlaylist and newPlaylist ~= "" then
+        self.cl_currentPlaylist = newPlaylist
+    end
+end
+
+function RadioPortable.cl_changeRepeatMode(self, mode)
+    self.cl_repeatMode = mode
+    if sm.exists(self.gui) then
+        self.gui:setButtonState("RepeatButton", repeatModeState(mode))
+    end
+end
+
+function RadioPortable.cl_changeShuffle(self, state)
+    self.cl_shuffle = state
+    if sm.exists(self.gui) then
+        self.gui:setButtonState("ShuffleButton", state)
+    end
+    if state then
+        self:rebuildShuffleQueue()
+    end
+end
+
+function RadioPortable.cl_setFmMode(self, state)
+    self.cl_fmMode = state
+    if sm.exists(self.gui) then
+        self.gui:setButtonState("FmButton", state)
+    end
+end
+
+function RadioPortable.cl_setFmFrequency(self, freq)
+    self.cl_fmFrequency = freq
+    if sm.exists(self.gui) then
+        if self.cl_fmMode then
+            self.gui:setText("FmFrequencyLabel", "FM " .. tostring(freq))
+        end
+    end
+end
+
 -- ─────────────────────────────────────────────
 --  TRACK SELECTION
 -- ─────────────────────────────────────────────
 
-function RadioPortable.selectTrack(self, trackName)
+function RadioPortable:selectTrack(trackName)
+    if self.cl_fmMode then
+        return
+    end
     if not trackName or trackName == "" then
         return
     end
@@ -477,26 +997,59 @@ function RadioPortable.selectTrack(self, trackName)
     self.network:sendToServer("sv_changeTrack", trackName)
 end
 
-function RadioPortable.onSetPlayState(self)
+function RadioPortable:onSetPlayState()
     local shouldPlay = not self.cl_playState
 
-    if shouldPlay and self.cl_currentAudioName == nil then
-        Utilities.selectRandomTrack(self, function(track)
-            self:selectTrack(track)
-        end)
+    if shouldPlay and not self.cl_fmMode then
+        local activeTracks = self:getActiveTracks()
+        local trackInPlaylist = false
+        for _, t in ipairs(activeTracks) do
+            if t == self.cl_currentAudioName then
+                trackInPlaylist = true
+                break
+            end
+        end
+
+        if self.cl_currentAudioName == nil or not self:isValidEffect() or not trackInPlaylist then
+            if self.cl_shuffle then
+                local next = self:nextShuffleTrack()
+                if next then
+                    self:selectTrack(next)
+                end
+            else
+                Utilities.selectRandomTrack(self, function(track)
+                    self:selectTrack(track)
+                end)
+            end
+        end
     end
 
     self.network:sendToServer("sv_changePlayState", shouldPlay)
 end
 
-function RadioPortable.onNextSound(self)
-    Utilities.changeSound(self, 1, self.tracks, function(track)
+function RadioPortable:onNextSound()
+    if self.cl_fmMode then
+        return
+    end
+    Utilities.changeSound(self, 1, self:getActiveTracks(), function(track)
         self:selectTrack(track)
     end)
 end
 
-function RadioPortable.onBackSound(self)
-    Utilities.changeSound(self, -1, self.tracks, function(track)
+function RadioPortable:onBackSound()
+    if self.cl_fmMode then
+        return
+    end
+    Utilities.changeSound(self, -1, self:getActiveTracks(), function(track)
+        self:selectTrack(track)
+    end)
+end
+
+function RadioPortable:onRandomSound()
+    if self.cl_fmMode then
+        return
+    end
+    Utilities.selectRandomTrack(self, function(track)
         self:selectTrack(track)
     end)
 end

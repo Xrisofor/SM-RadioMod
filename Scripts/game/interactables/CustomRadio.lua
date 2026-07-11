@@ -14,13 +14,11 @@ CustomRadio.componentType = "customRadio"
 
 local ANTENNA = sm.uuid.new("70eda77b-aff9-4c23-a818-0fcaaf6d577d")
 
+local SLOTS_PER_PAGE = 9
+local PLAYLIST_SLOTS_PER_PAGE = 3
+
 local function repeatModeState(mode)
     return mode == REPEAT_TRACK or mode == REPEAT_PLAYLIST
-end
-
-local function formatTime(seconds)
-    local s = math.floor(seconds)
-    return string.format("%d:%02d", math.floor(s / 60), s % 60)
 end
 
 if not fmdata then
@@ -303,8 +301,11 @@ function CustomRadio.client_onCreate(self)
     self.cl_repeatMode = REPEAT_NONE
     self.cl_shuffle = false
     self.cl_shuffleQueue = {}
+    self.cl_trackPage = 0
+    self.cl_currentPageTracks = {}
+    self.cl_playlistPage = 0
+    self.cl_currentPagePlaylists = {}
     self.cl_effectJustStarted = false
-    self.cl_trackTimer = 0
     self.cl_pendingRadioInfo = nil
     self.cl_audio_effect = nil
     self.cl_fmMode = false
@@ -517,10 +518,6 @@ function CustomRadio.client_onUpdate(self, dt)
 
     if self.cl_fmMode then
         self:updateFmAudio(shouldPlay)
-
-        if sm.exists(self.gui) then
-            self:updateGuiProgress()
-        end
         return
     end
 
@@ -532,16 +529,10 @@ function CustomRadio.client_onUpdate(self, dt)
                 self.cl_effectJustStarted = false
             end
         else
-            self.cl_trackTimer = (self.cl_trackTimer or 0) + dt
             if self.cl_audio_effect:isDone() then
-                self.cl_trackTimer = 0
                 self:onTrackEnded()
             end
         end
-    end
-
-    if sm.exists(self.gui) then
-        self:updateGuiProgress()
     end
 
     self:send_toSpeaker("remote_radio_controller", {
@@ -579,18 +570,6 @@ end
 --  GUI
 -- ─────────────────────────────────────────────
 
-function CustomRadio:updateGuiProgress()
-    local info = self.trackInfo and self.trackInfo[self.cl_currentAudioName]
-    local durationSec = info and info.Duration and (info.Duration * 60) or 0
-    local elapsed = self.cl_trackTimer or 0
-
-    if durationSec > 0 then
-        self.gui:setText("ProgressLabel", formatTime(elapsed) .. " / " .. formatTime(durationSec))
-    else
-        self.gui:setText("ProgressLabel", elapsed > 0 and (formatTime(elapsed) .. " / --:--") or "--:-- / --:--")
-    end
-end
-
 function CustomRadio:openGui()
     if not sm.exists(self.gui) then
         self:createGui()
@@ -604,7 +583,8 @@ function CustomRadio:openGui()
     self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
     self.gui:setText("SubTitle", tostring(#self.connectedElements) .. " / " .. tostring(CustomRadio.maxChildCount))
 
-    self:cl_refreshTrackGrid()
+    self:cl_refreshTrackList()
+    self:cl_refreshPlaylistList()
 
     self.gui:setImage("PlayerIcon", self.cl_playState and STOP_ICON or PLAY_ICON)
     self.gui:setButtonState("RepeatButton", repeatModeState(self.cl_repeatMode))
@@ -635,7 +615,8 @@ function CustomRadio:cl_refreshFmGui()
         self.gui:setVisible("BackButton", false)
         self.gui:setVisible("RepeatButton", false)
         self.gui:setVisible("ShuffleButton", false)
-        self.gui:setVisible("TrackGrid", false)
+        self.gui:setVisible("TrackListPanel", false)
+        self.gui:setVisible("PlaylistPanel", false)
 
         local signal = self:getFMSignal()
         if signal and signal.track then
@@ -655,7 +636,8 @@ function CustomRadio:cl_refreshFmGui()
         self.gui:setVisible("BackButton", true)
         self.gui:setVisible("RepeatButton", true)
         self.gui:setVisible("ShuffleButton", true)
-        self.gui:setVisible("TrackGrid", true)
+        self.gui:setVisible("TrackListPanel", true)
+        self.gui:setVisible("PlaylistPanel", true)
     end
 end
 
@@ -675,6 +657,18 @@ function CustomRadio:createGui()
     self.gui:setButtonCallback("FmButton", "onToggleFmMode")
     self.gui:setButtonCallback("FmFrequencyUp", "onFmFrequencyUp")
     self.gui:setButtonCallback("FmFrequencyDown", "onFmFrequencyDown")
+
+    for i = 1, SLOTS_PER_PAGE do
+        self.gui:setButtonCallback("TrackSlot_" .. i, "cl_onTrackSlot" .. i)
+    end
+    self.gui:setButtonCallback("TrackPageUp", "onTrackPageUp")
+    self.gui:setButtonCallback("TrackPageDown", "onTrackPageDown")
+
+    self.gui:setButtonCallback("PlaylistPageUp", "onPlaylistPageUp")
+    self.gui:setButtonCallback("PlaylistPageDown", "onPlaylistPageDown")
+    for i = 1, PLAYLIST_SLOTS_PER_PAGE do
+        self.gui:setButtonCallback("PlaylistSlot_" .. i, "cl_onPlaylistSlot" .. i)
+    end
 end
 
 function CustomRadio.remote_control(self)
@@ -687,56 +681,157 @@ function CustomRadio.client_onInteract(self, char, lookAt)
     end
 end
 
-function CustomRadio:cl_refreshTrackGrid()
+function CustomRadio:cl_refreshTrackList()
     local activeTracks = self:getActiveTracks()
+    local totalPages = math.max(1, math.ceil(#activeTracks / SLOTS_PER_PAGE))
 
-    self.gui:createGridFromJson("TrackGrid", {
-        type = "itemGrid",
-        layout = TRACK_ITEM_LAYOUT,
-        itemWidth = 270,
-        itemHeight = 90,
-        itemCount = #activeTracks
-    })
-    self.gui:setGridButtonCallback("MainPanel", "cl_onTrackClicked")
-
-    for i, trackKey in ipairs(activeTracks) do
-        local info = Utilities.getTrackInfo(self, trackKey)
-        self.gui:setGridItem("TrackGrid", i - 1, {
-            Name = info.Name,
-            Author = info.Author,
-            HighlightItemIcon = (trackKey == self.cl_currentAudioName),
-            itemId = "00000000-0000-0000-0000-000000000000"
-        })
+    if self.cl_trackPage > totalPages - 1 then
+        self.cl_trackPage = totalPages - 1
     end
+    if self.cl_trackPage < 0 then
+        self.cl_trackPage = 0
+    end
+
+    local start = self.cl_trackPage * SLOTS_PER_PAGE + 1
+    self.cl_currentPageTracks = {}
+
+    for slot = 1, SLOTS_PER_PAGE do
+        local trackKey = activeTracks[start + slot - 1]
+        self.cl_currentPageTracks[slot] = trackKey
+
+        if trackKey then
+            local info = Utilities.getTrackInfo(self, trackKey)
+            local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
+
+            self.gui:setVisible("TrackSlot_" .. slot, true)
+            self.gui:setText("TrackName_" .. slot, info.Name)
+            self.gui:setText("TrackAuthor_" .. slot, info.Author)
+            self.gui:setImage("TrackImage_" .. slot, modPrefix .. "/" .. info.Image)
+            self.gui:setButtonState("TrackSlot_" .. slot, trackKey == self.cl_currentAudioName)
+        else
+            self.gui:setVisible("TrackSlot_" .. slot, false)
+            self.gui:setButtonState("TrackSlot_" .. slot, false)
+        end
+    end
+
+    self.gui:setText("TrackPageLabel", tostring(self.cl_trackPage + 1) .. "/" .. tostring(totalPages))
+    self.gui:setVisible("TrackPageDown", self.cl_trackPage ~= 0)
+    self.gui:setVisible("TrackPageUp", self.cl_trackPage ~= (totalPages - 1))
 end
 
-function CustomRadio.cl_onTrackClicked(self, grid, index)
+function CustomRadio:cl_onTrackSlotClicked(slot)
     if self.cl_fmMode then
         return
     end
 
-    local activeTracks = self:getActiveTracks()
-    local trackKey = activeTracks[index + 1]
+    local trackKey = self.cl_currentPageTracks[slot]
     if trackKey then
         self:selectTrack(trackKey)
-        self:cl_refreshTrackGrid()
+        self:cl_refreshTrackList()
     end
+end
+
+for i = 1, SLOTS_PER_PAGE do
+    CustomRadio["cl_onTrackSlot" .. i] = function(self)
+        self:cl_onTrackSlotClicked(i)
+    end
+end
+
+function CustomRadio:onTrackPageUp()
+    if self.cl_fmMode then
+        return
+    end
+    self.cl_trackPage = self.cl_trackPage + 1
+    self:cl_refreshTrackList()
+end
+
+function CustomRadio:onTrackPageDown()
+    if self.cl_fmMode then
+        return
+    end
+    if self.cl_trackPage > 0 then
+        self.cl_trackPage = self.cl_trackPage - 1
+    end
+    self:cl_refreshTrackList()
 end
 
 -- ─────────────────────────────────────────────
 --  GUI CALLBACKS
 -- ─────────────────────────────────────────────
 
-function CustomRadio.cl_onPlaylistDropdownInteract(self, option)
+function CustomRadio:cl_refreshPlaylistList()
+    local names = self.playlistNames or {}
+    local totalPages = math.max(1, math.ceil(#names / PLAYLIST_SLOTS_PER_PAGE))
+
+    if self.cl_playlistPage > totalPages - 1 then
+        self.cl_playlistPage = totalPages - 1
+    end
+    if self.cl_playlistPage < 0 then
+        self.cl_playlistPage = 0
+    end
+
+    local start = self.cl_playlistPage * PLAYLIST_SLOTS_PER_PAGE + 1
+    self.cl_currentPagePlaylists = {}
+
+    for slot = 1, PLAYLIST_SLOTS_PER_PAGE do
+        local playlistName = names[start + slot - 1]
+        self.cl_currentPagePlaylists[slot] = playlistName
+
+        if playlistName then
+            local info = Utilities.getPlaylistInfo(self, playlistName)
+            local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
+
+            self.gui:setVisible("PlaylistSlot_" .. slot, true)
+            self.gui:setText("PlaylistName_" .. slot, info.Name)
+            self.gui:setText("PlaylistAuthor_" .. slot, info.Author)
+            self.gui:setImage("PlaylistImage_" .. slot, modPrefix .. "/" .. info.Image)
+            self.gui:setButtonState("PlaylistSlot_" .. slot, playlistName == self.cl_currentPlaylist)
+        else
+            self.gui:setVisible("PlaylistSlot_" .. slot, false)
+            self.gui:setButtonState("PlaylistSlot_" .. slot, false)
+        end
+    end
+
+    self.gui:setText("PlaylistPageLabel", tostring(self.cl_playlistPage + 1) .. "/" .. tostring(totalPages))
+    self.gui:setVisible("PlaylistPageDown", self.cl_playlistPage ~= 0)
+    self.gui:setVisible("PlaylistPageUp", self.cl_playlistPage ~= (totalPages - 1))
+end
+
+function CustomRadio:cl_onPlaylistSlotClicked(slot)
     if self.cl_fmMode then
         return
     end
-    self.network:sendToServer("sv_changePlaylist", option)
-    self:cl_changePlaylist(option)
-    if sm.exists(self.gui) then
-        self:cl_refreshTrackGrid()
+
+    local playlistName = self.cl_currentPagePlaylists[slot]
+    if not playlistName or playlistName == self.cl_currentPlaylist then
+        return
     end
+
+    self.network:sendToServer("sv_changePlaylist", playlistName)
+    self:cl_changePlaylist(playlistName)
+    self.cl_trackPage = 0
     self:rebuildShuffleQueue()
+
+    self:cl_refreshTrackList()
+    self:cl_refreshPlaylistList()
+end
+
+for i = 1, PLAYLIST_SLOTS_PER_PAGE do
+    CustomRadio["cl_onPlaylistSlot" .. i] = function(self)
+        self:cl_onPlaylistSlotClicked(i)
+    end
+end
+
+function CustomRadio:onPlaylistPageUp()
+    self.cl_playlistPage = self.cl_playlistPage + 1
+    self:cl_refreshPlaylistList()
+end
+
+function CustomRadio:onPlaylistPageDown()
+    if self.cl_playlistPage > 0 then
+        self.cl_playlistPage = self.cl_playlistPage - 1
+    end
+    self:cl_refreshPlaylistList()
 end
 
 function CustomRadio.client_onVolumeSliderMoved(self, value)
@@ -845,7 +940,6 @@ function CustomRadio.cl_changeTrack(self, newTrack)
     end
     self.cl_audio_effect = nil
     self.cl_effectJustStarted = false
-    self.cl_trackTimer = 0
     self.cl_currentAudioName = newTrack
 
     if newTrack ~= nil and newTrack ~= "" then
@@ -860,12 +954,7 @@ function CustomRadio.cl_changeTrack(self, newTrack)
         self.gui:setText("TrackAuthor", info.Author)
         self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
 
-        local activeTracks = self:getActiveTracks()
-        for i, trackKey in ipairs(activeTracks) do
-            self.gui:setGridItem("TrackGrid", i - 1, {
-                HighlightItemIcon = (trackKey == newTrack)
-            })
-        end
+        self:cl_refreshTrackList()
     end
 end
 

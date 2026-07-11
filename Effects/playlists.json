@@ -1,6 +1,20 @@
 {
-    "Test": [
-        "RadioMod - Phonk Playlist No. 1",
-        "Korol i Shut - Playlist No. 1 (RU)"
-    ]
+    "Scrap Mechanic": {
+        "Tracks": [
+            "Scrap Mechanic - Radio",
+            "Scrap Mechanic - North Korea",
+            "Scrap Mechanic - Elevator"
+        ],
+        "Name": "Scrap Mechanic",
+        "Author": "Axolot Games"
+    },
+    "Radio Mod": {
+        "Tracks": [
+            "RadioMod - Phonk Playlist No. 1",
+            "Korol i Shut - Playlist No. 1 (RU)",
+            "E - Russian Hardbass Radio (RU)"
+        ],
+        "Name": "Custom Radio Mod Playlist",
+        "Author": "Xrisofor"
+    }
 }

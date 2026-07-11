@@ -2,17 +2,13 @@
    "RadioMod - Phonk Playlist No. 1" : {
       "parameterList": {
          "CAE_Volume": 1.0,
-         "CAE_Pitch": 1.0,
-         "CAE_Reverb": 1.0,
-         "CAE_ReverbIdx": -1.0,
          "CAE_Position": 0.0
       },
       "effectList" : [
          {
-            "delay" : 0.0,
             "name" : "Phonk_PlaylistOne_Radio_RadioMod",
             "type" : "audio",
-            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position", "progress" ]
+            "parameters": [ "CAE_Volume", "CAE_Position" ]
          }
       ],
       "radioMod": {
@@ -25,17 +21,13 @@
    "E - Russian Hardbass Radio (RU)" : {
       "parameterList": {
          "CAE_Volume": 1.0,
-         "CAE_Pitch": 1.0,
-         "CAE_Reverb": 1.0,
-         "CAE_ReverbIdx": -1.0,
          "CAE_Position": 0.0
       },
       "effectList" : [
          {
-            "delay" : 0.0,
             "name" : "Russian_Hardbass_Radio_E",
             "type" : "audio",
-            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position", "progress" ]
+            "parameters": [ "CAE_Volume", "CAE_Position" ]
          }
       ],
       "radioMod": {
@@ -48,17 +40,13 @@
    "Korol i Shut - Playlist No. 1 (RU)" : {
       "parameterList": {
          "CAE_Volume": 1.0,
-         "CAE_Pitch": 1.0,
-         "CAE_Reverb": 1.0,
-         "CAE_ReverbIdx": -1.0,
          "CAE_Position": 0.0
       },
       "effectList" : [
          {
-            "delay" : 0.0,
             "name" : "Korol_i_Shut_PlaylistOne_Radio_RadioMod",
             "type" : "audio",
-            "parameters": [ "CAE_Volume", "CAE_Pitch", "CAE_Reverb", "CAE_ReverbIdx", "CAE_Position", "progress" ]
+            "parameters": [ "CAE_Volume", "CAE_Position" ]
          }
       ],
       "radioMod": {
