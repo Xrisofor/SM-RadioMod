@@ -126,6 +126,19 @@ function Utilities.extractPlaylistData(raw)
     return tracks, nil
 end
 
+function Utilities.formatTime(ms)
+    ms = tonumber(ms) or 0
+    if ms < 0 then
+        ms = 0
+    end
+
+    local totalSeconds = math.floor(ms / 1000)
+    local minutes = math.floor(totalSeconds / 60)
+    local seconds = totalSeconds % 60
+
+    return string.format("%d:%02d", minutes, seconds)
+end
+
 function Utilities.buildTrackKey(name, modUUID)
     if modUUID and tostring(modUUID) ~= "" then
         return tostring(modUUID) .. name

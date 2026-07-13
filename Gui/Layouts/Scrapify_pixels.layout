@@ -416,6 +416,15 @@
 				<Property key="TextAlign" value="Center" />
 				<Property key="Caption" value="FM" />
 			</Widget>
+			<Widget type="TextBox" skin="TextBox" name="TrackTimeLabel" position="0 658 1759 28">
+				<Property key="Caption" value="0:00 / 0:00" />
+				<Property key="FontName" value="SM_Button" />
+				<Property key="TextAlign" value="Center" />
+				<Property key="FontHeight" value="16" />
+				<Property key="NeedKey" value="false" />
+				<Property key="NeedMouse" value="false" />
+			</Widget>
 		</Widget>
+		<Widget type="ScrollBar" skin="PanelEmpty" name="SeekBar" position="95 900 1710 135" />
 	</Widget>
 </MyGUI>

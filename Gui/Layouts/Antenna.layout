@@ -1,42 +1,35 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
 <MyGUI type="Layout" version="3.2.0">
-    <Widget type="Widget" skin="BackgroundInteractableWide" position_real="0 0 0.26041666666666669 0.20833333333333334" name="BackPanel">
-        <Widget type="TextBox" skin="TextBox" position_real="0 0.066666666666666666 1 0.22222222222222221" align="HCenter Top" name="Title">
-            <Property key="FontName" value="SM_Button"/>
-            <Property key="TextAlign" value="Center"/>
-            <Property key="TextShadow" value="true"/>
-            <Property key="Caption" value="ANTENNA"/>
-        </Widget>
-        <Widget type="Widget" skin="NonBlurryBackgroundDarkRoundedLowerLeft" position_real="0 0.37777777777777777 1 0.62222222222222223" align="HCenter Bottom">
-            <Widget type="TextBox" skin="TextBox" position_real="0 0.14285714285714285 1 0.17857142857142858" align="HCenter Top" name="StatusValue">
-                <Property key="Caption" value="Status"/>
-                <Property key="TextAlign" value="Center"/>
-                <Property key="TextShadow" value="true"/>
-                <Property key="FontName" value="SM_Button"/>
-            </Widget>
-            <Widget type="Widget" skin="PanelEmpty" position_real="0 0.42857142857142855 1 0.39285714285714285">
-                <Widget type="TextBox" skin="TextBox" position="0 0 500 55" name="FmFrequencyLabel">
-                    <Property key="Caption" value="FM 0"/>
-                    <Property key="FontName" value="SM_Button"/>
-                    <Property key="TextAlign" value="Center"/>
-                </Widget>
-                <Widget type="Button" skin="SettingsButton" position="135 5 60 45" name="FmFrequencyDown">
-                    <Property key="Caption" value="-"/>
-                    <Property key="FontName" value="SM_Button"/>
-                    <Property key="TextAlign" value="Center"/>
-                </Widget>
-                <Widget type="Button" skin="SettingsButton" position="305 5 60 45" name="FmFrequencyUp">
-                    <Property key="Caption" value="+"/>
-                    <Property key="FontName" value="SM_Button"/>
-                    <Property key="TextAlign" value="Center"/>
-                </Widget>
-            </Widget>
-        </Widget>
-    </Widget>
-    <CodeGeneratorSettings>
-        <Property key="IncludeDirectory" value=""/>
-        <Property key="PanelName" value=""/>
-        <Property key="PanelNamespace" value=""/>
-        <Property key="SourceDirectory" value=""/>
-    </CodeGeneratorSettings>
+	<Widget type="Widget" skin="BackgroundInteractableWide" name="BackPanel" position_real="0 0 0.2604166666666667 0.20833333333333334">
+		<Widget type="TextBox" align="HCenter Top" skin="TextBox" name="Title" position_real="0 0.06666666666666667 1 0.2222222222222222">
+			<Property key="FontName" value="SM_Button" />
+			<Property key="TextAlign" value="Center" />
+			<Property key="TextShadow" value="true" />
+			<Property key="Caption" value="ANTENNA" />
+		</Widget>
+		<Widget type="Widget" align="HCenter Bottom" skin="NonBlurryBackgroundDarkRoundedLowerLeft" position_real="0 0.37777777777777777 1 0.6222222222222222">
+			<Widget type="TextBox" align="HCenter Top" skin="TextBox" name="StatusValue" position_real="0 0.14285714285714285 1 0.17857142857142858">
+				<Property key="Caption" value="Status" />
+				<Property key="TextAlign" value="Center" />
+				<Property key="TextShadow" value="true" />
+				<Property key="FontName" value="SM_Button" />
+			</Widget>
+			<Widget type="Widget" skin="PanelEmpty" position_real="0 0.42857142857142855 1 0.39285714285714285">
+				<Widget type="TextBox" skin="TextBox" name="FmFrequencyLabel" position_real="0 0 1 1">
+					<Property key="Caption" value="FM 0" />
+					<Property key="FontName" value="SM_Button" />
+					<Property key="TextAlign" value="Center" />
+				</Widget>
+				<Widget type="Button" skin="SettingsButton" name="FmFrequencyDown" position_real="0.27 0.09090909090909091 0.12 0.8181818181818182">
+					<Property key="Caption" value="-" />
+					<Property key="FontName" value="SM_Button" />
+					<Property key="TextAlign" value="Center" />
+				</Widget>
+				<Widget type="Button" skin="SettingsButton" name="FmFrequencyUp" position_real="0.61 0.09090909090909091 0.12 0.8181818181818182">
+					<Property key="Caption" value="+" />
+					<Property key="FontName" value="SM_Button" />
+					<Property key="TextAlign" value="Center" />
+				</Widget>
+			</Widget>
+		</Widget>
+	</Widget>
 </MyGUI>
