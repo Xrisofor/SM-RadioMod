@@ -12,7 +12,10 @@ CustomRadio.poseWeightCount = 1
 CustomRadio.maxChildCount = 15
 CustomRadio.componentType = "customRadio"
 
-local ANTENNA = sm.uuid.new("70eda77b-aff9-4c23-a818-0fcaaf6d577d")
+local ANTENNA_UUIDS = {
+    [tostring(sm.uuid.new("70eda77b-aff9-4c23-a818-0fcaaf6d577d"))] = true,
+    [tostring(sm.uuid.new("30165326-52c4-4faa-b76f-b12fc5f19efb"))] = true
+}
 
 local SLOTS_PER_PAGE = 9
 local PLAYLIST_SLOTS_PER_PAGE = 3
@@ -108,7 +111,7 @@ end
 function CustomRadio:findAntennaChild()
     for _, child in ipairs(self.interactable:getChildren()) do
         local shape = child:getShape()
-        if shape and shape.uuid == ANTENNA then
+        if shape and ANTENNA_UUIDS[tostring(shape.uuid)] then
             return child
         end
     end

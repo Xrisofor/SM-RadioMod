@@ -1,59 +1,44 @@
-## Custom Radio (Radio Mod)
-**Custom Radio** is a mod for [Scrap Mechanic](https://store.steampowered.com/app/387990/Scrap_Mechanic/) that adds radios capable of playing both built-in and user-added music — all without replacing core game files.
+# SM-RadioMod (Custom Radio) / EN
 
-[>> Русская версия <<](https://github.com/Xrisofor/SM-RadioMod/blob/main/README-RU.md)
+![Mod Preview](https://github.com/Xrisofor/SM-RadioMod/blob/main/preview.jpg?raw=true)
 
-## How does it work?
-* Install the required dependencies:
-  * [SM-DLL-Injector](https://github.com/QuestionableM/SM-DLL-Injector/releases/)
-  * [SM-CustomAudioExtension](https://github.com/QuestionableM/SM-CustomAudioExtension/releases/)
-* Enable the mod and [Mod Database](https://steamcommunity.com/workshop/filedetails/?id=2504530003) in your game world.
+**Custom Radio** - the same familiar in-game radio, but now with support for your own custom tracks. Listen to your favorite music anywhere, any way you want!
 
-## What objects are included?
-* Custom Radio
-* Mini Custom Radio
-* Portable Radio
-* Radio Speaker
-* Radio Remote Control
-* Device Timer *(only works in worlds where time flows)*
+> **Important:** This mod is currently in **Beta**. Some features are still being worked on and may behave unpredictably. Bug reports are highly appreciated!
 
-## Why use Custom Radio?
-* **No file replacement** — You don’t need to restart the game or replace ``.bank`` files.
-* **High compatibility** — Minimal conflicts with other mods, even those using their own sounds.
-* **Ease of use** — Control music with intuitive in-game devices.
+# Installation
 
-## Included tracks
-This beta version includes the following playlists:
-* Scrap Mechanic - Radio
-* Scrap Mechanic - Elevator Music
-* Scrap Mechanic - North Korea
-* [Phonk Radio - Radio Mod](https://en.wikipedia.org/wiki/Phonk)
-* [Russian Hardbass Radio - E (RU)](https://steamcommunity.com/sharedfiles/filedetails/?id=2476541477)
-* [Neon Genesis Evangelion - Shiro SAGISU](https://en.wikipedia.org/wiki/Neon_Genesis_Evangelion)
-* [Compilation #1 - Korol i Shut (RU)](https://en.wikipedia.org/wiki/Korol_i_Shut)
+- Download and install the required extensions:
+  - [SM-DLL-Injector](https://github.com/QuestionableM/SM-DLL-Injector/#how-to-install)
+  - [SM-CustomAudioExtension](https://github.com/QuestionableM/SM-CustomAudioExtension#how-to-download-and-enable)
+- Enable **Custom Radio** in your world settings.
 
-## Want to add your own music?
-You can customize the radio to play your own tracks in two ways:
+A detailed installation guide is available in the [README on GitHub](https://github.com/Xrisofor/SM-RadioMod/blob/main/README.md).
 
-### Option 1 — Manual setup
-Follow [the wiki guide](https://github.com/Xrisofor/SM-RadioMod/wiki/How-to-Use-Custom-Radio) to configure ``sm_cae_config.json`` and ``custom_effects.json``.
+# Mod Contents
 
-### Option 2 — Custom Radio Manager
-Use the [Custom Radio Manager](https://drive.google.com/file/d/1ndqaF3vAaxhKE7nunuXn1MYdKF-Y13Tn/view) app to:
-* Automate setup
-* Install required extensions
-> ⚠️ Requires [Microsoft .NET Framework 4.7.2](https://dotnet.microsoft.com/ru-ru/download/dotnet-framework/net472).
+- **Custom Radio** - your personal media center that plays both vanilla tracks and your own custom audio files.
+- **Mini Custom Radio** - a smaller version of the receiver that retains full functionality, but easily fits into the cabin of any vehicle.
+- **Portable Radio** - a mobile device that lets you listen to music on the go.
+- **Radio Speaker** - an auxiliary speaker to broadcast audio to remote parts of your builds or vehicles.
+- **Radio Remote Control** - a tool for remotely switching tracks on a linked radio receiver.
+- **Antenna** - connects to a radio receiver and broadcasts the currently playing music to a specific frequency.
 
-> ⚠️ IMPORTANT:
-> If you're using your own mod with Custom Radio, it **must be published and enabled in the game.**
-> Otherwise, [Mod Database](https://steamcommunity.com/workshop/filedetails/?id=2504530003) will not detect or load your mod.
+# Mod Features
 
-## Editing the Main Mod
-You can manually modify the main mod files. However:
-> ❗ Any **mod update or reinstallation** may **overwrite your changes**.
-For long-term use, it's recommended to create your own **separate mod** that works with Custom Radio.
+- **Clean Audio Integration** - music is played without replacing any vanilla Scrap Mechanic files, powered by the *SM-CustomAudioExtension* (CAE).
+- **Script Control via [SComputers](https://steamcommunity.com/sharedfiles/filedetails/?id=2949350596)** - the radio supports a full API. You can write in-game Lua scripts to automate play/stop functions, switch tracks, and read the receiver's current state.
+- **Survival Mode Support** - thanks to integration with [Modded Craftbot Recipes](https://steamcommunity.com/sharedfiles/filedetails/?id=2816900681), all mod components (receivers, speakers, remotes, antennas) can be crafted.
+- **Custom Music Pack Support** - expand your library with ready-made music packs from other creators without conflicts or manual config file editing.
+- **Wireless FM Network** - tune antennas and radio receivers to any of the 256 frequencies (0–255) to broadcast music wirelessly between your builds and vehicles.
+- **Multi-Speaker Systems (Multiroom)** - connect up to 15 external speakers to a single radio. They will synchronously replicate the audio, adjusting to volume and speed (pitch) changes from the main device.
+- **Full Playback Control** - a user-friendly GUI with volume control, speed adjustment (pitch), shuffle, and three repeat modes.
+- **Logic System Integration** - besides computers, the radio supports standard control via triggers, sensors, buttons, timers, and driver seats.
 
-## Future Plans
-* More music playlists
-* Additional radio devices
-* General bug fixes and improvements
+# Adding Custom Music
+
+Want to listen to your own tracks in-game? You can easily package them into an independent add-on. A simple and straightforward API lets you register your audio files and playlists in just a few lines of code.
+
+A detailed, step-by-step guide with ready-to-use code examples is published on the [official project Wiki on GitHub](https://github.com/Xrisofor/SM-RadioMod/wiki).
+
+> Please note: for your tracks to appear on the radio receivers, your custom music add-on must be enabled in the mod list of your game world.

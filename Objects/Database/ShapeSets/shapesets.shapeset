@@ -99,6 +99,32 @@
          },
          "sticky" : "-Y",
          "uuid" : "70eda77b-aff9-4c23-a818-0fcaaf6d577d"
+      },
+      {
+         "hull" : {
+            "x" : 5,
+            "y" : 5,
+            "z" : 3,
+            "col": "$GAME_DATA/Objects/Collision/obj_industrial_satellite03.obj"
+         },
+         "color" : "930000",
+         "flammable" : false,
+         "name" : "obj_custom_satellite",
+         "physicsMaterial" : "Metal",
+         "ratings" : {
+            "buoyancy" : 3,
+            "density" : 2,
+            "durability" : 4,
+            "friction" : 4
+         },
+         "renderable" : "$CONTENT_DATA/Objects/Renderable/obj_interactive_satellite.rend",
+         "rotationSet" : "PropZmmNegZmm",
+         "scripted" : {
+            "classname" : "CustomAntenna",
+            "filename" : "$CONTENT_DATA/Scripts/game/interactables/CustomAntenna.lua"
+         },
+         "sticky" : "-Z+Z",
+         "uuid" : "30165326-52c4-4faa-b76f-b12fc5f19efb"
       }
    ]
 }
