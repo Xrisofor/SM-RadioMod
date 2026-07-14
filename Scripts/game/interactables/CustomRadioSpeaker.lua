@@ -101,6 +101,7 @@ function CustomRadioSpeaker.remote_radio_controller_volume(self, param)
     self.cl_currentAudioVolume = param
     if effectExists(self.cl_audio_effect) then
         self.cl_audio_effect:setParameter("CAE_Volume", param / 10.0)
+        self.cl_audio_effect:setParameter("CAE_Position", (self.cl_trackPosition or 0) / 1000.0)
     end
 end
 

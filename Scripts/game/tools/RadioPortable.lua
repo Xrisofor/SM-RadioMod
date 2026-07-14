@@ -4,11 +4,15 @@ dofile("$CONTENT_DATA/Scripts/game/Utilities.lua")
 
 RadioPortable = class()
 
-local renderables = {"$CONTENT_DATA/Tools/Portable/radio_portable.rend"}
-local renderablesTp = {"$SURVIVAL_DATA/Character/Char_Male/Animations/char_male_tp_heavytool.rend",
-                       "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool_tp_animlist.rend"}
-local renderablesFp = {"$SURVIVAL_DATA/Character/Char_Male/Animations/char_male_fp_heavytool.rend",
-                       "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool_fp_animlist.rend"}
+local renderables = { "$CONTENT_DATA/Tools/Portable/radio_portable.rend" }
+local renderablesTp = {
+    "$SURVIVAL_DATA/Character/Char_Male/Animations/char_male_tp_heavytool.rend", 
+    "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool_tp_animlist.rend"
+}
+local renderablesFp = {
+    "$SURVIVAL_DATA/Character/Char_Male/Animations/char_male_fp_heavytool.rend",
+    "$SURVIVAL_DATA/Character/Char_Tools/char_heavytool/char_heavytool_fp_animlist.rend"
+}
 
 local currentRenderablesTp = {}
 local currentRenderablesFp = {}
@@ -19,6 +23,14 @@ sm.tool.preloadRenderables(renderablesFp)
 
 local SLOTS_PER_PAGE = 9
 local PLAYLIST_SLOTS_PER_PAGE = 3
+
+local FM_DRIFT_THRESHOLD_MS = 500
+
+local SEEK_SLIDER_STEPS = 1000
+local SEEK_SYNC_COOLDOWN = 0.6
+
+local MIN_PLAY_TIME_BEFORE_DONE = 0.3
+local MAX_TRACK_START_RETRIES = 6
 
 local function repeatModeState(mode)
     return mode == REPEAT_TRACK or mode == REPEAT_PLAYLIST
@@ -72,7 +84,7 @@ function RadioPortable:nextShuffleTrack()
 end
 
 -- ─────────────────────────────────────────────
---  FM HELPERS (только приём — переносная рация не транслирует, антенны нет)
+--  FM HELPERS
 -- ─────────────────────────────────────────────
 
 function RadioPortable:getFMSignal()
@@ -99,11 +111,13 @@ function RadioPortable.server_onCreate(self)
         track = nil,
         volume = 1,
         play_state = false,
+        play_speed = 1,
         playlist = "All Tracks",
         repeat_mode = REPEAT_NONE,
         shuffle = false,
         fm_mode = false,
-        fm_frequency = 0
+        fm_frequency = 0,
+        track_position = 0
     }
     for k, v in pairs(defaults) do
         if self.storageSave[k] == nil then
@@ -114,30 +128,82 @@ function RadioPortable.server_onCreate(self)
     self.sv_audioName = self.storageSave.track
     self.sv_volumeLevel = self.storageSave.volume
     self.sv_playState = self.storageSave.play_state
+    self.sv_playSpeed = self.storageSave.play_speed
     self.sv_playlist = self.storageSave.playlist
     self.sv_repeatMode = self.storageSave.repeat_mode
     self.sv_shuffle = self.storageSave.shuffle
     self.sv_fmMode = self.storageSave.fm_mode
     self.sv_fmFrequency = self.storageSave.fm_frequency
+    self.sv_trackPosition = self.storageSave.track_position or 0
+    self.sv_positionSaveTimer = 0
 end
+
+function RadioPortable.server_onUnload(self)
+    self.storageSave.track_position = math.floor(self.sv_trackPosition or 0)
+    self.storage:save(self.storageSave)
+end
+
+function RadioPortable:server_onFixedUpdate(dt)
+    dt = dt or (1 / 40)
+
+    if self.sv_playState and not self.sv_fmMode and self.sv_audioName and self.sv_audioName ~= "" then
+        local speed = (self.sv_playSpeed and self.sv_playSpeed > 0) and self.sv_playSpeed or 1
+        self.sv_trackPosition = (self.sv_trackPosition or 0) + dt * 1000 * speed
+
+        local info = Utilities.getTrackInfo(self, self.sv_audioName)
+        local duration = info.Duration or 0
+        if duration > 0 and self.sv_trackPosition > duration then
+            self.sv_trackPosition = duration
+        end
+
+        self.sv_positionSaveTimer = (self.sv_positionSaveTimer or 0) + dt
+        if self.sv_positionSaveTimer >= 3 then
+            self.sv_positionSaveTimer = 0
+            self.storageSave.track_position = math.floor(self.sv_trackPosition)
+            self.storage:save(self.storageSave)
+        end
+    end
+end
+
+local SETTING_FIELD = {
+    track = "sv_audioName",
+    volume = "sv_volumeLevel",
+    play_state = "sv_playState",
+    play_speed = "sv_playSpeed",
+    playlist = "sv_playlist",
+    repeat_mode = "sv_repeatMode",
+    shuffle = "sv_shuffle",
+    fm_mode = "sv_fmMode",
+    fm_frequency = "sv_fmFrequency"
+}
 
 function RadioPortable:sv_updateSetting(key, value, clientFn)
     if self.storageSave[key] ~= value then
         self.storageSave[key] = value
-        self["sv_" .. key] = value
+        self[SETTING_FIELD[key] or ("sv_" .. key)] = value
         self.storage:save(self.storageSave)
         self.network:sendToClients(clientFn, value)
     end
 end
 
 function RadioPortable.sv_changeTrack(self, s)
+    if self.sv_audioName ~= s then
+        self.sv_trackPosition = 0
+        self.storageSave.track_position = 0
+        self.storage:save(self.storageSave)
+    end
     self:sv_updateSetting("track", s, "cl_changeTrack")
 end
 function RadioPortable.sv_changeTrackVolume(self, s)
     self:sv_updateSetting("volume", s, "cl_changeTrackVolume")
 end
 function RadioPortable.sv_changePlayState(self, s)
+    self.storageSave.track_position = math.floor(self.sv_trackPosition or 0)
+    self.storage:save(self.storageSave)
     self:sv_updateSetting("play_state", s, "cl_changePlayState")
+end
+function RadioPortable.sv_changePlaySpeed(self, s)
+    self:sv_updateSetting("play_speed", s, "cl_changePlaySpeed")
 end
 function RadioPortable.sv_changePlaylist(self, s)
     self:sv_updateSetting("playlist", s, "cl_changePlaylist")
@@ -155,16 +221,25 @@ function RadioPortable.sv_setFmFrequency(self, freq)
     self:sv_updateSetting("fm_frequency", freq, "cl_setFmFrequency")
 end
 
+function RadioPortable.sv_seekTrack(self, positionMs)
+    self.sv_trackPosition = positionMs
+    self.storageSave.track_position = math.floor(positionMs)
+    self.storage:save(self.storageSave)
+    self.network:sendToClients("cl_seekTrack", positionMs)
+end
+
 function RadioPortable.sv_getRadioInfo(self, _, player)
     self.network:sendToClient(player, "cl_updateRadioInfo", {
         track = self.sv_audioName,
         volume = self.sv_volumeLevel,
         playState = self.sv_playState,
+        playSpeed = self.sv_playSpeed,
         playlist = self.sv_playlist,
         repeatMode = self.sv_repeatMode,
         shuffle = self.sv_shuffle,
         fmMode = self.sv_fmMode,
-        fmFrequency = self.sv_fmFrequency
+        fmFrequency = self.sv_fmFrequency,
+        position = self.sv_trackPosition or 0
     })
 end
 
@@ -177,6 +252,7 @@ function RadioPortable.client_onCreate(self)
     self.cl_currentAudioName = nil
     self.cl_currentAudioVolume = 1
     self.cl_playState = false
+    self.cl_playSpeed = 1
     self.cl_currentPlaylist = "All Tracks"
     self.cl_repeatMode = REPEAT_NONE
     self.cl_shuffle = false
@@ -188,9 +264,20 @@ function RadioPortable.client_onCreate(self)
     self.cl_effectJustStarted = false
     self.cl_pendingRadioInfo = nil
     self.cl_audio_effect = nil
+
+    self.cl_trackPosition = 0
+    self.cl_trackDuration = 0
+    self.cl_guiPositionTimer = 0
+    self.cl_elapsedTime = 0
+    self.cl_lastUserSeekAt = -math.huge
+    self.cl_seekBarSyncing = false
+    self.cl_trackStartClock = 0
+    self.cl_trackStartRetries = 0
+
     self.cl_fmMode = false
     self.cl_fmFrequency = 0
     self.cl_fmCurrentTrack = nil
+    self.cl_fmTrackPosition = 0
 
     self:loadAnimations()
 
@@ -222,8 +309,10 @@ function RadioPortable:applyRadioInfo(data)
     self:cl_changeRepeatMode(data.repeatMode or REPEAT_NONE)
     self:cl_changeShuffle(data.shuffle or false)
     self:cl_changeTrack(data.track)
+    self:cl_seekTo(data.position or 0)
     self:cl_changeTrackVolume(data.volume)
     self:cl_changePlayState(data.playState)
+    self:cl_changePlaySpeed(data.playSpeed)
     self:cl_setFmMode(data.fmMode or false)
     self:cl_setFmFrequency(data.fmFrequency or 0)
 end
@@ -231,6 +320,24 @@ end
 -- ─────────────────────────────────────────────
 --  TRACK END LOGIC
 -- ─────────────────────────────────────────────
+
+function RadioPortable:retryCurrentTrack()
+    self.cl_trackStartRetries = (self.cl_trackStartRetries or 0) + 1
+
+    if self:isValidEffect() then
+        if self.cl_audio_effect:isPlaying() then
+            self.cl_audio_effect:stop()
+        end
+        self.cl_audio_effect:destroy()
+    end
+    self.cl_audio_effect = nil
+
+    if self.cl_currentAudioName and self.cl_currentAudioName ~= "" then
+        self.cl_audio_effect = sm.effect.createEffect(self.cl_currentAudioName, self.tool:getOwner():getCharacter())
+    end
+
+    self.cl_effectJustStarted = false
+end
 
 function RadioPortable:onTrackEnded()
     if self.cl_fmMode then
@@ -246,6 +353,9 @@ function RadioPortable:onTrackEnded()
         end
         self.cl_audio_effect = sm.effect.createEffect(self.cl_currentAudioName, self.tool:getOwner():getCharacter())
         self.cl_effectJustStarted = true
+        self.cl_trackPosition = 0
+        self.cl_trackStartRetries = 0
+        self:cl_updateTrackPositionGui()
         return
     end
 
@@ -287,6 +397,11 @@ function RadioPortable:updateAudioEffect(play)
             if self:isValidEffect() and not self.cl_audio_effect:isPlaying() then
                 self.cl_audio_effect:start()
                 self.cl_effectJustStarted = true
+                self.cl_trackStartClock = self.cl_elapsedTime or 0
+
+                if self.cl_trackPosition and self.cl_trackPosition > 0 then
+                    self.cl_audio_effect:setParameter("CAE_Position", self.cl_trackPosition / 1000.0)
+                end
             end
         else
             if self:isValidEffect() then
@@ -306,7 +421,7 @@ function RadioPortable:updateAudioEffect(play)
     end
 end
 
-function RadioPortable:updateFmAudio(shouldPlay)
+function RadioPortable:updateFmAudio(shouldPlay, dt)
     local signal = self:getFMSignal()
 
     if not signal then
@@ -314,10 +429,14 @@ function RadioPortable:updateFmAudio(shouldPlay)
             self.cl_audio_effect:stop()
         end
         self.cl_fmCurrentTrack = nil
+        self.cl_fmTrackPosition = 0
         return
     end
 
-    if signal.track ~= self.cl_fmCurrentTrack then
+    local wasPlaying = self:isValidEffect() and self.cl_audio_effect:isPlaying()
+    local trackChanged = signal.track ~= self.cl_fmCurrentTrack
+
+    if trackChanged then
         if self:isValidEffect() then
             if self.cl_audio_effect:isPlaying() then
                 self.cl_audio_effect:stop()
@@ -326,9 +445,11 @@ function RadioPortable:updateFmAudio(shouldPlay)
         end
         self.cl_audio_effect = nil
         self.cl_fmCurrentTrack = signal.track
+        self.cl_fmTrackPosition = signal.position or 0
 
         if signal.track and signal.track ~= "" then
             self.cl_audio_effect = sm.effect.createEffect(signal.track, self.tool:getOwner():getCharacter())
+            self.cl_audio_effect:setParameter("CAE_Position", self.cl_fmTrackPosition / 1000.0)
         end
     end
 
@@ -338,6 +459,8 @@ function RadioPortable:updateFmAudio(shouldPlay)
     if actualPlay then
         if self:isValidEffect() and not self.cl_audio_effect:isPlaying() then
             self.cl_audio_effect:start()
+            self.cl_fmTrackPosition = signal.position or 0
+            self.cl_audio_effect:setParameter("CAE_Position", self.cl_fmTrackPosition / 1000.0)
         end
     else
         if self:isValidEffect() and self.cl_audio_effect:isPlaying() then
@@ -345,8 +468,23 @@ function RadioPortable:updateFmAudio(shouldPlay)
         end
     end
 
+    if actualPlay and not trackChanged and wasPlaying then
+        local speed = (signal.playSpeed and signal.playSpeed > 0) and signal.playSpeed or 1
+        self.cl_fmTrackPosition = (self.cl_fmTrackPosition or 0) + (dt or 0) * 1000 * speed
+
+        local drift = math.abs((self.cl_fmTrackPosition or 0) - (signal.position or 0))
+        if drift > FM_DRIFT_THRESHOLD_MS then
+            self.cl_fmTrackPosition = signal.position or 0
+            if self:isValidEffect() then
+                self.cl_audio_effect:setParameter("CAE_Position", self.cl_fmTrackPosition / 1000.0)
+            end
+        end
+    end
+
     if self:isValidEffect() then
         self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
+        local spd = signal.playSpeed or 1
+        self.cl_audio_effect:setParameter("CAE_Pitch", spd > 0 and spd or 0.5)
     end
 end
 
@@ -417,6 +555,8 @@ end
 -- ─────────────────────────────────────────────
 
 function RadioPortable.client_onUpdate(self, dt)
+    self.cl_elapsedTime = (self.cl_elapsedTime or 0) + dt
+
     local isCrouching = self.tool:isCrouching()
     local crouchWeight = isCrouching and 1.0 or 0.0
     local normalWeight = 1.0 - crouchWeight
@@ -476,7 +616,7 @@ function RadioPortable.client_onUpdate(self, dt)
     end
 
     if self.cl_fmMode then
-        self:updateFmAudio(self.cl_playState)
+        self:updateFmAudio(self.cl_playState, dt)
         return
     end
 
@@ -489,13 +629,32 @@ function RadioPortable.client_onUpdate(self, dt)
             end
         else
             if self.cl_audio_effect:isDone() then
-                self:onTrackEnded()
+                local playedFor = (self.cl_elapsedTime or 0) - (self.cl_trackStartClock or 0)
+                if playedFor < MIN_PLAY_TIME_BEFORE_DONE and (self.cl_trackStartRetries or 0) < MAX_TRACK_START_RETRIES then
+                    self:retryCurrentTrack()
+                else
+                    self:onTrackEnded()
+                end
+            else
+                local durationMs = self.cl_trackDuration or 0
+                local speed = self.cl_playSpeed > 0 and self.cl_playSpeed or 1
+                self.cl_trackPosition = (self.cl_trackPosition or 0) + dt * 1000 * speed
+                if durationMs > 0 and self.cl_trackPosition > durationMs then
+                    self.cl_trackPosition = durationMs
+                end
             end
         end
     end
 
+    self.cl_guiPositionTimer = (self.cl_guiPositionTimer or 0) + dt
+    if self.cl_guiPositionTimer >= 0.25 then
+        self.cl_guiPositionTimer = 0
+        self:cl_updateTrackPositionGui()
+    end
+
     if self:isValidEffect() then
         self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
+        self.cl_audio_effect:setParameter("CAE_Pitch", self.cl_playSpeed > 0 and self.cl_playSpeed or 0.5)
     end
 end
 
@@ -576,6 +735,7 @@ function RadioPortable.client_onEquippedUpdate(self, primaryState, secondaryStat
 
         self:cl_refreshTrackList()
         self:cl_refreshPlaylistList()
+        self:cl_updateTrackPositionGui()
 
         self.gui:setImage("PlayerIcon", self.cl_playState and STOP_ICON or PLAY_ICON)
         self.gui:setButtonState("RepeatButton", repeatModeState(self.cl_repeatMode))
@@ -600,6 +760,7 @@ function RadioPortable.createGui(self)
     self.gui:setIconImage("Icon", sm.uuid.new("8cef2bc5-e57f-4068-85a6-0082601dc2e5"))
 
     self.gui:createHorizontalSlider("VolumeSlider", 11, self.cl_currentAudioVolume * 10, "client_onVolumeSliderMoved")
+    self.gui:createHorizontalSlider("SeekBar", 1000, 0, "client_onSeekBarMoved")
 
     self.gui:setButtonCallback("PlayerButton", "onSetPlayState")
     self.gui:setButtonCallback("NextButton", "onNextSound")
@@ -642,6 +803,8 @@ function RadioPortable:cl_refreshFmGui()
         self.gui:setVisible("ShuffleButton", false)
         self.gui:setVisible("TrackListPanel", false)
         self.gui:setVisible("PlaylistPanel", false)
+        self.gui:setVisible("SeekBar", false)
+        self.gui:setVisible("TrackTimeLabel", false)
 
         local signal = self:getFMSignal()
         if signal and signal.track then
@@ -663,6 +826,8 @@ function RadioPortable:cl_refreshFmGui()
         self.gui:setVisible("ShuffleButton", true)
         self.gui:setVisible("TrackListPanel", true)
         self.gui:setVisible("PlaylistPanel", true)
+        self.gui:setVisible("TrackTimeLabel", true)
+        self:cl_updateTrackPositionGui()
     end
 end
 
@@ -831,6 +996,13 @@ function RadioPortable.client_onVolumeSliderMoved(self, value)
     end
 end
 
+function RadioPortable.client_onSpeedSliderMoved(self, value)
+    if self.cl_fmMode then
+        return
+    end
+    self.network:sendToServer("sv_changePlaySpeed", value)
+end
+
 function RadioPortable:onCycleRepeat()
     if self.cl_fmMode then
         return
@@ -927,8 +1099,12 @@ function RadioPortable.cl_changeTrack(self, newTrack)
         self.cl_audio_effect = sm.effect.createEffect(newTrack, self.tool:getOwner():getCharacter())
     end
 
+    local info = Utilities.getTrackInfo(self, newTrack)
+    self.cl_trackDuration = info.Duration or 0
+    self.cl_trackPosition = 0
+    self.cl_trackStartRetries = 0
+
     if sm.exists(self.gui) then
-        local info = Utilities.getTrackInfo(self, newTrack)
         local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
 
         self.gui:setText("TrackName", info.Name)
@@ -936,11 +1112,22 @@ function RadioPortable.cl_changeTrack(self, newTrack)
         self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
 
         self:cl_refreshTrackList()
+        self:cl_updateTrackPositionGui()
     end
 end
 
 function RadioPortable.cl_changeTrackVolume(self, newVolume)
     self.cl_currentAudioVolume = newVolume or 1
+
+    if self:isValidEffect() then
+        self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
+        local positionMs = self.cl_fmMode and (self.cl_fmTrackPosition or 0) or (self.cl_trackPosition or 0)
+        self.cl_audio_effect:setParameter("CAE_Position", positionMs / 1000.0)
+    end
+end
+
+function RadioPortable.cl_changePlaySpeed(self, newSpeed)
+    self.cl_playSpeed = newSpeed or 1
 end
 
 function RadioPortable.cl_changePlaylist(self, newPlaylist)
@@ -980,6 +1167,83 @@ function RadioPortable.cl_setFmFrequency(self, freq)
             self.gui:setText("FmFrequencyLabel", "FM " .. tostring(freq))
         end
     end
+end
+
+-- ─────────────────────────────────────────────
+--  TRACK POSITION / SEEK
+-- ─────────────────────────────────────────────
+
+function RadioPortable:cl_updateTrackPositionGui()
+    if not sm.exists(self.gui) then
+        return
+    end
+
+    local duration = self.cl_trackDuration or 0
+    local hasDuration = duration > 0
+
+    if not hasDuration then
+        self.gui:setText("TrackTimeLabel", "Seeking unavailable")
+        self.gui:setVisible("SeekBar", false)
+        return
+    end
+
+    if not self.cl_fmMode then
+        self.gui:setVisible("SeekBar", true)
+    end
+
+    self.gui:setText("TrackTimeLabel", Utilities.formatTime(self.cl_trackPosition or 0) .. " / " .. Utilities.formatTime(duration))
+
+    local sinceUserInput = (self.cl_elapsedTime or 0) - (self.cl_lastUserSeekAt or -math.huge)
+    if sinceUserInput < SEEK_SYNC_COOLDOWN then
+        return
+    end
+
+    local position = self.cl_trackPosition or 0
+
+    local sliderValue = math.floor((position / duration) * SEEK_SLIDER_STEPS + 0.5)
+    sliderValue = math.max(0, math.min(SEEK_SLIDER_STEPS, sliderValue))
+
+    self.cl_seekBarSyncing = true
+    self.gui:setSliderPosition("SeekBar", sliderValue)
+    self.cl_seekBarSyncing = false
+end
+
+function RadioPortable:cl_seekTo(positionMs)
+    positionMs = math.max(0, positionMs or 0)
+    if self.cl_trackDuration and self.cl_trackDuration > 0 then
+        positionMs = math.min(positionMs, self.cl_trackDuration)
+    end
+    self.cl_trackPosition = positionMs
+
+    if self:isValidEffect() then
+        self.cl_audio_effect:setParameter("CAE_Position", positionMs / 1000.0)
+    end
+
+    self:cl_updateTrackPositionGui()
+end
+
+function RadioPortable.cl_seekTrack(self, positionMs)
+    self:cl_seekTo(positionMs)
+end
+
+function RadioPortable.client_onSeekBarMoved(self, value)
+    if self.cl_seekBarSyncing then
+        return
+    end
+
+    self.cl_lastUserSeekAt = self.cl_elapsedTime or 0
+
+    if self.cl_fmMode or not self:hasRealTrack() then
+        return
+    end
+    if not self.cl_trackDuration or self.cl_trackDuration <= 0 then
+        return
+    end
+
+    local targetMs = (value / SEEK_SLIDER_STEPS) * self.cl_trackDuration
+
+    self:cl_seekTo(targetMs)
+    self.network:sendToServer("sv_seekTrack", self.cl_trackPosition)
 end
 
 -- ─────────────────────────────────────────────

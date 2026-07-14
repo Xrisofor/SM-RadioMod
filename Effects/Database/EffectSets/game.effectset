@@ -9,8 +9,7 @@
       "radioMod": {
          "Name": "Radio",
          "Author": "Scrap Mechanic",
-         "Image": "Gui/Icons/default_image.png",
-         "Duration": 22
+         "Image": "Gui/Icons/default_image.png"
       }
    },
    "Scrap Mechanic - North Korea" : {
@@ -23,8 +22,7 @@
       "radioMod": {
          "Name": "North Korea",
          "Author": "Scrap Mechanic",
-         "Image": "Gui/Icons/default_image.png",
-         "Duration": 2
+         "Image": "Gui/Icons/default_image.png"
       }
    },
    "Scrap Mechanic - Elevator" : {
@@ -37,8 +35,7 @@
       "radioMod": {
          "Name": "Elevator",
          "Author": "Scrap Mechanic",
-         "Image": "Gui/Icons/default_image.png",
-         "Duration": 2
+         "Image": "Gui/Icons/default_image.png"
       }
    }
 }

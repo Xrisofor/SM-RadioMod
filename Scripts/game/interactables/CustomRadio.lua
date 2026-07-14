@@ -276,10 +276,22 @@ function CustomRadio:server_onFixedUpdate(dt)
     end
 end
 
+local SETTING_FIELD = {
+    track = "sv_audioName",
+    volume = "sv_volumeLevel",
+    play_state = "sv_playState",
+    play_speed = "sv_playSpeed",
+    playlist = "sv_playlist",
+    repeat_mode = "sv_repeatMode",
+    shuffle = "sv_shuffle",
+    fm_mode = "sv_fmMode",
+    fm_frequency = "sv_fmFrequency"
+}
+
 function CustomRadio:sv_updateSetting(key, value, clientFn)
     if self.storageSave[key] ~= value then
         self.storageSave[key] = value
-        self["sv_" .. key] = value
+        self[SETTING_FIELD[key] or ("sv_" .. key)] = value
         self.storage:save(self.storageSave)
         self.network:sendToClients(clientFn, value)
     end
@@ -779,8 +791,8 @@ function CustomRadio:cl_refreshFmGui()
         self.gui:setVisible("ShuffleButton", true)
         self.gui:setVisible("TrackListPanel", true)
         self.gui:setVisible("PlaylistPanel", true)
-        self.gui:setVisible("SeekBar", true)
         self.gui:setVisible("TrackTimeLabel", true)
+        self:cl_updateTrackPositionGui()
     end
 end
 
@@ -1109,6 +1121,13 @@ end
 
 function CustomRadio.cl_changeTrackVolume(self, newVolume)
     self.cl_currentAudioVolume = newVolume or 1
+
+    if self:isValidEffect() then
+        self.cl_audio_effect:setParameter("CAE_Volume", self.cl_currentAudioVolume / 10.0)
+        local positionMs = self.cl_fmMode and (self.cl_fmTrackPosition or 0) or (self.cl_trackPosition or 0)
+        self.cl_audio_effect:setParameter("CAE_Position", positionMs / 1000.0)
+    end
+
     self:send_toSpeaker("remote_radio_controller_volume", self.cl_currentAudioVolume)
 end
 
@@ -1167,21 +1186,30 @@ function CustomRadio:cl_updateTrackPositionGui()
         return
     end
 
-    self.gui:setText("TrackTimeLabel", Utilities.formatTime(self.cl_trackPosition or 0) .. " / " .. Utilities.formatTime(self.cl_trackDuration or 0))
+    local duration = self.cl_trackDuration or 0
+    local hasDuration = duration > 0
+
+    if not hasDuration then
+        self.gui:setText("TrackTimeLabel", "Seeking unavailable")
+        self.gui:setVisible("SeekBar", false)
+        return
+    end
+
+    if not self.cl_fmMode then
+        self.gui:setVisible("SeekBar", true)
+    end
+
+    self.gui:setText("TrackTimeLabel", Utilities.formatTime(self.cl_trackPosition or 0) .. " / " .. Utilities.formatTime(duration))
 
     local sinceUserInput = (self.cl_elapsedTime or 0) - (self.cl_lastUserSeekAt or -math.huge)
     if sinceUserInput < SEEK_SYNC_COOLDOWN then
         return
     end
 
-    local duration = self.cl_trackDuration or 0
     local position = self.cl_trackPosition or 0
 
-    local sliderValue = 0
-    if duration > 0 then
-        sliderValue = math.floor((position / duration) * SEEK_SLIDER_STEPS + 0.5)
-        sliderValue = math.max(0, math.min(SEEK_SLIDER_STEPS, sliderValue))
-    end
+    local sliderValue = math.floor((position / duration) * SEEK_SLIDER_STEPS + 0.5)
+    sliderValue = math.max(0, math.min(SEEK_SLIDER_STEPS, sliderValue))
 
     self.cl_seekBarSyncing = true
     self.gui:setSliderPosition("SeekBar", sliderValue)

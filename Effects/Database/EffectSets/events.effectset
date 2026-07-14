@@ -15,7 +15,7 @@
          "Name": "Phonk Playlist No. 1",
          "Author": "Radio Mod",
          "Image": "Gui/Icons/phonk_playlist_one_radio.jpeg",
-         "Duration": 22
+         "Duration": 1332665
       }
    },
    "E - Russian Hardbass Radio (RU)" : {
@@ -34,7 +34,7 @@
          "Name": "Russian Hardbass Radio",
          "Author": "E",
          "Image": "Gui/Icons/default_image.png",
-         "Duration": 25
+         "Duration": 1483945
       }
    },
    "Korol i Shut - Playlist No. 1 (RU)" : {
@@ -53,7 +53,7 @@
          "Name": "Playlist No. 1",
          "Author": "Korol i Shut",
          "Image": "Gui/Icons/korol_i_shut_playlist_one.jpg",
-         "Duration": 27
+         "Duration": 1606815
       }
    }
 }
