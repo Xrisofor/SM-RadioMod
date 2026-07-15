@@ -20,7 +20,8 @@
             "data" : {},
             "file" : "$CONTENT_DATA/Scripts/game/tools/RadioPortable.lua"
          },
-         "uuid" : "8cef2bc5-e57f-4068-85a6-0082601dc2e5"
+         "uuid" : "8cef2bc5-e57f-4068-85a6-0082601dc2e5",
+         "autoTool": true
       }
    ]
 }

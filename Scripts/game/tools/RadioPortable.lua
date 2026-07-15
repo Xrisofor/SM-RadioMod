@@ -719,35 +719,63 @@ end
 --  EQUIPPED UPDATE
 -- ─────────────────────────────────────────────
 
+local updateForceBuildText = function ()
+	local valid, worldPos, worldNormal = ConstructionRayCast( { "terrainSurface", "terrainAsset", "body", "joint" } )
+	if valid then
+		local keyBindingText =  sm.gui.getKeyBinding( "ForceBuild", true )
+		sm.gui.setInteractionText( "", keyBindingText, "#{INTERACTION_FORCE_BUILD}" )
+	end
+end
+
 function RadioPortable.client_onEquippedUpdate(self, primaryState, secondaryState, forceBuildActive)
-    if primaryState == sm.tool.interactState.start and not forceBuildActive then
-        if not sm.exists(self.gui) then
-            self:createGui()
+    local activeItem = sm.localPlayer.getActiveItem()
+
+    if activeItem == sm.uuid.new("e2988014-1a09-4079-a498-7e3540d39d40") and not forceBuildActive then
+        local rayStart = sm.localPlayer.getRaycastStart()
+        local rayDir = sm.localPlayer.getDirection()
+        local success, result = sm.physics.raycast( rayStart, rayStart + rayDir * 7.5, sm.localPlayer.getPlayer().character, bit.bor( sm.physics.filter.default, sm.physics.filter.areaTrigger ) )
+
+        if success then
+            sm.gui.setCenterIcon( "Use" )
+            local keyBindingText =  sm.gui.getKeyBinding( "Create", true )
+            sm.gui.setInteractionText( "", keyBindingText, "Use" )
+
+            updateForceBuildText()
         end
 
-        local info = Utilities.getTrackInfo(self, self.cl_currentAudioName)
-        local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
+        if primaryState == sm.tool.interactState.start and not forceBuildActive then
+            if not sm.exists(self.gui) then
+                self:createGui()
+            end
 
-        self.gui:setText("TrackName", info.Name)
-        self.gui:setText("TrackAuthor", info.Author)
-        self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
-        self.gui:setText("SubTitle", "Music is always nearby")
+            local info = Utilities.getTrackInfo(self, self.cl_currentAudioName)
+            local modPrefix = info.ModUUID and ("$CONTENT_" .. tostring(info.ModUUID)) or "$CONTENT_DATA"
 
-        self:cl_refreshTrackList()
-        self:cl_refreshPlaylistList()
-        self:cl_updateTrackPositionGui()
+            self.gui:setText("TrackName", info.Name)
+            self.gui:setText("TrackAuthor", info.Author)
+            self.gui:setImage("TrackImage", modPrefix .. "/" .. info.Image)
+            self.gui:setText("SubTitle", "Music is always nearby")
 
-        self.gui:setImage("PlayerIcon", self.cl_playState and STOP_ICON or PLAY_ICON)
-        self.gui:setButtonState("RepeatButton", repeatModeState(self.cl_repeatMode))
-        self.gui:setButtonState("ShuffleButton", self.cl_shuffle)
+            self:cl_refreshTrackList()
+            self:cl_refreshPlaylistList()
+            self:cl_updateTrackPositionGui()
 
-        self:cl_refreshFmGui()
+            self.gui:setImage("PlayerIcon", self.cl_playState and STOP_ICON or PLAY_ICON)
+            self.gui:setButtonState("RepeatButton", repeatModeState(self.cl_repeatMode))
+            self.gui:setButtonState("ShuffleButton", self.cl_shuffle)
 
-        self.gui:open()
-        sm.audio.play("ConnectTool - Selected")
+            self:cl_refreshFmGui()
+
+            self.gui:open()
+            sm.audio.play("ConnectTool - Selected")
+
+        end
+
+        updateForceBuildText()
+        return true, false
     end
 
-    return true, true
+    return false, false
 end
 
 -- ─────────────────────────────────────────────
@@ -830,6 +858,8 @@ function RadioPortable:cl_refreshFmGui()
         self:cl_updateTrackPositionGui()
     end
 end
+
+
 
 function RadioPortable:cl_refreshTrackList()
     local activeTracks = self:getActiveTracks()

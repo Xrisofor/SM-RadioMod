@@ -3,10 +3,12 @@ dofile("$SURVIVAL_DATA/Scripts/util.lua")
 
 RadioRemote = class()
 
-local renderables = {"$CONTENT_DATA/Tools/Remote/char_liftremote.rend"}
-local renderablesTp = {"$GAME_DATA/Character/Char_Male/Animations/char_male_tp_weldtool.rend",
-                       "$GAME_DATA/Character/Char_Tools/Char_liftremote/char_liftremote_tp_animlist.rend"}
-local renderablesFp = {"$GAME_DATA/Character/Char_Tools/Char_liftremote/char_liftremote_fp_animlist.rend"}
+local renderables = { "$CONTENT_DATA/Tools/Remote/char_liftremote.rend" }
+local renderablesTp = {
+    "$GAME_DATA/Character/Char_Male/Animations/char_male_tp_weldtool.rend",
+    "$GAME_DATA/Character/Char_Tools/Char_liftremote/char_liftremote_tp_animlist.rend"
+}
+local renderablesFp = { "$GAME_DATA/Character/Char_Tools/Char_liftremote/char_liftremote_fp_animlist.rend" }
 
 local currentRenderablesTp = {}
 local currentRenderablesFp = {}
@@ -15,11 +17,79 @@ sm.tool.preloadRenderables(renderables)
 sm.tool.preloadRenderables(renderablesTp)
 sm.tool.preloadRenderables(renderablesFp)
 
+local CUSTOM_RADIO_UUIDS = {
+    [tostring(sm.uuid.new("d0ad87eb-22ef-41fb-8c39-002e7507d7e3"))] = true,
+    [tostring(sm.uuid.new("f6b6faf5-2554-49cd-aa49-23af1a6cb2a3"))] = true
+}
+
+local function isCustomRadioShape(shape)
+    return shape ~= nil and CUSTOM_RADIO_UUIDS[tostring(shape.uuid)] == true
+end
+
+local RECONNECT_SEARCH_RADIUS = 0.05
+
+-- ─────────────────────────────────────────────
+--  SERVER
+-- ─────────────────────────────────────────────
+
+function RadioRemote.server_onCreate(self)
+    self.storageSave = self.storage:load() or {}
+    self:trySendSavedConnectionToOwner()
+end
+
+function RadioRemote:trySendSavedConnectionToOwner()
+    local pos = self.storageSave.connectedPos
+    if not pos then
+        return
+    end
+
+    local contacts = sm.physics.getSphereContacts(sm.vec3.new(pos.x, pos.y, pos.z), RECONNECT_SEARCH_RADIUS)
+    for _, body in ipairs(contacts.bodies) do
+        for _, shape in ipairs(body:getShapes()) do
+            if isCustomRadioShape(shape) then
+                self.network:sendToClient(self.tool:getOwner(), "client_restoreConnection", shape)
+                return
+            end
+        end
+    end
+end
+
+function RadioRemote:server_setConnection(pos)
+    if pos ~= nil then
+        self.storageSave.connectedPos = {
+            x = pos.x,
+            y = pos.y,
+            z = pos.z
+        }
+    else
+        self.storageSave.connectedPos = nil
+    end
+    self.storage:save(self.storageSave)
+end
+
+-- ─────────────────────────────────────────────
+--  CLIENT
+-- ─────────────────────────────────────────────
+
 function RadioRemote.client_onCreate(self)
     self.isLocal = self.tool:isLocal()
     self.ConnectionCustomRadio = nil
 
     self:loadAnimations()
+end
+
+function RadioRemote:client_restoreConnection(shape)
+    if shape ~= nil and sm.exists(shape) and isCustomRadioShape(shape) then
+        self.ConnectionCustomRadio = shape
+    end
+end
+
+function RadioRemote:saveConnection()
+    if self.ConnectionCustomRadio ~= nil and sm.exists(self.ConnectionCustomRadio) then
+        self.network:sendToServer("server_setConnection", self.ConnectionCustomRadio:getWorldPosition())
+    else
+        self.network:sendToServer("server_setConnection", nil)
+    end
 end
 
 function RadioRemote.client_onRefresh(self)
@@ -205,6 +275,11 @@ function RadioRemote.client_onToggle(self)
 end
 
 function RadioRemote.client_onEquippedUpdate(self, primaryState, secondaryState, forceBuildActive)
+    if self.ConnectionCustomRadio ~= nil and not sm.exists(self.ConnectionCustomRadio) then
+        self.ConnectionCustomRadio = nil
+        self:saveConnection()
+    end
+
     local _, result = sm.localPlayer.getRaycast(7.5)
     local shape = nil
 
@@ -213,11 +288,7 @@ function RadioRemote.client_onEquippedUpdate(self, primaryState, secondaryState,
     if sm.exists(result) and result.type == "body" then
         shape = result:getShape()
 
-        local shape_uuid = shape and shape.uuid
-        local is_target_uuid = shape_uuid == sm.uuid.new("d0ad87eb-22ef-41fb-8c39-002e7507d7e3") or shape_uuid ==
-                                   sm.uuid.new("f6b6faf5-2554-49cd-aa49-23af1a6cb2a3")
-
-        if is_target_uuid then
+        if isCustomRadioShape(shape) then
             if self.ConnectionCustomRadio == nil then
                 local keyBindingText = sm.gui.getKeyBinding("Create", true)
                 sm.gui.setInteractionText("", keyBindingText, "#{CONTROLLER_UPGRADE_Connections}")
@@ -242,19 +313,17 @@ function RadioRemote.client_onEquippedUpdate(self, primaryState, secondaryState,
             if self.ConnectionCustomRadio == nil then
                 if shape ~= nil then
                     self.ConnectionCustomRadio = shape
+                    self:saveConnection()
 
                     sm.audio.play("ConnectTool - Selected")
                 end
             else
                 self.ConnectionCustomRadio = nil
+                self:saveConnection()
 
                 sm.audio.play("ConnectTool - Released")
             end
         else
-            if not sm.exists(self.ConnectionCustomRadio) then
-                self.ConnectionCustomRadio = nil
-            end
-
             if self.ConnectionCustomRadio ~= nil then
                 setFpAnimation(self.fpAnimations, "use", 0.5)
 
