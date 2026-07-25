@@ -1,0 +1,19 @@
+{
+   "lodList" : [
+      {
+         "mesh" : "$SURVIVAL_DATA/Objects/Mesh/shoprewards/obj_shoprewards_synth_off.fbx",
+         "includes" : [ "POSITION", "UV0", "NORMAL", "TANGENTS" ],
+         "pose0" : "$SURVIVAL_DATA/Objects/Mesh/shoprewards/obj_shoprewards_synth_on.fbx",
+         "subMeshList" : [
+            {
+               "material" : "PoseAnimDifAsgNor",
+               "textureList" : [
+                  "$SURVIVAL_DATA/Objects/Textures/shoprewards/obj_shoprewards_synth_dif.tga",
+                  "$SURVIVAL_DATA/Objects/Textures/shoprewards/obj_shoprewards_synth_asg.tga",
+                  "$SURVIVAL_DATA/Objects/Textures/shoprewards/obj_shoprewards_synth_nor.tga"
+               ]
+            }
+         ]
+      }
+   ]
+}

@@ -1,19 +1,91 @@
 {
-   "lodList" : [
-      {
-         "mesh" : "$CONTENT_DATA/Tools/Portable/radio_portable.dae",
-         "includes" : ["POSITION", "UV0", "NORMAL", "TANGENTS", "BLEND_INDICES", "BLEND_WEIGHTS"],
-         "maxViewDistance": 1500,
-            "subMeshMap" : {
-               "radio" : {
-                  "material" : "DifAsgNor",
-                  "textureList" : [
-                     "$GAME_DATA/Objects/Textures/interactive/obj_interactive_radio_dif.tga",
-                     "$GAME_DATA/Objects/Textures/interactive/obj_interactive_radio_asg.tga",
-                     "$GAME_DATA/Objects/Textures/interactive/obj_interactive_radio_nor.tga"
-                  ]
-               }
-            }
-         }
-   ]
+	"lodList" : 
+	[
+		{
+			"includes" : 
+			[
+				"POSITION",
+				"UV0",
+				"NORMAL",
+				"TANGENTS",
+				"BLEND_INDICES",
+				"BLEND_WEIGHTS"
+			],
+			"maxViewDistance" : 1500,
+			"mesh" : "$CONTENT_DATA/Tools/Portable/radio_portable.dae",
+			"subMeshMap" : 
+			{
+				"m_bars" : 
+				{
+					"color" : "000000ff",
+					"custom" : 
+					{
+						"stepUv" : 
+						{
+							"duration" : 
+							[
+								0.136000007,
+								0.0
+							],
+							"step" : 
+							[
+								0.125,
+								0.0
+							]
+						}
+					},
+					"material" : "DifAsgNorStep_alpha",
+					"textureList" : 
+					[
+						"$SURVIVAL_DATA/Objects/Textures/interactive/obj_interactive_boomboxbars_dif.tga",
+						"$SURVIVAL_DATA/Objects/Textures/interactive/obj_interactive_boomboxbars_asg.tga",
+						"$GAME_DATA/Textures/Default/default_nor.tga"
+					]
+				},
+				"m_boombox" : 
+				{
+					"material" : "DifAsgNor",
+					"textureList" : 
+					[
+						"$SURVIVAL_DATA/Objects/Textures/interactive/obj_interactive_boombox_dif.tga",
+						"$SURVIVAL_DATA/Objects/Textures/interactive/obj_interactive_boombox_asg.tga",
+						"$SURVIVAL_DATA/Objects/Textures/interactive/obj_interactive_boombox_nor.tga"
+					]
+				},
+				"m_boombox_matcap" : 
+				{
+					"material" : "DifAsgNor_LightCapMasked",
+					"textureList" : 
+					[
+						"$SURVIVAL_DATA/Objects/Textures/interactive/obj_interactive_boombox_dif.tga",
+						"$SURVIVAL_DATA/Objects/Textures/interactive/obj_interactive_boombox_matcap_asg.tga",
+						"$SURVIVAL_DATA/Objects/Textures/interactive/obj_interactive_boombox_nor.tga",
+						"",
+						"$SURVIVAL_DATA/Textures/Lightcap/t_crystal_lcap.tga"
+					]
+				},
+				"m_screen" : 
+				{
+					"custom" : 
+					{
+						"scrollUv" : 
+						{
+							"speed" : 
+							[
+								0.0,
+								-0.300000012
+							]
+						}
+					},
+					"material" : "DifAsgNorScroll",
+					"textureList" : 
+					[
+						"$SURVIVAL_DATA/Objects/Textures/interactive/obj_interactive_boombox_screen_dif.tga",
+						"$SURVIVAL_DATA/Objects/Textures/interactive/obj_interactive_boombox_screen_asg.tga",
+						"$GAME_DATA/Textures/Default/default_nor.tga"
+					]
+				}
+			}
+		}
+	]
 }
