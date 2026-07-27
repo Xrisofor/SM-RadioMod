@@ -26,5 +26,9 @@
    "30165326-52c4-4faa-b76f-b12fc5f19efb" : {
       "description" : "The same antenna in dish form - works exactly the same, just looks sharper on a rooftop. Connect it to a Custom Radio and dial in a frequency from 0 to 255 to send music through the air.\n\nBy Xrisofor.",
       "title" : "Custom Satellite Reflector Dish"
+   },
+   "4ac9c7bb-ec7f-4dbd-8efa-9a45e827ee4d" : {
+      "description" : "Use to play a tune.\n\nBy: Xrisofor.",
+      "title" : "Custom Synth"
    }
 }

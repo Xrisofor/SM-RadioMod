@@ -9,9 +9,9 @@
 				"z" : 1
 			},
 			"color" : "df7f01",
-			"flammable" : true,
+			"flammable" : false,
 			"name" : "obj_custom_radio",
-			"physicsMaterial" : "Mechanical",
+			"physicsMaterial" : "Electronics",
 			"ratings" : 
 			{
 				"buoyancy" : 6,
@@ -37,15 +37,15 @@
 				"z" : 1
 			},
 			"color" : "df7f01",
-			"flammable" : true,
+			"flammable" : false,
 			"name" : "obj_custom_radio_speaker",
-			"physicsMaterial" : "Metal",
+			"physicsMaterial" : "Electronics",
 			"ratings" : 
 			{
 				"buoyancy" : 6,
 				"density" : 2,
 				"durability" : 3,
-				"friction" : 5
+				"friction" : 4
 			},
 			"renderable" : "$CONTENT_DATA/Objects/Renderable/obj_interactive_radio_speaker.rend",
 			"rotationSet" : "PropYZm",
@@ -55,6 +55,7 @@
 				"filename" : "$CONTENT_DATA/Scripts/game/interactables/CustomRadioSpeaker.lua"
 			},
 			"showInInventory" : true,
+			"sticky" : "-Z-Y+Y-X+X",
 			"uuid" : "99ae2a73-b28d-4b7c-a558-104ed1b59b1d"
 		},
 		{
@@ -65,15 +66,15 @@
 				"z" : 1
 			},
 			"color" : "df7f01",
-			"flammable" : true,
+			"flammable" : false,
 			"name" : "obj_custom_small_radio",
-			"physicsMaterial" : "Mechanical",
+			"physicsMaterial" : "Electronics",
 			"ratings" : 
 			{
-				"buoyancy" : 6,
+				"buoyancy" : 4,
 				"density" : 2,
-				"durability" : 3,
-				"friction" : 5
+				"durability" : 2,
+				"friction" : 2
 			},
 			"renderable" : "$CONTENT_DATA/Objects/Renderable/obj_interactive_small_radio.rend",
 			"rotationSet" : "PropYZ",

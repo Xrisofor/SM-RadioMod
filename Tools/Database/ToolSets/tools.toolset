@@ -27,15 +27,15 @@
 		{
 			"autoTool" : true,
 			"name" : "tool_portable_radio",
-			"previewRenderable" : "$CONTENT_DATA/Tools/Portable/radio_portable_prev.rend",
+			"previewRenderable" : "$SURVIVAL_DATA/Character/Char_Tools/char_carrytool_preview.rend",
 			"previewRotation" : 
 			[
-				1,
-				0,
-				0,
-				0,
-				1,
 				-1,
+				0,
+				0,
+				0,
+				0,
+				1,
 				0,
 				1,
 				0
