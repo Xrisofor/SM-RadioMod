@@ -1,0 +1,83 @@
+{
+	"lodList" : 
+	[
+		{
+			"mesh" : "$GAME_DATA/Objects/Mesh/interactive/obj_interactive_logicgate_off.fbx",
+			"minViewSize" : 30,
+			"pose0" : "$GAME_DATA/Objects/Mesh/interactive/obj_interactive_logicgate_on.fbx",
+			"subMeshMap" : 
+			{
+				"logicgate" : 
+				{
+					"custom" : 
+					{
+						"metalProfile" : "DifAsgNor_Painted"
+					},
+					"material" : "PoseAnimDifAsgNorAo_Metal",
+					"textureList" : 
+					[
+						"$GAME_DATA/Objects/Textures/interactive/obj_interactive_logicgate_dif.tga",
+						"$GAME_DATA/Objects/Textures/interactive/obj_interactive_logicgate_asg.tga",
+						"$GAME_DATA/Objects/Textures/interactive/obj_interactive_logicgate_nor.tga",
+						"$GAME_DATA/Objects/Textures/interactive/obj_interactive_logicgate_ao.tga"
+					]
+				},
+				"screen" : 
+				{
+					"custom" : 
+					{
+						"uv0" : 
+						{
+							"u" : 0.166666999,
+							"v" : 0.164499998
+						}
+					},
+					"material" : "UVAnimDifAsgNor",
+					"textureList" : 
+					[
+						"$CONTENT_DATA/Objects/Textures/obj_interactive_logicgate_dif.tga",
+						"$GAME_DATA/Objects/Textures/interactive/obj_interactive_logicgate_asg.tga",
+						"$GAME_DATA/Objects/Textures/interactive/obj_interactive_logicgate_nor.tga"
+					]
+				}
+			}
+		},
+		{
+			"mesh" : "$GAME_DATA/Objects/Mesh/interactive/obj_interactive_logicgate_lod1.fbx",
+			"subMeshMap" : 
+			{
+				"logicgate" : 
+				{
+					"custom" : 
+					{
+						"metalProfile" : "DifAsgNor_Painted"
+					},
+					"material" : "DifAsgNor_Metal",
+					"textureList" : 
+					[
+						"$GAME_DATA/Objects/Textures/interactive/obj_interactive_logicgate_dif.tga",
+						"$GAME_DATA/Objects/Textures/interactive/obj_interactive_logicgate_asg.tga",
+						"$GAME_DATA/Objects/Textures/interactive/obj_interactive_logicgate_nor.tga"
+					]
+				},
+				"screen" : 
+				{
+					"custom" : 
+					{
+						"uv0" : 
+						{
+							"u" : 0.166666999,
+							"v" : 0.164499998
+						}
+					},
+					"material" : "UVAnimDifAsg",
+					"textureList" : 
+					[
+						"$CONTENT_DATA/Objects/Textures/obj_interactive_logicgate_dif.tga",
+						"$GAME_DATA/Objects/Textures/interactive/obj_interactive_logicgate_asg.tga"
+					]
+				}
+			}
+		}
+	]
+}

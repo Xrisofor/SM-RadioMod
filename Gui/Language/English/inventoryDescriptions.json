@@ -30,5 +30,13 @@
    "4ac9c7bb-ec7f-4dbd-8efa-9a45e827ee4d" : {
       "description" : "Use to play a tune.\n\nBy: Xrisofor.",
       "title" : "Custom Synth"
+   },
+   "85f02f24-6fb3-49e8-9ebd-0c3b41f050e4" : {
+      "description" : "Internal test item for trying out the new GuiManager and TrackManager. Won't be present in the final build.\n\nBy Xrisofor.",
+      "title" : "Test"
+   },
+   "9be1c109-180a-480b-bc60-81ef99ba9284" : {
+      "description" : "Feels the beat better than the bots ever could. Connect it to a Custom Radio and the emitter will pulse power and trigger right in time with the track - bringing your light shows and contraptions to life.\n\nBy Xrisofor.",
+      "title" : "Beat Emitter"
    }
 }

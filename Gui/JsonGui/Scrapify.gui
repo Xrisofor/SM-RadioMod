@@ -1,0 +1,966 @@
+{
+	"Anchor" : "Center",
+	"Childs" : 
+	[
+		{
+			"Childs" : 
+			[
+				{
+					"Caption" : "SCRAPIFY",
+					"Childs" : [],
+					"FontName" : "SM_HeaderLarge_Wide",
+					"Name" : "Title",
+					"NeedKey" : false,
+					"NeedMouse" : false,
+					"Skin" : "TextBox",
+					"TextAlign" : "Center",
+					"Type" : "TextBox",
+					"height" : 35,
+					"width" : 1150,
+					"x" : 0,
+					"y" : 35
+				},
+				{
+					"Caption" : "0 / 15",
+					"Childs" : [],
+					"FontName" : "SM_SubHeader",
+					"Name" : "SubTitle",
+					"NeedKey" : false,
+					"NeedMouse" : false,
+					"Skin" : "TextBox",
+					"TextAlign" : "Center",
+					"TextColour" : "1 0.803922 0.247059 1",
+					"Type" : "TextBox",
+					"height" : 28,
+					"width" : 1150,
+					"x" : 0,
+					"y" : 60
+				},
+				{
+					"Childs" : [],
+					"ImageTexture" : "alarmclock_icon.png",
+					"Name" : "Icon",
+					"NeedKey" : false,
+					"NeedMouse" : false,
+					"Skin" : "ImageBox",
+					"Type" : "ImageBox",
+					"height" : 100,
+					"width" : 100,
+					"x" : 20,
+					"y" : 0
+				},
+				{
+					"Childs" : 
+					[
+						{
+							"Childs" : 
+							[
+								{
+									"Childs" : [],
+									"ImageTexture" : "$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Icons/default_image.png",
+									"Name" : "TrackImage",
+									"NeedKey" : false,
+									"NeedMouse" : false,
+									"Skin" : "ImageBox",
+									"Type" : "ImageBox",
+									"height" : 60,
+									"width" : 60,
+									"x" : 0,
+									"y" : 0
+								},
+								{
+									"Caption" : "Name",
+									"Childs" : [],
+									"FontName" : "SM_Button",
+									"Name" : "TrackName",
+									"NeedKey" : false,
+									"NeedMouse" : false,
+									"Skin" : "TextBox",
+									"TextAlign" : "HStretch",
+									"Type" : "TextBox",
+									"height" : 30,
+									"width" : 290,
+									"x" : 70,
+									"y" : 5
+								},
+								{
+									"Caption" : "Author",
+									"Childs" : [],
+									"FontName" : "SM_ButtonSmall",
+									"Name" : "TrackAuthor",
+									"NeedKey" : false,
+									"NeedMouse" : false,
+									"Skin" : "TextBox",
+									"TextAlign" : "Top Left",
+									"Type" : "TextBox",
+									"height" : 25,
+									"width" : 290,
+									"x" : 70,
+									"y" : 35
+								}
+							],
+							"LayoutRule" : "Absolute",
+							"Name" : "Track Info",
+							"NeedKey" : false,
+							"NeedMouse" : false,
+							"Skin" : "PanelEmpty",
+							"Type" : "Widget",
+							"height" : 60,
+							"width" : 370,
+							"x" : 0,
+							"y" : 0
+						},
+						{
+							"Childs" : 
+							[
+								{
+									"Childs" : 
+									[
+										{
+											"Childs" : [],
+											"ImageTexture" : "$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/shuffle.png",
+											"NeedKey" : false,
+											"NeedMouse" : false,
+											"Skin" : "ImageBox",
+											"Type" : "ImageBox",
+											"height" : 25,
+											"width" : 25,
+											"x" : 0,
+											"y" : 0
+										}
+									],
+									"LayoutRule" : "Center",
+									"Name" : "ShuffleButton",
+									"NeedKey" : false,
+									"NeedMouse" : true,
+									"OnClickEffect" : "Gui - Click",
+									"OnFocusEffect" : "Gui - Highlight",
+									"Skin" : "ToggleButton",
+									"Type" : "Button",
+									"height" : 46,
+									"width" : 75,
+									"x" : 5,
+									"y" : 6
+								},
+								{
+									"Childs" : 
+									[
+										{
+											"Childs" : [],
+											"ImageTexture" : "$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/arrow-left-circle.png",
+											"NeedKey" : false,
+											"NeedMouse" : false,
+											"Skin" : "ImageBox",
+											"Type" : "ImageBox",
+											"height" : 25,
+											"width" : 25,
+											"x" : 0,
+											"y" : 0
+										}
+									],
+									"LayoutRule" : "Center",
+									"Name" : "BackButton",
+									"NeedKey" : false,
+									"NeedMouse" : true,
+									"OnClickEffect" : "Gui - Click",
+									"OnFocusEffect" : "Gui - Highlight",
+									"Skin" : "SettingsButton",
+									"Type" : "Button",
+									"height" : 40,
+									"onClick" : "cl_onBackClick",
+									"width" : 70,
+									"x" : 0,
+									"y" : 10
+								},
+								{
+									"Childs" : 
+									[
+										{
+											"Childs" : [],
+											"ImageTexture" : "$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/play-circle.png",
+											"LayoutRule" : "Center",
+											"Name" : "PlayIcon",
+											"NeedKey" : false,
+											"NeedMouse" : false,
+											"Skin" : "ImageBox",
+											"Type" : "ImageBox",
+											"height" : 25,
+											"width" : 25,
+											"x" : 0,
+											"y" : 0
+										}
+									],
+									"LayoutRule" : "Center",
+									"Name" : "PlayButton",
+									"NeedKey" : false,
+									"NeedMouse" : true,
+									"OnClickEffect" : "Gui - Click",
+									"OnFocusEffect" : "Gui - Highlight",
+									"Skin" : "SettingsButton",
+									"Type" : "Button",
+									"height" : 40,
+									"onClick" : "cl_onPlayClick",
+									"width" : 70,
+									"x" : 0,
+									"y" : 10
+								},
+								{
+									"Childs" : 
+									[
+										{
+											"Childs" : [],
+											"ImageTexture" : "$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/arrow-right-circle.png",
+											"LayoutRule" : "Center",
+											"NeedKey" : false,
+											"NeedMouse" : false,
+											"Skin" : "ImageBox",
+											"Type" : "ImageBox",
+											"height" : 25,
+											"width" : 25,
+											"x" : 0,
+											"y" : 0
+										}
+									],
+									"LayoutRule" : "Center",
+									"Name" : "NextButton",
+									"NeedKey" : false,
+									"NeedMouse" : true,
+									"OnClickEffect" : "Gui - Click",
+									"OnFocusEffect" : "Gui - Highlight",
+									"Skin" : "SettingsButton",
+									"Type" : "Button",
+									"height" : 40,
+									"onClick" : "cl_onNextClick",
+									"width" : 70,
+									"x" : 0,
+									"y" : 10
+								},
+								{
+									"Childs" : 
+									[
+										{
+											"Childs" : [],
+											"ImageTexture" : "$CONTENT_e8d9c47d-8029-4441-b662-95ef4ccd55be/Gui/Layouts/repeat.png",
+											"LayoutRule" : "Center",
+											"NeedKey" : false,
+											"NeedMouse" : false,
+											"Skin" : "ImageBox",
+											"Type" : "ImageBox",
+											"height" : 25,
+											"width" : 25,
+											"x" : 0,
+											"y" : 0
+										}
+									],
+									"LayoutRule" : "Center",
+									"Name" : "RepeatButton",
+									"NeedKey" : false,
+									"NeedMouse" : true,
+									"OnClickEffect" : "Gui - Click",
+									"OnFocusEffect" : "Gui - Highlight",
+									"Skin" : "ToggleButton",
+									"Type" : "Button",
+									"height" : 46,
+									"width" : 75,
+									"x" : 0,
+									"y" : 6
+								}
+							],
+							"LayoutRule" : "Horizontal",
+							"Name" : "State Control",
+							"NeedKey" : false,
+							"NeedMouse" : true,
+							"Skin" : "PanelEmpty",
+							"Type" : "Widget",
+							"height" : 60,
+							"width" : 370,
+							"x" : 0,
+							"y" : 0
+						},
+						{
+							"Childs" : [],
+							"Name" : "Other Control",
+							"NeedKey" : false,
+							"NeedMouse" : true,
+							"Skin" : "PanelEmpty",
+							"Type" : "Widget",
+							"height" : 100,
+							"width" : 370,
+							"x" : 0,
+							"y" : 0
+						}
+					],
+					"GridItemSize" : 
+					{
+						"height" : 60,
+						"width" : 370
+					},
+					"LayoutRule" : "Grid",
+					"Name" : "Playback Controls",
+					"NeedKey" : false,
+					"NeedMouse" : true,
+					"Skin" : "PanelEmpty",
+					"Type" : "Widget",
+					"height" : 60,
+					"width" : 1110,
+					"x" : 20,
+					"y" : 472
+				},
+				{
+					"Childs" : 
+					[
+						{
+							"Childs" : [],
+							"Name" : "Background",
+							"NeedKey" : false,
+							"NeedMouse" : true,
+							"Skin" : "SmallBrightSliderBackground",
+							"Type" : "Widget",
+							"height" : 20.0,
+							"width" : 1150.0,
+							"x" : 0.0,
+							"y" : 0.0
+						},
+						{
+							"Childs" : [],
+							"Cursor" : "Draggable",
+							"Name" : "Handle",
+							"NeedKey" : false,
+							"NeedMouse" : true,
+							"Skin" : "SmallBrightSliderTrack",
+							"Type" : "Button",
+							"height" : 20.0,
+							"onDrag" : "cl_onHorizontalSliderHandleDrag",
+							"onPressed" : "cl_onHorizontalSliderHandlePressed",
+							"onReleased" : "cl_onHorizontalSliderHandleReleased",
+							"width" : 30.0,
+							"x" : 0.0,
+							"y" : 0.0
+						}
+					],
+					"Cursor" : "Draggable",
+					"Name" : "Progress Control",
+					"NeedKey" : false,
+					"NeedMouse" : true,
+					"Skin" : "PanelEmpty",
+					"Type" : "Widget",
+					"Visible" : true,
+					"height" : 20,
+					"width" : 1150,
+					"x" : 0,
+					"y" : 456
+				},
+				{
+					"Caption" : "0:00 / 0:00",
+					"Childs" : [],
+					"FontName" : "SM_ButtonTiny",
+					"Name" : "Progress Time",
+					"NeedKey" : false,
+					"NeedMouse" : false,
+					"Skin" : "TextBox",
+					"TextAlign" : "Center",
+					"Type" : "TextBox",
+					"height" : 15,
+					"width" : 1150,
+					"x" : 0,
+					"y" : 445
+				},
+				{
+					"Childs" : 
+					[
+						{
+							"Childs" : 
+							[
+								{
+									"Childs" : 
+									[
+										{
+											"Childs" : 
+											[
+												{
+													"Childs" : 
+													[
+														{
+															"Childs" : [],
+															"ImageTexture" : "icon_beacon_saw.png",
+															"Name" : "Image",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "ImageBox",
+															"Type" : "ImageBox",
+															"height" : 60,
+															"width" : 60,
+															"x" : 8,
+															"y" : 8
+														},
+														{
+															"Caption" : "Name",
+															"Childs" : [],
+															"FontName" : "SM_Button",
+															"Name" : "Name",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 20,
+															"width" : 305,
+															"x" : 75,
+															"y" : 15
+														},
+														{
+															"Caption" : "Author",
+															"Childs" : [],
+															"FontName" : "SM_ButtonSmall",
+															"Name" : "Author",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 15,
+															"width" : 305,
+															"x" : 75,
+															"y" : 34
+														},
+														{
+															"Caption" : "0 min",
+															"Childs" : [],
+															"FontName" : "SM_ButtonTiny",
+															"Name" : "Duration",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 15,
+															"width" : 305,
+															"x" : 75,
+															"y" : 50
+														}
+													],
+													"Name" : "Button",
+													"NeedKey" : false,
+													"NeedMouse" : true,
+													"OnClickEffect" : "Gui - Click",
+													"OnFocusEffect" : "Gui - Highlight",
+													"Skin" : "GenderButton",
+													"Type" : "Button",
+													"height" : 75,
+													"onClick" : "cl_onClick",
+													"width" : 270,
+													"x" : 0,
+													"y" : 0
+												}
+											],
+											"LayoutRule" : "Absolute",
+											"Name" : "MainPanel",
+											"NeedKey" : false,
+											"NeedMouse" : true,
+											"Skin" : "PanelEmpty",
+											"Type" : "Widget",
+											"height" : 75.0,
+											"width" : 280.0,
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"Childs" : 
+											[
+												{
+													"Childs" : 
+													[
+														{
+															"Childs" : [],
+															"ImageTexture" : "icon_beacon_saw.png",
+															"Name" : "Image",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "ImageBox",
+															"Type" : "ImageBox",
+															"height" : 60,
+															"width" : 60,
+															"x" : 8,
+															"y" : 8
+														},
+														{
+															"Caption" : "Name",
+															"Childs" : [],
+															"FontName" : "SM_Button",
+															"Name" : "Name",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 20,
+															"width" : 305,
+															"x" : 75,
+															"y" : 15
+														},
+														{
+															"Caption" : "Author",
+															"Childs" : [],
+															"FontName" : "SM_ButtonSmall",
+															"Name" : "Author",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 15,
+															"width" : 305,
+															"x" : 75,
+															"y" : 34
+														},
+														{
+															"Caption" : "0 min",
+															"Childs" : [],
+															"FontName" : "SM_ButtonTiny",
+															"Name" : "Duration",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 15,
+															"width" : 305,
+															"x" : 75,
+															"y" : 50
+														}
+													],
+													"Name" : "Button",
+													"NeedKey" : false,
+													"NeedMouse" : true,
+													"OnClickEffect" : "Gui - Click",
+													"OnFocusEffect" : "Gui - Highlight",
+													"Skin" : "GenderButton",
+													"Type" : "Button",
+													"height" : 75,
+													"onClick" : "cl_onClick",
+													"width" : 250,
+													"x" : 0,
+													"y" : 0
+												}
+											],
+											"LayoutRule" : "Absolute",
+											"Name" : "MainPanel",
+											"NeedKey" : false,
+											"NeedMouse" : true,
+											"Skin" : "PanelEmpty",
+											"Type" : "Widget",
+											"height" : 75.0,
+											"width" : 250.0,
+											"x" : 0.0,
+											"y" : 0.0
+										}
+									],
+									"GridItemSize" : 
+									{
+										"height" : 75,
+										"width" : 270
+									},
+									"GridScrollOffset" : 
+									{
+										"left" : 0,
+										"top" : 0
+									},
+									"LayoutRule" : "Grid",
+									"Name" : "PlaylistScrollView",
+									"NeedKey" : false,
+									"NeedMouse" : true,
+									"Skin" : "PanelEmpty",
+									"Type" : "Widget",
+									"height" : 340,
+									"onMouseWheel" : "cl_onPlaylistScroll",
+									"width" : 270,
+									"x" : 0,
+									"y" : 0
+								},
+								{
+									"Childs" : 
+									[
+										{
+											"Childs" : [],
+											"Cursor" : "Draggable",
+											"Name" : "PlaylistScrollButton",
+											"NeedKey" : true,
+											"NeedMouse" : true,
+											"Skin" : "InventoryScrollTrack",
+											"Type" : "Button",
+											"height" : 28,
+											"onDrag" : "cl_onPlaylistScrollButtonDrag",
+											"onMouseWheel" : "cl_onPlaylistScroll",
+											"onPressed" : "cl_onPlaylistScrollButtonPressed",
+											"onReleased" : "cl_onPlaylistScrollButtonReleased",
+											"width" : 18,
+											"x" : 0,
+											"y" : 0
+										}
+									],
+									"Name" : "PlaylistScrollBar",
+									"NeedKey" : true,
+									"NeedMouse" : true,
+									"Skin" : "InventoryScrollBackground",
+									"Type" : "Button",
+									"height" : 340,
+									"onPressed" : "cl_onPlaylistScrollBarPressed",
+									"width" : 18,
+									"x" : 280,
+									"y" : 0
+								}
+							],
+							"Name" : "Playlist Holder",
+							"NeedKey" : false,
+							"NeedMouse" : true,
+							"Skin" : "PanelEmpty",
+							"Type" : "Widget",
+							"height" : 340,
+							"width" : 300,
+							"x" : 0,
+							"y" : 0
+						},
+						{
+							"Childs" : [],
+							"NeedKey" : false,
+							"NeedMouse" : false,
+							"Skin" : "DressbotQueueBackground",
+							"Type" : "Widget",
+							"height" : 340,
+							"width" : 20,
+							"x" : 0,
+							"y" : 0
+						},
+						{
+							"Childs" : 
+							[
+								{
+									"Childs" : 
+									[
+										{
+											"Childs" : 
+											[
+												{
+													"Childs" : 
+													[
+														{
+															"Childs" : [],
+															"ImageTexture" : "icon_beacon_saw.png",
+															"Name" : "Image",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "ImageBox",
+															"Type" : "ImageBox",
+															"height" : 60,
+															"width" : 60,
+															"x" : 8,
+															"y" : 8
+														},
+														{
+															"Caption" : "Name",
+															"Childs" : [],
+															"FontName" : "SM_Button",
+															"Name" : "Name",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 20,
+															"width" : 305,
+															"x" : 75,
+															"y" : 15
+														},
+														{
+															"Caption" : "Author",
+															"Childs" : [],
+															"FontName" : "SM_ButtonSmall",
+															"Name" : "Author",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 15,
+															"width" : 305,
+															"x" : 75,
+															"y" : 34
+														},
+														{
+															"Caption" : "0 min",
+															"Childs" : [],
+															"FontName" : "SM_ButtonTiny",
+															"Name" : "Duration",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 15,
+															"width" : 305,
+															"x" : 75,
+															"y" : 50
+														}
+													],
+													"Name" : "Button",
+													"NeedKey" : false,
+													"NeedMouse" : true,
+													"OnClickEffect" : "Gui - Click",
+													"OnFocusEffect" : "Gui - Highlight",
+													"Skin" : "GenderButton",
+													"Type" : "Button",
+													"height" : 75,
+													"onClick" : "cl_onClick",
+													"width" : 375,
+													"x" : 0,
+													"y" : 0
+												}
+											],
+											"LayoutRule" : "Absolute",
+											"Name" : "MainPanel",
+											"NeedKey" : false,
+											"NeedMouse" : true,
+											"Skin" : "PanelEmpty",
+											"Type" : "Widget",
+											"height" : 75.0,
+											"width" : 375.0,
+											"x" : 0.0,
+											"y" : 0.0
+										},
+										{
+											"Childs" : 
+											[
+												{
+													"Childs" : 
+													[
+														{
+															"Childs" : [],
+															"ImageTexture" : "icon_beacon_saw.png",
+															"Name" : "Image",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "ImageBox",
+															"Type" : "ImageBox",
+															"height" : 60,
+															"width" : 60,
+															"x" : 8,
+															"y" : 8
+														},
+														{
+															"Caption" : "Name",
+															"Childs" : [],
+															"FontName" : "SM_Button",
+															"Name" : "Name",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 20,
+															"width" : 305,
+															"x" : 75,
+															"y" : 15
+														},
+														{
+															"Caption" : "Author",
+															"Childs" : [],
+															"FontName" : "SM_ButtonSmall",
+															"Name" : "Author",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 15,
+															"width" : 305,
+															"x" : 75,
+															"y" : 34
+														},
+														{
+															"Caption" : "0 min",
+															"Childs" : [],
+															"FontName" : "SM_ButtonTiny",
+															"Name" : "Duration",
+															"NeedKey" : false,
+															"NeedMouse" : false,
+															"Skin" : "TextBox",
+															"Type" : "TextBox",
+															"height" : 15,
+															"width" : 305,
+															"x" : 75,
+															"y" : 50
+														}
+													],
+													"Name" : "Button",
+													"NeedKey" : false,
+													"NeedMouse" : true,
+													"OnClickEffect" : "Gui - Click",
+													"OnFocusEffect" : "Gui - Highlight",
+													"Skin" : "GenderButton",
+													"Type" : "Button",
+													"height" : 75,
+													"onClick" : "cl_onClick",
+													"width" : 375,
+													"x" : 0,
+													"y" : 0
+												}
+											],
+											"LayoutRule" : "Absolute",
+											"Name" : "MainPanel",
+											"NeedKey" : false,
+											"NeedMouse" : true,
+											"Skin" : "PanelEmpty",
+											"Type" : "Widget",
+											"height" : 75.0,
+											"width" : 375.0,
+											"x" : 0.0,
+											"y" : 0.0
+										}
+									],
+									"GridItemSize" : 
+									{
+										"height" : 75,
+										"width" : 375
+									},
+									"GridScrollOffset" : 
+									{
+										"left" : 0,
+										"top" : 0
+									},
+									"LayoutRule" : "Grid",
+									"Name" : "TrackScrollView",
+									"NeedKey" : false,
+									"NeedMouse" : true,
+									"Skin" : "PanelEmpty",
+									"Type" : "Widget",
+									"height" : 340,
+									"onMouseWheel" : "cl_onTrackScroll",
+									"width" : 760,
+									"x" : 0,
+									"y" : 0
+								},
+								{
+									"Childs" : 
+									[
+										{
+											"Childs" : [],
+											"Cursor" : "Draggable",
+											"Name" : "TrackScrollButton",
+											"NeedKey" : true,
+											"NeedMouse" : true,
+											"Skin" : "InventoryScrollTrack",
+											"Type" : "Button",
+											"height" : 28,
+											"onDrag" : "cl_onTrackScrollButtonDrag",
+											"onMouseWheel" : "cl_onTrackScroll",
+											"onPressed" : "cl_onTrackScrollButtonPressed",
+											"onReleased" : "cl_onTrackScrollButtonReleased",
+											"width" : 18,
+											"x" : 0,
+											"y" : 0
+										}
+									],
+									"Name" : "TrackScrollBar",
+									"NeedKey" : true,
+									"NeedMouse" : true,
+									"Skin" : "InventoryScrollBackground",
+									"Type" : "Button",
+									"height" : 340,
+									"onPressed" : "cl_onTrackScrollBarPressed",
+									"width" : 18,
+									"x" : 770,
+									"y" : 0
+								}
+							],
+							"Name" : "Track Holder",
+							"NeedKey" : false,
+							"NeedMouse" : true,
+							"Skin" : "PanelEmpty",
+							"Type" : "Widget",
+							"height" : 340,
+							"width" : 800,
+							"x" : 0,
+							"y" : 0
+						}
+					],
+					"LayoutRule" : "Horizontal",
+					"Name" : "Track List",
+					"NeedKey" : false,
+					"NeedMouse" : true,
+					"Skin" : "PanelEmpty",
+					"Type" : "Widget",
+					"height" : 340,
+					"width" : 1110,
+					"x" : 20,
+					"y" : 100
+				},
+				{
+					"Childs" : 
+					[
+						{
+							"Childs" : [],
+							"NeedKey" : false,
+							"NeedMouse" : false,
+							"Skin" : "SearchBarBackground",
+							"Type" : "Widget",
+							"height" : 28,
+							"width" : 240,
+							"x" : 0,
+							"y" : 0
+						},
+						{
+							"Caption" : "#{SEARCH}",
+							"Childs" : [],
+							"FontName" : "SM_SearchText",
+							"Name" : "Search",
+							"NeedKey" : true,
+							"NeedMouse" : true,
+							"Skin" : "EditBoxEmpty",
+							"TextAlign" : "Left",
+							"TextColour" : "0.576471 0.576471 0.584314 1",
+							"Type" : "EditBox",
+							"height" : 28,
+							"onTextEdit" : "cl_onSearchTextEdit",
+							"onTextEnter" : "cl_onSearchTextEnter",
+							"width" : 200,
+							"x" : 5,
+							"y" : 0
+						},
+						{
+							"Childs" : [],
+							"ImageTexture" : "gui_inventory_icon_search.png",
+							"NeedKey" : false,
+							"NeedMouse" : false,
+							"Skin" : "ImageBox",
+							"Type" : "ImageBox",
+							"height" : 18,
+							"width" : 18,
+							"x" : 210,
+							"y" : 5
+						}
+					],
+					"Name" : "Search Control",
+					"NeedKey" : true,
+					"NeedMouse" : true,
+					"Skin" : "PanelEmpty",
+					"Type" : "Widget",
+					"height" : 28,
+					"width" : 240,
+					"x" : 885,
+					"y" : 48
+				}
+			],
+			"InheritsPick" : true,
+			"LayoutRule" : "Absolute",
+			"Name" : "Background",
+			"NeedKey" : false,
+			"NeedMouse" : true,
+			"Skin" : "BackgroundSequenceController",
+			"Type" : "Widget",
+			"height" : 540.0,
+			"width" : 1150.0,
+			"x" : 0.0,
+			"y" : 0.0
+		}
+	],
+	"LayoutRule" : "Absolute",
+	"Name" : "MainPanel",
+	"NeedKey" : false,
+	"NeedMouse" : true,
+	"Skin" : "PanelEmpty",
+	"Type" : "Widget",
+	"height" : 540.0,
+	"onClose" : "cl_onClose",
+	"width" : 1150.0,
+	"x" : 0.0,
+	"y" : -40.0
+}

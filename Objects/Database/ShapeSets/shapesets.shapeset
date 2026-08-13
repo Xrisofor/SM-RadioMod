@@ -201,6 +201,53 @@
 			"showInInventory" : true,
 			"sticky" : "-Y",
 			"uuid" : "4ac9c7bb-ec7f-4dbd-8efa-9a45e827ee4d"
+		},
+		{
+			"box" : 
+			{
+				"x" : 1,
+				"y" : 1,
+				"z" : 1
+			},
+			"color" : "df7f01",
+			"name" : "obj_jsongui_test",
+			"physicsMaterial" : "Electronics",
+			"renderable" : "$GAME_DATA/Objects/Renderable/Interactive/obj_interactive_logicgate.rend",
+			"rotationSet" : "PropYZ",
+			"scripted" : 
+			{
+				"classname" : "GuiTest",
+				"filename" : "$CONTENT_DATA/Scripts/game/GuiTest.lua"
+			},
+			"uuid" : "85f02f24-6fb3-49e8-9ebd-0c3b41f050e4"
+		},
+		{
+			"box" : 
+			{
+				"x" : 1,
+				"y" : 1,
+				"z" : 1
+			},
+			"color" : "df7f01",
+			"flammable" : false,
+			"name" : "obj_custom_beat_emitter",
+			"physicsMaterial" : "Electronics",
+			"ratings" : 
+			{
+				"buoyancy" : 2,
+				"density" : 2,
+				"durability" : 3,
+				"friction" : 5
+			},
+			"renderable" : "$CONTENT_DATA/Objects/Renderable/obj_interactive_logicgate.rend",
+			"rotationSet" : "PropYZ",
+			"scripted" : 
+			{
+				"classname" : "CustomBeatEmitter",
+				"filename" : "$CONTENT_DATA/Scripts/game/interactables/CustomBeatEmitter.lua"
+			},
+			"stackSize" : 10,
+			"uuid" : "9be1c109-180a-480b-bc60-81ef99ba9284"
 		}
 	]
 }

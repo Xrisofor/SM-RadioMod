@@ -1,0 +1,87 @@
+{
+	"Childs" : 
+	[
+		{
+			"Childs" : 
+			[
+				{
+					"Childs" : [],
+					"ImageTexture" : "icon_beacon_saw.png",
+					"Name" : "Image",
+					"NeedKey" : false,
+					"NeedMouse" : false,
+					"Skin" : "ImageBox",
+					"Type" : "ImageBox",
+					"height" : 60,
+					"width" : 60,
+					"x" : 8,
+					"y" : 8
+				},
+				{
+					"Caption" : "Name",
+					"Childs" : [],
+					"FontName" : "SM_Button",
+					"Name" : "Name",
+					"NeedKey" : false,
+					"NeedMouse" : false,
+					"Skin" : "TextBox",
+					"Type" : "TextBox",
+					"height" : 20,
+					"width" : 305,
+					"x" : 75,
+					"y" : 15
+				},
+				{
+					"Caption" : "Author",
+					"Childs" : [],
+					"FontName" : "SM_ButtonSmall",
+					"Name" : "Author",
+					"NeedKey" : false,
+					"NeedMouse" : false,
+					"Skin" : "TextBox",
+					"Type" : "TextBox",
+					"height" : 15,
+					"width" : 305,
+					"x" : 75,
+					"y" : 34
+				},
+				{
+					"Caption" : "0 min",
+					"Childs" : [],
+					"FontName" : "SM_ButtonTiny",
+					"Name" : "Duration",
+					"NeedKey" : false,
+					"NeedMouse" : false,
+					"Skin" : "TextBox",
+					"Type" : "TextBox",
+					"height" : 15,
+					"width" : 305,
+					"x" : 75,
+					"y" : 50
+				}
+			],
+			"Name" : "Button",
+			"NeedKey" : false,
+			"NeedMouse" : true,
+			"OnClickEffect" : "Gui - Click",
+			"OnFocusEffect" : "Gui - Highlight",
+			"Skin" : "GenderButton",
+			"Type" : "Button",
+			"height" : 75,
+			"onClick" : "cl_onTrackClick",
+			"width" : 375,
+			"x" : 0,
+			"y" : 0
+		}
+	],
+	"LayoutRule" : "Absolute",
+	"Name" : "MainPanel",
+	"NeedKey" : false,
+	"NeedMouse" : true,
+	"Skin" : "PanelEmpty",
+	"Type" : "Widget",
+	"height" : 75.0,
+	"width" : 375.0,
+	"x" : 0.0,
+	"y" : 0.0
+}
